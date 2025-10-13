@@ -10,6 +10,8 @@ from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
 
+from jobseeker_agent.scraper.linkedin_query import QueryBuilder
+
 @dataclass
 class JobData:
     title: str
@@ -139,11 +141,20 @@ class LinkedInJobsScraper:
 
 
 def main():
-    params = {"keywords": "Machine Learning Engineer", "location": "Paris, France", "max_jobs": 10}
+
+    builder = QueryBuilder()
+    query = builder.build_primary_query()
+    
+    print(query)
+    params = {
+        "keywords": query,
+        "location": "Australia",
+        "max_jobs": 10,
+    }
 
     scraper = LinkedInJobsScraper()
     jobs = scraper.scrape_jobs(**params)
-    scraper.save_results(jobs)
+    scraper.save_results(jobs, filename="linkedin_jobs_primary.json")
 
 
 if __name__ == "__main__":

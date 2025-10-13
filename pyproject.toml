@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jobseeker-agent"
+version = "0.0.1"
+authors = [
+  { name="Hugo Vaillaud", email="hugovaillaud@gmail.com" },
+]
+description = "A small package to automate the job search and application process"
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["jobseeker_agent"]
