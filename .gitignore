@@ -8,4 +8,4 @@ __pycache__/
 *.pyw
 *.pyz
 .cursor
-.egg-info/
+*.egg-info/
