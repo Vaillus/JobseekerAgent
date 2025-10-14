@@ -193,11 +193,11 @@ def main():
     query = builder.build_primary_query()
     
     print(query)
-    remote_type = "any" # remote, hybrid, on_site, any
+    remote_type = "remote" # remote, hybrid, on_site, any
     max_time = "month" # day, week, month
     params = {
         "keywords": query,
-        "location": "Paris, France",
+        "location": "Berlin, Germany",
         "max_jobs": 100,
         "remote_type": remote_type,
         "max_time": max_time

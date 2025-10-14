@@ -10,3 +10,4 @@ __pycache__/
 .cursor
 *.egg-info/
 .DS_Store
+/src/jobseeker_agent/data/raw_jobs/raw_jobs.json
