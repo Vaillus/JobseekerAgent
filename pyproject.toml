@@ -18,5 +18,5 @@ classifiers = [
 ]
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+J'utilise Cursor et dans un autre projet, quand je faisais ctrl+clic sur une fonction, ça me téléportait à là où la fonction est appelée. Et là, ça ne marche pas. Je ne sais pas pourquoi. Tu sais à quoi ça peut être dû ?package-dir = {"" = "src"}
 packages = ["jobseeker_agent"]

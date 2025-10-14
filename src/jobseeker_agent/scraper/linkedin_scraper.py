@@ -10,6 +10,8 @@ from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
 from jobseeker_agent.scraper.linkedin_query import QueryBuilder
+from jobseeker_agent.scraper.raw_jobs_manager import add_new_job
+
 
 @dataclass
 class JobData:
@@ -52,20 +54,23 @@ class LinkedInJobsScraper:
         return session
 
     def scrape_jobs(
-        self, 
-        keywords: str, 
-        location: str, 
-        max_jobs: int = 100, 
-        remote_type: str = "any", 
-        max_time: str = "day"
-    ) -> List[JobData]:
+        self,
+        keywords: str,
+        location: str,
+        max_jobs: int = 100,
+        remote_type: str = "any",
+        max_time: str = "day",
+    ) -> int:
         """Scrape jobs from LinkedIn based on the given parameters."""
-        all_jobs = []
+        new_jobs_count = 0
+        total_jobs_processed = 0
         start = 0
 
-        while len(all_jobs) < max_jobs:
+        while total_jobs_processed < max_jobs:
             try:
-                url = self._build_search_url(keywords, location, start, remote_type, max_time)
+                url = self._build_search_url(
+                    keywords, location, start, remote_type, max_time
+                )
                 print(url)
                 soup = self._fetch_job_page(url)
                 job_cards = soup.find_all("div", class_="base-card")
@@ -73,12 +78,28 @@ class LinkedInJobsScraper:
                 if not job_cards:
                     break
                 for card in job_cards:
+                    if total_jobs_processed >= max_jobs:
+                        break
                     job_data = self._extract_job_data(card)
                     if job_data:
-                        all_jobs.append(job_data)
-                        if len(all_jobs) >= max_jobs:
-                            break
-                print(f"Scraped {len(all_jobs)} jobs...")
+                        job_dict = {
+                            "title": job_data.title,
+                            "company": job_data.company,
+                            "location": job_data.location,
+                            "job_link": job_data.job_link,
+                            "posted_date": job_data.posted_date,
+                        }
+                        added_job = add_new_job(job_dict)
+                        if added_job:
+                            new_jobs_count += 1
+                            print(f"Added new job: {job_data.title}")
+                        else:
+                            print(f"Job already exists: {job_data.title}")
+                    total_jobs_processed += 1
+
+                print(
+                    f"Processed {total_jobs_processed} jobs, added {new_jobs_count} new jobs..."
+                )
                 start += ScraperConfig.JOBS_PER_PAGE
                 time.sleep(
                     random.uniform(ScraperConfig.MIN_DELAY, ScraperConfig.MAX_DELAY)
@@ -86,14 +107,14 @@ class LinkedInJobsScraper:
             except Exception as e:
                 print(f"Scraping error: {str(e)}")
                 break
-        return all_jobs[:max_jobs]
+        return new_jobs_count
 
     def _build_search_url(
-        self, 
-        keywords: str, 
-        location: str, 
-        start: int = 0, 
-        remote_type: str = "any", 
+        self,
+        keywords: str,
+        location: str,
+        start: int = 0,
+        remote_type: str = "any",
         max_time: str = "day"
     ) -> str:
         """Build the search URL based on the given parameters."""
@@ -137,9 +158,11 @@ class LinkedInJobsScraper:
             job_link = self._clean_job_url(
                 job_card.find("a", class_="base-card__full-link")["href"]
             )
-            posted_date = job_card.find("time", class_="job-search-card__listdate")
+            # print(job_card.prettify())
+            posted_date = job_card.find("time", class_="job-search-card__listdate") or job_card.find("time", class_="job-search-card__listdate--new")
+            # print(posted_date)
             posted_date = posted_date.text.strip() if posted_date else "N/A"
-
+            # print(posted_date)
             return JobData(
                 title=title,
                 company=company,
@@ -163,15 +186,6 @@ class LinkedInJobsScraper:
         except requests.RequestException as e:
             raise RuntimeError(f"Request failed: {str(e)}")
 
-    def save_results(
-        self, jobs: List[JobData], filename: str = "linkedin_jobs.json"
-    ) -> None:
-        if not jobs:
-            return
-        with open(filename, "w", encoding="utf-8") as f:
-            json.dump([vars(job) for job in jobs], f, indent=2, ensure_ascii=False)
-        print(f"Saved {len(jobs)} jobs to {filename}")
-
 
 def main():
 
@@ -180,19 +194,18 @@ def main():
     
     print(query)
     remote_type = "any" # remote, hybrid, on_site, any
-    max_time = "day" # day, week, month
+    max_time = "month" # day, week, month
     params = {
         "keywords": query,
-        "location": "Australia",
-        "max_jobs": 10,
+        "location": "Paris, France",
+        "max_jobs": 100,
         "remote_type": remote_type,
         "max_time": max_time
     }
 
     scraper = LinkedInJobsScraper()
-    jobs = scraper.scrape_jobs(**params)
-    print(jobs)
-    # scraper.save_results(jobs, filename="linkedin_jobs_primary.json")
+    new_jobs_added = scraper.scrape_jobs(**params)
+    print(f"Finished scraping. Added {new_jobs_added} new jobs.")
 
 
 if __name__ == "__main__":
