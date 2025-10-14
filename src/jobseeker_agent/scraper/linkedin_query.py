@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List
 
 import sys
-print(">>> MON SYS.PATH ACTUEL:", sys.path) # Ligne de diagnostic
+# print(">>> MON SYS.PATH ACTUEL:", sys.path) # Ligne de diagnostic
 
 from jobseeker_agent.utils.paths import get_linkedin_keywords_path
 
