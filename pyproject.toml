@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "jobseeker-agent"
+name = "jobseeker_agent"
 version = "0.0.1"
 authors = [
   { name="Hugo Vaillaud", email="hugovaillaud@gmail.com" },
@@ -16,7 +16,17 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dependencies = [
+    "beautifulsoup4",
+    "python-dotenv",
+    "langchain",
+    "langchain-openai",
+    "selenium",
+    "webdriver-manager",
+    "lxml",
+    "html2text",
+]
 
 [tool.setuptools]
-J'utilise Cursor et dans un autre projet, quand je faisais ctrl+clic sur une fonction, ça me téléportait à là où la fonction est appelée. Et là, ça ne marche pas. Je ne sais pas pourquoi. Tu sais à quoi ça peut être dû ?package-dir = {"" = "src"}
+package-dir = {"" = "src"}
 packages = ["jobseeker_agent"]

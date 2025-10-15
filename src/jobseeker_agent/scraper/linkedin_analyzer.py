@@ -1,6 +1,10 @@
 
 import requests
+import html2text
 from bs4 import BeautifulSoup
+
+
+
 
 def fetch_job_page(url):
     """Fetches the content of the job posting URL."""
@@ -24,10 +28,16 @@ def analyze_linkedin_job(url):
         return None
 
     soup = BeautifulSoup(page_content, 'html.parser')
-    
+
     # --- Job Description ---
     description_tag = soup.find('div', class_='description__text description__text--rich')
-    job_description = description_tag.get_text(strip=True) if description_tag else 'Description not found.'
+    if description_tag:
+        html_description = str(description_tag)
+        h = html2text.HTML2Text()
+        h.ignore_links = True
+        job_description = h.handle(html_description)
+    else:
+        job_description = 'Description not found.'
 
     # --- Job Status ---
     job_status = "Unknown"

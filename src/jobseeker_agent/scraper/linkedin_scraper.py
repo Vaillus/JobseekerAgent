@@ -190,14 +190,14 @@ class LinkedInJobsScraper:
 def main():
 
     builder = QueryBuilder()
-    query = builder.build_primary_query()
+    query = builder.build_secondary_query()
     
     print(query)
-    remote_type = "remote" # remote, hybrid, on_site, any
+    remote_type = "any" # remote, hybrid, on_site, any
     max_time = "month" # day, week, month
     params = {
         "keywords": query,
-        "location": "Berlin, Germany",
+        "location": "Paris, France",
         "max_jobs": 100,
         "remote_type": remote_type,
         "max_time": max_time

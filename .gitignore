@@ -12,3 +12,4 @@ __pycache__/
 .DS_Store
 /src/jobseeker_agent/data/raw_jobs/raw_jobs.json
 /src/jobseeker_agent/temp/
+/src/temp/
