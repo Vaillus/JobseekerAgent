@@ -1,0 +1,38 @@
+[
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - GenBio AI\n\n## The Job\n- Requires biology/omics expertise beyond me: -1\n\n---\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong DL (PyTorch/JAX), rigorous research, fast learner, autonomous in startup settings.\n\t* Against: Little hands-on bio/omics experience; limited top-tier AI/Bio publications.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Frontier generative AI and multimodal modeling; world-class team; high-impact healthcare domain.\n\t* Against: Significant biology ramp-up; likely non-remote/relocation; less aligned with defense/robotics interests.",
+        "score": 4,
+        "preferred_pitch": 2,
+        "id": 1
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - AryaXAI\n\n## The Job\n### Required expertise\n- RL mentioned as a core skill in qualifications (+2)\n- Prior XAI methods (LRP/SHAP/LIME/IG/CEM) required; I lack direct experience (-1)\n\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: PhD-level rigor; strong ML/RL foundation; hands-on algorithms; research-to-prod collaboration; publications experience.\n\t* Against: Limited direct XAI toolkit experience; need to reinforce MLOps/cloud deployment track record.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Focus on alignment/safety/explainability; startup pace with research impact; opportunities to publish and ship features.\n\t* Against: Less direct overlap with OR/robotics; short-term upskilling needed in XAI methods and MLOps.",
+        "score": 7,
+        "preferred_pitch": 2,
+        "id": 2
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Haiqu\n\n## The Job\n### Required expertise\n- RL explicitly required: No (+0)\n- OR/optimization/planning algorithms: Not explicit; focus is quantum-specific (+0)\n- AI workflows implementation heavy: No (+0)\n- Requires strong expertise I'm not familiar with: Yes \u2014 quantum algorithms/QEC/Qiskit (-1)\n- Non-Python language required: No (+0)\n- Infrastructure-focused over algorithms: No (+0)\n- Data scientist/engineer vagueness: No; clear research scientist scope (+0)\n\n### Type of role\n- More managerial than technical: No (+0)\n- Leading a team: No (+0)\n- Coaching world-class scientists: No (+0)\n\n## The Company\n- Top-tier (Google/Meta/Helsing/etc.): No (+0)\n- Consulting firm: No (+0)\n- Defense sector: No (+0)\n- Robotics sector: No (+0)\n\n---\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: PhD-level research rigor; strong algorithms/optimization background; Python/ML skills; experience designing, benchmarking, and prototyping algorithms.\n\t* Against: No quantum computing/QEC/Tensor Networks/Qiskit experience; no quantum publications; likely steep ramp-up; hardware/compilation unfamiliar.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Frontier algorithmic R&D; hands-on experiments on cutting-edge hardware; startup impact and equity; chance to learn QC.\n\t* Against: Significant domain mismatch; lower interview odds without prior QC track record.",
+        "score": 3,
+        "preferred_pitch": 2,
+        "id": 3
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Mistral AI\n\nThe Job\nRequired expertise\n- Heavy ML pipelines/frameworks, eval, APIs: yes (+3)\n- Distributed training at scale (DeepSpeed/FSDP/SLURM/K8s): partial gap (-1)\n\nThe Company\n- Top-tier company: yes (+2)\n- EU/UK full-remote option: yes (+2)\n\nSynthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* Pros: PhD-level research engineer; strong Python/ML; bridges research\u2194production; rigorous experimentation.\n\t* Pros: PyTorch/JAX familiarity; algorithm design; end-to-end delivery mindset (CV project).\n\t* Cons: Limited hands-on with large-scale distributed training (FSDP/DeepSpeed), SLURM/K8s; limited CUDA.\n- Main arguments for/against why the job is of interest to me:\n\t* Pros: Cut\u2011ting\u2011edge LLM training and tooling; open-source impact; EU remote; direct product tie-in (Le Chat, enterprise API).\n\t* Cons: May skew infra-heavy vs RL/RO/robotics interests; not agentic-workflow focused.",
+        "score": 6,
+        "preferred_pitch": 2,
+        "id": 4
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Datadog\n\n## The Job\n- RL required/skill: Yes, agents & on-policy RL (+2)\n- OR/optimization/planning: Multi-step planning mentioned (+2)\n- AI workflows: Agentic training/eval; multi-modal FMs (+3)\n- Requires expertise I'm missing: Large-scale FM training & distributed stacks (-1)\n\n## The Company\n- >150 employees: Yes (-1)\n\n---\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: PhD with strong RO/RL/algorithms; built simulations; Python/PyTorch; research rigor and product impact (Thales); interest in agents/workflows.\n\t* Against: Limited hands-on with LLM/FM pre/post-training, DeepSpeed/Megatron; CUDA only light; new to observability domain.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Agentic systems, on-policy training, simulated envs; opportunity to publish/open-source; large-scale infra to learn; real-world impact at scale.\n\t* Against: Not defense/robotics; big-company context; remote not explicit.",
+        "score": 5,
+        "preferred_pitch": 3,
+        "id": 5
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Dassault Syst\u00e8mes\n\n## The Job\n### Required expertise\n- RL mentioned as a plus (+2)\n- Prototyping AI components/workflows central (+3)\n- Strong 3D modeling required; my exposure is limited (-1)\n- C++ required; my experience is rusty (-1)\n\n## The Company\n- Very large enterprise (>150 employees) (-1)\n\n---\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: PhD-level rigor in ML/optimization; strong algorithmic mindset; experience building prototypes and simulations; solid Python/Deep Learning expertise; familiarity with RL.\n\t* Against: Limited recent C++ and 3D modeling; little direct VLM hands-on; less direct experience in industrial 3D twin environments.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Cutting-edge research on AI in mixed real/virtual 3D, VLMs and new learning paradigms; building innovative prototypes with tech transfer and potential patents; aligns with autonomous systems/agentic interests.\n\t* Against: Big-company environment; likely on-site/hybrid; emphasis on C++ and 3D modeling may reduce initial velocity.",
+        "score": 6.5,
+        "preferred_pitch": 1,
+        "id": 6
+    }
+]

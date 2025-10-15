@@ -24,9 +24,15 @@ def get_raw_jobs_json_path() -> Path:
 
 def get_evaluator_labels_path() -> Path:
     """Retourne le chemin vers le fichier JSON des labels."""
-    labels_dir = get_data_path() / "evaluator_labels"
+    labels_dir = get_data_path() / "evaluator"
     labels_dir.mkdir(parents=True, exist_ok=True)
-    return labels_dir / "label.json"
+    return labels_dir / "labels.json"
+
+def get_evaluator_evals_json_path() -> Path:
+    """Retourne le chemin vers le fichier JSON des evaluations."""
+    evals_dir = get_data_path() / "evaluator"
+    evals_dir.mkdir(parents=True, exist_ok=True)
+    return evals_dir / "evals.json"
 
 def load_prompt(prompt_name: str) -> str:
     """Charge le prompt depuis le fichier."""
@@ -57,6 +63,27 @@ def save_labels(labels: List[Dict[str, Any]]) -> None:
     labels_path = get_evaluator_labels_path()
     with open(labels_path, "w") as f:
         json.dump(labels, f, indent=4)
+
+
+def load_evals() -> List[Dict[str, Any]]:
+    """Charge les evals depuis le fichier JSON."""
+    evals_path = get_evaluator_evals_json_path()
+    if not evals_path.exists():
+        return []
+
+    with open(evals_path, "r") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []
+
+
+def save_evals(evals: List[Dict[str, Any]]) -> None:
+    """Sauvegarde les evals dans le fichier JSON."""
+    evals_path = get_evaluator_evals_json_path()
+    with open(evals_path, "w") as f:
+        json.dump(evals, f, indent=4)
+
 
 if __name__ == "__main__":
     print(get_linkedin_keywords_path())
