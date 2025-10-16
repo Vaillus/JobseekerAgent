@@ -32,6 +32,7 @@ return a summary of the job description as follows:
 - Consulting job for a standard/low-tier consulting firm: (-2)
 - In the defense sector: (+2)
 - In the robotics sector: (+2)
+- If not french, requires security clearance: (-1.5)
 
 ^ only mention the lines that are relevant to the job description, with associated score bonus or penalty. 
 For example, do not output "- Leading a team: No (+0)". Instead do not output anything for this criteria.

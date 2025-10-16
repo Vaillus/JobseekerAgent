@@ -19,3 +19,4 @@ src/jobseeker_agent/data/evaluator/evals.json
 src/jobseeker_agent/data/evaluator/processed_jobs.json
 src/jobseeker_agent/data/evaluator/evals.json
 src/jobseeker_agent/data/prompts/profil_pro.md
+src/jobseeker_agent/data/evaluator/job_statuses.json

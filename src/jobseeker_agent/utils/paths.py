@@ -32,6 +32,10 @@ def get_main_evals_json_path() -> Path:
     """Retourne le chemin vers le fichier JSON des evaluations."""
     return get_evaluator_path() / "evals.json"
 
+def get_job_statuses_json_path() -> Path:
+    """Retourne le chemin vers le fichier JSON des statuts des jobs."""
+    return get_evaluator_path() / "job_statuses.json"
+
 def get_processed_jobs_json_path() -> Path:
     """Retourne le chemin vers le fichier JSON des jobs traités."""
     return get_evaluator_path() / "processed_jobs.json"
@@ -116,6 +120,24 @@ def save_main_evals(evals: List[Dict[str, Any]]) -> None:
     evals_path = get_main_evals_json_path()
     with open(evals_path, "w") as f:
         json.dump(evals, f, indent=4)
+
+
+def load_job_statuses() -> List[Dict[str, Any]]:
+    """Charge les statuts des jobs depuis le fichier JSON."""
+    statuses_path = get_job_statuses_json_path()
+    if not statuses_path.exists():
+        return []
+    with open(statuses_path, "r") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []
+
+def save_job_statuses(statuses: List[Dict[str, Any]]) -> None:
+    """Sauvegarde les statuts des jobs dans le fichier JSON."""
+    statuses_path = get_job_statuses_json_path()
+    with open(statuses_path, "w") as f:
+        json.dump(statuses, f, indent=4)
 
 
 def load_processed_jobs() -> List[int]:

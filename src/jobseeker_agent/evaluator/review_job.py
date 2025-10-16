@@ -98,5 +98,9 @@ def main(job_id: int):
 
 
 if __name__ == "__main__":
-    job_id = 312
-    main(job_id)
+    parser = argparse.ArgumentParser(description="Review a specific job evaluation.")
+    parser.add_argument(
+        "job_id", type=int, help="The ID of the job to review."
+    )
+    args = parser.parse_args()
+    main(args.job_id)

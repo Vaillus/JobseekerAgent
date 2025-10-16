@@ -17,16 +17,11 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    "requests",
     "beautifulsoup4",
-    "python-dotenv",
-    "langchain",
-    "langchain-openai",
-    "selenium",
-    "webdriver-manager",
-    "lxml",
     "html2text",
-    "matplotlib",
-    "seaborn",
+    "openai",
+    "flask"
 ]
 
 [tool.setuptools]
