@@ -25,6 +25,8 @@ dependencies = [
     "webdriver-manager",
     "lxml",
     "html2text",
+    "matplotlib",
+    "seaborn",
 ]
 
 [tool.setuptools]

@@ -14,3 +14,7 @@ __pycache__/
 /src/jobseeker_agent/temp/
 /src/temp/
 /src/jobseeker_agent/data/prompts/profil_pro.md
+src/jobseeker_agent/data/evaluator/tests/
+src/jobseeker_agent/data/evaluator/evals.json
+src/jobseeker_agent/data/evaluator/processed_jobs.json
+src/jobseeker_agent/data/evaluator/evals.json
