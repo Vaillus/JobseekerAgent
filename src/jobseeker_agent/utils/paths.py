@@ -11,6 +11,12 @@ def get_data_path() -> Path:
     """Retourne le chemin vers les données."""
     return get_project_root() / "data"
 
+def get_evaluator_path() -> Path:
+    """Retourne le chemin vers le dossier evaluator."""
+    evaluator_dir = get_data_path() / "evaluator"
+    evaluator_dir.mkdir(parents=True, exist_ok=True)
+    return evaluator_dir
+
 def get_linkedin_keywords_path() -> Path:
     """Retourne le chemin vers les keywords de LinkedIn."""
     return get_data_path() / "linkedin_keywords"
@@ -22,15 +28,23 @@ def get_raw_jobs_json_path() -> Path:
     raw_jobs_dir.mkdir(parents=True, exist_ok=True)
     return raw_jobs_dir / "raw_jobs.json"
 
-def get_evaluator_labels_path() -> Path:
+def get_main_evals_json_path() -> Path:
+    """Retourne le chemin vers le fichier JSON des evaluations."""
+    return get_evaluator_path() / "evals.json"
+
+def get_processed_jobs_json_path() -> Path:
+    """Retourne le chemin vers le fichier JSON des jobs traités."""
+    return get_evaluator_path() / "processed_jobs.json"
+
+def get_evaluator_labels_path(generation_id: int) -> Path:
     """Retourne le chemin vers le fichier JSON des labels."""
-    labels_dir = get_data_path() / "evaluator"
+    labels_dir = get_data_path() / "evaluator" / "tests" / str(generation_id)
     labels_dir.mkdir(parents=True, exist_ok=True)
     return labels_dir / "labels.json"
 
-def get_evaluator_evals_json_path() -> Path:
+def get_evaluator_evals_json_path(generation_id: int) -> Path:
     """Retourne le chemin vers le fichier JSON des evaluations."""
-    evals_dir = get_data_path() / "evaluator"
+    evals_dir = get_data_path() / "evaluator" / "tests" / str(generation_id)
     evals_dir.mkdir(parents=True, exist_ok=True)
     return evals_dir / "evals.json"
 
@@ -49,25 +63,25 @@ def load_raw_jobs() -> List[Dict[str, Any]]:
     with open(raw_jobs_path, "r") as f:
         return json.load(f)
 
-def load_labels() -> List[Dict[str, Any]]:
+def load_labels(generation_id: int) -> List[Dict[str, Any]]:
     """Charge les labels depuis le fichier JSON."""
-    labels_path = get_evaluator_labels_path()
+    labels_path = get_evaluator_labels_path(generation_id)
     if not labels_path.exists():
         return []
     
     with open(labels_path, "r") as f:
         return json.load(f)
 
-def save_labels(labels: List[Dict[str, Any]]) -> None:
+def save_labels(labels: List[Dict[str, Any]], generation_id: int) -> None:
     """Sauvegarde les labels dans le fichier JSON."""
-    labels_path = get_evaluator_labels_path()
+    labels_path = get_evaluator_labels_path(generation_id)
     with open(labels_path, "w") as f:
         json.dump(labels, f, indent=4)
 
 
-def load_evals() -> List[Dict[str, Any]]:
+def load_evals(generation_id: int) -> List[Dict[str, Any]]:
     """Charge les evals depuis le fichier JSON."""
-    evals_path = get_evaluator_evals_json_path()
+    evals_path = get_evaluator_evals_json_path(generation_id)
     if not evals_path.exists():
         return []
 
@@ -78,11 +92,49 @@ def load_evals() -> List[Dict[str, Any]]:
             return []
 
 
-def save_evals(evals: List[Dict[str, Any]]) -> None:
+def save_evals(evals: List[Dict[str, Any]], generation_id: int) -> None:
     """Sauvegarde les evals dans le fichier JSON."""
-    evals_path = get_evaluator_evals_json_path()
+    evals_path = get_evaluator_evals_json_path(generation_id)
     with open(evals_path, "w") as f:
         json.dump(evals, f, indent=4)
+
+
+def load_main_evals() -> List[Dict[str, Any]]:
+    """Charge les evals depuis le fichier JSON principal."""
+    evals_path = get_main_evals_json_path()
+    if not evals_path.exists():
+        return []
+
+    with open(evals_path, "r") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []
+
+def save_main_evals(evals: List[Dict[str, Any]]) -> None:
+    """Sauvegarde les evals dans le fichier JSON principal."""
+    evals_path = get_main_evals_json_path()
+    with open(evals_path, "w") as f:
+        json.dump(evals, f, indent=4)
+
+
+def load_processed_jobs() -> List[int]:
+    """Charge les IDs des jobs traités depuis le fichier JSON."""
+    processed_jobs_path = get_processed_jobs_json_path()
+    if not processed_jobs_path.exists():
+        return []
+
+    with open(processed_jobs_path, "r") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []
+
+def save_processed_jobs(processed_jobs: List[int]) -> None:
+    """Sauvegarde les IDs des jobs traités dans le fichier JSON."""
+    processed_jobs_path = get_processed_jobs_json_path()
+    with open(processed_jobs_path, "w") as f:
+        json.dump(processed_jobs, f, indent=4)
 
 
 if __name__ == "__main__":
