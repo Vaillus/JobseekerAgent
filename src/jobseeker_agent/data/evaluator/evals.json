@@ -1,38 +1,695 @@
 [
     {
-        "evaluation_grid": "# Job Offer Evaluation Grid - GenBio AI\n\n## The Job\n- Requires biology/omics expertise beyond me: -1\n\n---\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong DL (PyTorch/JAX), rigorous research, fast learner, autonomous in startup settings.\n\t* Against: Little hands-on bio/omics experience; limited top-tier AI/Bio publications.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Frontier generative AI and multimodal modeling; world-class team; high-impact healthcare domain.\n\t* Against: Significant biology ramp-up; likely non-remote/relocation; less aligned with defense/robotics interests.",
+        "evaluation_grid": "Job Offer Evaluation Grid - Pinterest\n\nThe Job\n- PhD in quantitative field fits my background: (+1.5)\n- Strong domain unfamiliar (ads/marketplace, causal inference): (-1)\n- Core requirement unfamiliar/top-3: (-1)\n\nType of role\n- Role is managerial: (-2)\n- Lead highly technical DS team: (-1)\n- Leadership in unfamiliar domain: (-1)\n\nThe Company\n- Large company (>150 employees): (-1)",
+        "score": -5.5,
+        "synthesis and decision": "Main fit: PhD and strong analytical/ML background; solid communication and problem-structuring skills align with cross-functional expectations. Main gaps: No ads marketplace/metrics or causal inference depth; no prior people-management of DS teams; US-only requirement likely blocks eligibility. Interest: Big-tech scale and data-driven culture are attractive, but domain (ads) and managerial nature diverge from my core interests (RO/RL/agents) and current trajectory. Decision: Not a strong fit; deprioritize unless targeting a pivot into ads DS management and US relocation eligibility is cleared.",
+        "preferred_pitch": "4",
+        "id": 300
+    },
+    {
+        "evaluation_grid": "- Focus: Infra-heavy MLOps over algorithms (-3)\n- Requires lots of experience in large-scale training/inference/MLOps: Yes (-1)\n- Company size >150 employees: Yes (-1)",
+        "score": -5,
+        "synthesis and decision": "This role is an IC Machine Learning Engineer with a strong emphasis on MLOps, cloud/data infra, CI/CD, observability, and productionizing models at scale. It aligns less with RO/RL research depth and more with building reliable pipelines and platforms. Your strengths in Python, algorithmic rigor, and end-to-end problem solving transfer well, and your recent agentic/LLM interest is a nice plus (they value LLM ops as bonus). Main gap is hands-on production MLOps on AWS/SageMaker/Snowflake, orchestration (Airflow), and containerization (Docker/K8s), plus SQL depth. If you\u2019re ready to rapidly upskill (dockerize your CV project, add SQL, build a small AWS/SageMaker deploy, simple Airflow DAG, logging/monitoring), you can make a credible case.\n\nDecision: Worth applying if you position yourself as an ML Engineer who ships, highlight fast-learning and show concrete MLOps artifacts. Otherwise, it\u2019s a stretch.",
+        "preferred_pitch": "2",
+        "id": 257
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Insight Timer\n\nThe Job\n- Agentic workflows central: Yes (+3)\n\nThe Company\n- Full-remote option: Yes (+2)",
+        "score": 5,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong Python; rigorous systems thinking; evaluation/monitoring mindset; fast learner on agent frameworks (Andrew Ng agentic workflows completed); experience designing autonomous decision systems.\n- Against: Limited proof of production LLM agents at scale; backend ops experience not deeply evidenced; Australia residency requirement may block.\n\nMain arguments for/against why the job is of interest to me:\n- For: Direct work on LLM agents and workflows; autonomy and pragmatic engineering culture; user impact and wellbeing mission; remote setup.\n- Against: Location constraint (Australia-only) could exclude; little direct use of RL/RO or robotics, which are personal interests.",
+        "preferred_pitch": 2,
+        "id": 149
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Terabase Energy\n\n## The Job\n### Required expertise\n- Agentic workflows: Yes\u2014RAG, agents, LangChain/LangGraph (+3)\n- Unfamiliar core topic: Likely\u2014production LLMs/GenAI (-1)\n- PhD valued/accepted: Yes\u2014MSc or PhD listed (+1.5)",
+        "score": 3.5,
+        "synthesis and decision": "Main arguments for/against why I am a good fit:\n- For: Strong Python/ML background; CV/robotics exposure aligns with multimodal/agent action; research rigor (PhD) and mentoring ability; interest and recent training in agentic workflows.\n- Against: Limited proven production LLM/RAG/agent deployments; MLOps at scale and vector DB experience not yet demonstrated.\n\nMain arguments for/against why the job is of interest to me:\n- For: High-impact GenAI/agents focus; Paris-based core R&D; multimodal (text/vision) and real-world automation; alignment with my autonomy/agents interests.\n- Against: Expectation of seasoned GenAI production may require rapid upskilling; some emphasis on infra/scaling.\n\nDecision: Positive. Apply with a targeted demo (small RAG + agent with LangGraph/LangChain, vector DB, eval harness, and reliability metrics) to bridge the production LLM gap and showcase immediate readiness.",
+        "preferred_pitch": 2,
+        "id": 58
+    },
+    {
+        "evaluation_grid": "- Requires a programming language I am not familiar with (and not Python): Go required; I'm not proficient (-1)\n- Requires strong expertise in a topic/domain I am not familiar with: Strong Go + Go testing/benchmarks (-1)\n- In the top-three requirements: Yes, core must-have (-1)\n- Offers a full-remote option: Fully remote (+2)",
+        "score": -1,
+        "synthesis and decision": "Fit risk: The role\u2019s core requirement is strong Go proficiency with immediate start, which is not in my current toolkit. Strengths like rigorous testing mindset, debugging, and technical writing align, but the short 1\u2011month duration leaves little ramp-up time. Interest: The project sits close to AI evaluation/benchmarks and is flexible, well-paid, and remote, but it doesn\u2019t leverage my RL/OR strengths or agentic workflow interests. Decision: Pass unless I can rapidly demonstrate credible Go competency (tests, small OSS PRs, benchmark samples) before applying.",
+        "preferred_pitch": 3,
+        "id": 274
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - top itservices AG\n\n- Domain expertise: statutory health insurance required (-1)\n- Top-3 requirement: domain experience (-1)\n- Company size: likely >150 (-1)\n- Full-remote: possible (+2)\n- Consulting/staffing role: standard firm (-2)",
+        "score": -3,
+        "synthesis and decision": "Main arguments for/against fit:\n- For: Strong Python/ML, model development and validation, prior DS consulting internship, rigorous research mindset; can quickly add SQL and Docker.\n- Against: No German (hard blocker), no health insurance AI project experience, limited CI/CD/K8s, domain-specific requirement is key.\n\nMain arguments for/against interest:\n- For: Real-world ML on healthcare claims, remote option, measurable business impact (approval prediction, billing checks).\n- Against: Standard consulting environment, domain-heavy requirement, less alignment with RO/RL/agentic interests, infra/tooling expectations over pure algorithms.\n\nDecision: Low-fit primarily due to German fluency and mandatory statutory health insurance experience. Consider only if client relaxes language/domain requirements and values fast ramp-up on SQL/Docker.",
+        "preferred_pitch": 3,
+        "id": 221
+    },
+    {
+        "evaluation_grid": "The Job\n- Agentic workflows central: Yes (+3)\n\nThe Company\n- Company size >150: Yes (-1)",
+        "score": 2,
+        "synthesis and decision": "This role is a strong fit for my agentic-interest focus: it's hands-on AI agent design in Python, integration with systems, and building evaluation platforms. It doesn't require RL/RO specifically, nor heavy MLOps at scale. Optiver is a large, well-established trading firm (non-remote, on-site perks), so less startup-like but high-performance culture.\n\nMain arguments for/against why I am a good fit for the job:\n- For: 6+ years advanced Python; strong algorithmic background; built evaluation/simulation frameworks; daily LLM use and recent agentic workflow training; proven end-to-end delivery.\n- For: Comfortable tying tech to outcomes (e.g., +33% gains in thesis), strong problem-solving in dynamic settings.\n- Against: Limited explicit production experience with LLM agent frameworks (LangChain/LangGraph) and enterprise integrations; CI/CD and Docker less emphasized in my profile (quick to upskill).\n\nMain arguments for/against why the job is of interest to me:\n- For: Core focus on building AI agents end-to-end; measurable business impact; exposure to top-tier engineering culture.\n- Against: On-site in Europe (likely Amsterdam) and large-organization context vs. startup agility.",
+        "preferred_pitch": 1,
+        "id": 254
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Guerlain\n\n- Domain not familiar required: Yes (-1)\n- Top-three requirement: Yes (-1)\n- France-based, English needed: Yes (+0.5)\n- Role mainly managerial: Yes (-2)\n- Company size >150: Yes (-1)",
+        "score": -4.5,
+        "synthesis and decision": "This is a Digital Analytics/MarTech role (GA4, ContentSquare, Dynamic Yield, dashboards, media measurement) with strong project orchestration and enablement. It does not leverage RL/OR or core algorithmic R&D; it prioritizes analytics tooling, reporting, A/B testing, and stakeholder training. Given your background in RL/RO and research engineering, the fit is weak unless you want to pivot into web analytics and can quickly learn GA4/ContentSquare/Looker/Dynamic Yield.\n\nMain arguments for/against fit:\n- For: Strong analytical rigor, experimentation mindset, cross-functional collaboration experience, bilingual FR/EN.\n- Against: Core toolset mismatch (GA4/ContentSquare/DY/Looker), role is more program/enablement than algorithmic R&D.\n\nMain arguments for/against interest:\n- For: LVMH brand, Paris-based, exposure to enterprise-scale digital/e-commerce analytics.\n- Against: Limited alignment with RL/RO/agentic interests; managerial/enablement focus over technical research.\n\nDecision: Deprioritize unless intentionally pivoting to digital analytics; if applying, emphasize rapid upskilling in GA4/ContentSquare/Dynamic Yield and A/B testing.",
+        "preferred_pitch": "4",
+        "id": 111
+    },
+    {
+        "evaluation_grid": "The Job\n- Agentic workflows (MCP/A2A, conversational AI platform): Yes (+3)\n\nThe Company\n- Company size >150: Yes (-1)\n- Remote-friendly within AU/NZ: Yes (+2)",
         "score": 4,
-        "preferred_pitch": 2,
-        "id": 1
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* Strong algorithmic background; hands-on ML engineer; daily LLM use and agentic workflow training.\n\t* Limited production LLM fine-tuning at scale; potential need for non-Python backend; location constraint if not in AU/NZ.\n- Main arguments for/against why the job is of interest to me:\n\t* Direct work on conversational AI/agentic systems; end-to-end product impact; remote option (ANZ).\n\t* Less emphasis on RO/RL; possible regional relocation/time-zone requirement.",
+        "preferred_pitch": "3",
+        "id": 152
     },
     {
-        "evaluation_grid": "# Job Offer Evaluation Grid - AryaXAI\n\n## The Job\n### Required expertise\n- RL mentioned as a core skill in qualifications (+2)\n- Prior XAI methods (LRP/SHAP/LIME/IG/CEM) required; I lack direct experience (-1)\n\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: PhD-level rigor; strong ML/RL foundation; hands-on algorithms; research-to-prod collaboration; publications experience.\n\t* Against: Limited direct XAI toolkit experience; need to reinforce MLOps/cloud deployment track record.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Focus on alignment/safety/explainability; startup pace with research impact; opportunities to publish and ship features.\n\t* Against: Less direct overlap with OR/robotics; short-term upskilling needed in XAI methods and MLOps.",
-        "score": 7,
-        "preferred_pitch": 2,
-        "id": 2
+        "evaluation_grid": "# Job Offer Evaluation Grid - SFEIR\n\n## The Job\n- Agentic workflows prominent: RAG, LLM orchestration, prompt engineering, LangChain (+3)\n- Expertise outside my domain: Confirmed GCP/Vertex AI expertise required (-1)\n- Top-3 requirement outside domain: GCP/Vertex AI explicitly highlighted (-1)\n\n## The Company\n- Company size: ~900 employees (-1)\n- Consulting firm: Standard consulting model (-2)",
+        "score": -2,
+        "synthesis and decision": "Main arguments for fit:\n- Strong Python/ML background, rigorous algorithmic mindset (RO/RL), proven ability to build/evaluate pipelines.\n- Clear interest and emerging skill in agentic workflows (RAG, prompt engineering), daily LLM usage.\n\nMain arguments against fit:\n- No proven production experience on GCP/Vertex AI; limited Terraform/IaC exposure.\n- Consulting context likely expects certifications and client-facing delivery on GCP stack.\n\nMain arguments for interest:\n- Hands-on LLM/RAG/prompt-engineering focus aligns with current interests.\n- Access to GCP training, certifications, and Google ecosystem events; pathway to ML Architect.\n\nMain arguments against interest:\n- Cloud/GCP specialization may reduce time on RO/RL research topics.\n- Consulting pace and scope may limit deep product/long-horizon research.\n\nDecision: Moderate fit if ready to ramp quickly on GCP/Vertex AI. Worth applying with a clear 60-day GCP upskilling plan (Skills Boost + Vertex AI labs + a small Vertex AI Search RAG demo), highlighting agentic workflow strengths.",
+        "preferred_pitch": 3,
+        "id": 179
     },
     {
-        "evaluation_grid": "# Job Offer Evaluation Grid - Haiqu\n\n## The Job\n### Required expertise\n- RL explicitly required: No (+0)\n- OR/optimization/planning algorithms: Not explicit; focus is quantum-specific (+0)\n- AI workflows implementation heavy: No (+0)\n- Requires strong expertise I'm not familiar with: Yes \u2014 quantum algorithms/QEC/Qiskit (-1)\n- Non-Python language required: No (+0)\n- Infrastructure-focused over algorithms: No (+0)\n- Data scientist/engineer vagueness: No; clear research scientist scope (+0)\n\n### Type of role\n- More managerial than technical: No (+0)\n- Leading a team: No (+0)\n- Coaching world-class scientists: No (+0)\n\n## The Company\n- Top-tier (Google/Meta/Helsing/etc.): No (+0)\n- Consulting firm: No (+0)\n- Defense sector: No (+0)\n- Robotics sector: No (+0)\n\n---\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: PhD-level research rigor; strong algorithms/optimization background; Python/ML skills; experience designing, benchmarking, and prototyping algorithms.\n\t* Against: No quantum computing/QEC/Tensor Networks/Qiskit experience; no quantum publications; likely steep ramp-up; hardware/compilation unfamiliar.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Frontier algorithmic R&D; hands-on experiments on cutting-edge hardware; startup impact and equity; chance to learn QC.\n\t* Against: Significant domain mismatch; lower interview odds without prior QC track record.",
+        "evaluation_grid": "- Requires strong GenAI production experience; my hands-on is limited (finetuning/RAG): (-1)\n- France-based role with English B2 required: (+0.5)",
+        "score": -0.5,
+        "synthesis and decision": "Main arguments for/against why I am a good fit:\n- For: Strong Python and ML background; rigorous algorithmic mindset (RO/RL) for designing/validating models; proven end-to-end research-to-prototype delivery; clear communication/evangelization ability; comfortable in French/English; enthusiasm for agentic/GenAI topics.\n- Against: No prior production deployments of LLMs (finetuning/RAG) yet; limited formal people management experience; limited geospatial/cellular data experience.\n\nMain arguments for/against why the job is of interest to me:\n- For: High-impact, real-world product use-cases (public safety, mobility); small DS team with ownership; Python-first stack; opportunity to drive GenAI strategy and build agent-like decision systems; culture valuing innovation and initiative.\n- Against: 30% management may reduce hands-on time; hybrid (not full-remote); domain is geo/cellular rather than defense/robotics.",
+        "preferred_pitch": "3",
+        "id": 184
+    },
+    {
+        "evaluation_grid": "- Arabic proficiency required; I don't have it (-1)",
+        "score": -1,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong Python/ML background, end-to-end DS projects, stakeholder communication, product mindset, mentoring from PhD experience.\n- For: Comfortable client-facing; experience translating business needs to technical solutions; interest and hands-on use of GenAI/LLMs.\n- Against: No Arabic proficiency (explicit requirement); limited production NLP and BI tooling exposure; no direct labor-market/taxonomy experience.\n\nMain arguments for/against why the job is of interest to me:\n- For: High-impact social mission; leading data products in NLP/GenAI; client-facing strategic role; Amsterdam relocation supported.\n- Against: Arabic likely a hard requirement; hybrid NL-based (not full-remote); salary may be below alternatives.\n\nDecision: Proceed only if Arabic is \"nice-to-have\" or role can serve non-Arabic clients; otherwise deprioritize.",
+        "preferred_pitch": 2,
+        "id": 248
+    },
+    {
+        "evaluation_grid": "- PhD welcomed: (+1.5)\n- Large company (2,200+ employees): (-1)",
+        "score": 0.5,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: PhD-level rigor; strong Python and algorithmic background; end-to-end prototyping; interest and self-training in generative AI/agentic workflows; experience bridging research and production.\n- Against: Limited hands-on MLOps at scale; limited production IR experience; not yet shipped LLM/multimodal systems in industry.\n\nMain arguments for/against why the job is of interest to me:\n- For: Applied GenAI with space for agentic features; innovation + research + production culture; Paris location; opportunity to work on multimodal semantic layer and large-scale systems.\n- Against: Potentially more production/infra load than algorithmic research; less direct use of RO/RL specialty.",
+        "preferred_pitch": 3,
+        "id": 44
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Paddle\n\n## The Job\n- Agentic workflows prominent (LLMs, LangChain/Graph, prompt eng): +3\n- Strong MLOps/production expertise required: -1\n\n## The Company\n- Company size likely >150 employees: -1\n- Full-remote option available: +2",
         "score": 3,
+        "synthesis and decision": "Main arguments for/against why I am a good fit:\n- For: Strong algorithmic/ML background; Python expert; end-to-end experimentation; optimization mindset useful for pricing; active LLM/agentic workflow upskilling and daily LLM use; good cross-functional comms.\n- Against: Limited proven large-scale production/MLOps track record; fewer real-world LLM agent deployments; fintech/payments domain new; SQL/Docker not highlighted (quick to add).\n\nMain arguments for/against why the job is of interest to me:\n- For: Heavy agentic AI/LLM focus; impactful business problems (pricing, automation); ownership from design to production; remote-friendly; mentoring/tech leadership opportunities.\n- Against: Less direct use of RL/RO; notable emphasis on MLOps excellence over research; mid-to-large scale-up environment vs. small startup or defense/robotics focus.",
         "preferred_pitch": 2,
-        "id": 3
+        "id": 271
     },
     {
-        "evaluation_grid": "Job Offer Evaluation Grid - Mistral AI\n\nThe Job\nRequired expertise\n- Heavy ML pipelines/frameworks, eval, APIs: yes (+3)\n- Distributed training at scale (DeepSpeed/FSDP/SLURM/K8s): partial gap (-1)\n\nThe Company\n- Top-tier company: yes (+2)\n- EU/UK full-remote option: yes (+2)\n\nSynthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* Pros: PhD-level research engineer; strong Python/ML; bridges research\u2194production; rigorous experimentation.\n\t* Pros: PyTorch/JAX familiarity; algorithm design; end-to-end delivery mindset (CV project).\n\t* Cons: Limited hands-on with large-scale distributed training (FSDP/DeepSpeed), SLURM/K8s; limited CUDA.\n- Main arguments for/against why the job is of interest to me:\n\t* Pros: Cut\u2011ting\u2011edge LLM training and tooling; open-source impact; EU remote; direct product tie-in (Le Chat, enterprise API).\n\t* Cons: May skew infra-heavy vs RL/RO/robotics interests; not agentic-workflow focused.",
-        "score": 6,
+        "evaluation_grid": "- Agentic workflows: Yes \u2014 LLM/RAG, prompt engineering, LangChain/LlamaIndex (+3)\n- Based in France + English: Yes \u2014 Ile-de-France, FR+EN required (+0.5)\n- Requires strong expertise unfamiliar: Yes \u2014 Azure stack/LLMOps heavy (-1)\n- Company size: Yes \u2014 ~10,000 employees (-1)\n- Consulting role (standard firm): Yes \u2014 IT consulting, not top-tier (-2)",
+        "score": -0.5,
+        "synthesis and decision": "Synthesis:\n- Fit \u2014 For: Strong ML/algorithmic rigor, Python, evaluation mindset; interest and coursework in agentic workflows; FR/EN; ability to teach/train and document; defense context familiarity.\n- Fit \u2014 Against: Limited hands-on Azure (Azure ML/OpenAI/Prompt Flow/Databricks), Docker/K8s and LLMOps in production; few concrete GenAI/LLM delivery cases.\n- Interest \u2014 For: Heavy focus on GenAI/LLM (RAG, LangChain), opportunity to teach/enablement, exposure to large clients incl. defense.\n- Interest \u2014 Against: Consulting with strong cloud/tooling focus over core algorithms (RO/RL/robotics); on-site Ile-de-France, not full-remote.\nDecision: Borderline but viable if you can quickly demonstrate Azure GenAI proficiency. If pursuing, build a public Azure RAG/Prompt Flow mini-project, dockerize it, add vector DB eval, and target an Azure AI certification to close the gap before interviews.",
+        "preferred_pitch": 3,
+        "id": 48
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Motorola Solutions / Noggin\n\nThe Job\n- Requires strong expertise I'm not fully fluent in: RAG, entity extraction, cloud deployment (-1)\n\nThe Company\n- Offers a full-remote option: Full-time remote (+2)\n- More than 150 employees: Large global company (-1)",
+        "score": 0,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong ML foundations, algorithm design rigor (PhD), Python-first, experience building and validating models, ability to mentor, fast learner with recent LLM/agentic coursework.\n\t* Against: Limited hands-on production experience with RAG/entity extraction and cloud model deployment/CI-CD; fewer direct LLM app case studies.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Full-remote flexibility, impactful domain (public safety/resilience), modern AI focus (conversational AI, search, RAG), room to mentor and influence roadmap.\n\t* Against: Less emphasis on RO/RL/optimization research; big-company processes may slow iteration.",
+        "preferred_pitch": 1,
+        "id": 159
+    },
+    {
+        "evaluation_grid": "- Requires strong expertise in a topic I'm not familiar with (causal inference), top requirement: Yes (-2)\n- Requires a programming language I'm not familiar with (non-Python): Advanced SQL required (-1)\n- Company size >150 employees: Yes (-1)",
+        "score": -4,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python, rigorous experimental mindset, ability to build scalable analytical frameworks, cross-functional experience, mentoring capability.\n  * Against: No proven causal inference track record (DID/IV/RDD/uplift/A/B design), Advanced SQL not yet at required level, limited marketplace economics exposure.\n- Main arguments for/against why the job is of interest to me:\n  * For: High-impact analytical role influencing pricing/supply in a large two-sided marketplace; clear business impact; mission-aligned (circular tech, environment).\n  * Against: Less aligned with my RO/RL/agents focus; emphasis on econometrics/causal methods over optimization/RL; scale-up environment may be less research-oriented.\nDecision: Moderate mismatch. If I can quickly upskill to demonstrate credible causal inference depth and advanced SQL (portfolio notebook + A/B case), it\u2019s worth a targeted application; otherwise deprioritize.",
+        "preferred_pitch": 3,
+        "id": 88
+    },
+    {
+        "evaluation_grid": "- Requires a PhD in a field close to mine: PhD/Master in CS/AI/CV (+1.5)\n- Company size: Huawei is huge (>150) (-1)",
+        "score": 0.5,
+        "synthesis and decision": "Main arguments for/against fit:\n- For: Strong Python/PyTorch and deep learning; solid research track record (PhD); practical CV project showing initiative and rigor; experience bridging prototypes to systems; good collaborator.\n- Against: Limited top-tier CV publications; less hands-on with SOTA multimodal VLMs; limited exposure to emotion recognition/HCI; CV depth may be below typical research hire bar.\n\nMain arguments for/against interest:\n- For: Research-focused CV/multimodal role; opportunity to publish and collaborate across disciplines; resources of a major research center; aligns with interest in perception for autonomous systems.\n- Against: Not defense/robotics-focused; likely on-site Amsterdam (unclear remote); publication pressure in CV-specific venues.",
+        "preferred_pitch": "4",
+        "id": 121
+    },
+    {
+        "evaluation_grid": "- Company tier: top LLM company (+2)\n- Company size: >150 employees (-1)\n- Work mode: remote-friendly/full-remote option (+2)\n- Focus: data pipelines/infrastructure (-3)\n- Optimization context: throughput/accelerator utilization (-3)\n- Scale experience: large-scale data/training pipelines desired (-1)",
+        "score": -4,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong Python and research rigor; experience building data pipelines (IBM) and end-to-end technical projects (CV calibration). Comfortable with experimentation, optimization, and data quality analyses.\n- Against: Limited hands-on with Spark/Beam and true web/code/multilingual corpora at scale; less direct experience with LLM pretraining data curation and big-data infra.\n\nMain arguments for/against why the job is of interest to me:\n- For: Top-tier LLM company, remote-flexible, impactful role bridging research and engineering; exposure to pretraining data that underpins cutting-edge models.\n- Against: Heavier on data-engineering/throughput optimization vs. my core interests (RO/RL/agentic systems); infra-focused optimization over algorithmic optimization.",
         "preferred_pitch": 2,
+        "id": 215
+    },
+    {
+        "evaluation_grid": "- Focus skew: BI/Power Platform over algorithms (-3)\n- Unfamiliar strong expertise required: Power Platform (-1)\n- This requirement is in top-3 priorities (-1)\n- Company size: AXA is very large (>150) (-1)",
+        "score": -6,
+        "synthesis and decision": "Fit: Technically capable in Python/ML and rigorous with data; can pick up SQL/PySpark/Azure quickly and communicate well. However, lacks direct Power Platform/Power BI experience and limited insurance domain exposure; role emphasizes reporting/industrialization over algorithms. Interest: Strong corporate environment with good benefits/hybrid and exposure to Azure/data ops could be valuable. But the work is less aligned with RL/optimization/agentic focus and is a CDD. Decision: Low-to-moderate fit. Consider only if willing to pivot to BI/Power Platform and leverage it as an entry into enterprise data; otherwise deprioritize.",
+        "preferred_pitch": 1,
+        "id": 167
+    },
+    {
+        "evaluation_grid": "- Paris-based, English likely required (+0.5)\n- Top-tier company (AWS) (+2)\n- Very large organization (>150) (-1)\n- Sales/business focus over technical (-2)\n- Enterprise sales expertise not my core (-1)\n- Sales as top-3 requirement (-1)",
+        "score": -2.5,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong AI/ML credibility to engage DS/CTO; bilingual FR/EN; can translate technical value into outcomes; experience collaborating with diverse stakeholders.\n- Against: No 7+ years enterprise sales/account management; limited AWS GTM/partner motion; role is quota-carrying sales rather than technical IC.\n\nMain arguments for/against why the job is of interest to me:\n- For: Exposure to AWS GenAI portfolio (Bedrock, Q), large-scale enterprise impact, learning GTM and partnerships.\n- Against: Low alignment with algorithmic/RL/agentic work; sales-heavy responsibilities; less hands-on technical depth.\n\nDecision: Low fit unless you intentionally pivot to enterprise AI sales. Otherwise, deprioritize.",
+        "preferred_pitch": 4,
+        "id": 206
+    },
+    {
+        "evaluation_grid": "- C++ required; not my core language: (-1)\n- ASR/Kaldi/TFLite expertise; not my domain (top-three): (-2)\n- Remote in France/Germany; English collaboration: (+0.5)\n- Full-remote option offered: (+2)\n- Company size >150 employees: (-1)",
+        "score": -1.5,
+        "synthesis and decision": "Fit: You bring strong ML fundamentals, Python, research rigor, and mentoring ability, but lack hands-on ASR (Kaldi, end-to-end pipeline, on-device TFLite) and production-grade C++. Interest: Solid applied ML role with real-world impact in voice AI, remote in FR/DE, but leans away from your core (RO/RL/agentic), includes customer triage and infra tooling, and requires significant ramp-up in ASR+C++. Decision: Moderate mismatch. Viable if you\u2019re motivated to pivot quickly to ASR and level up C++/Docker/Kubernetes; otherwise, prioritize roles closer to decision systems/RL or agentic workflows.",
+        "preferred_pitch": 2,
+        "id": 112
+    },
+    {
+        "evaluation_grid": "- Focus area: Research enablement/platform, not algorithm R&D (-3)\n- Optimization context: Performance, inference pipelines, and cost (-3)\n- Company size: >150 employees (-1)\n- Work mode: Remote-friendly/flexible location (+2)",
+        "score": -5,
+        "synthesis and decision": "This role is an enablement/platform position focused on unblocking researchers, debugging training jobs, optimizing inference, and improving cost/performance\u2014more MLOps/infra-leaning than algorithmic research. Your strengths in Python, ML fundamentals, problem-solving, and communicating complex ideas align well. However, the lack of explicit cloud/MLOps tooling experience (Docker/K8s/infra) could be a gap, though quickly bridgeable. If you\u2019re open to a hands-on support role that accelerates others rather than building new algorithms yourself, it can be a good match and an entry into AI platform work at scale.\n\n---\n## Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* Strong Python, ML frameworks, debugging mindset, and ability to explain/enable researchers.\n\t* Experience in building tools, documentation, and rigorous experimentation fits enablement.\n\t* Gap: limited explicit MLOps/cloud/Docker/K8s; can be learned quickly.\n- Main arguments for/against why the job is of interest to me:\n\t* Pro: High-impact platform group, exposure to large-scale AI workflows, strong learning in infra and performance optimization.\n\t* Con: Less alignment with my core interest in algorithmic decision systems (RO/RL) and agentic methods; more support than novel algorithm design.",
+        "preferred_pitch": 3,
+        "id": 148
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Ardian\n\nRequired expertise\n- Generative AI (RAG) explicitly cited; agentic workflows relevant: (+3)\n- Paris-based role with cross-office collaboration; good English implied: (+0.5)\n\nThe Company\n- Large organization (>150 employees): (-1)",
+        "score": 2.5,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong DS/ML modeling, stakeholder-facing experience, autonomy; direct fit with RAG/LLM interest; solid Python; clear communication; multilingual (FR/EN/ES).\n\t* Against: Limited finance/PE domain background; role not centered on RL/RO research.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Exposure to real business impact across industries; chance to build GenAI/RAG and statistical models (portfolio returns); work in Paris with international team; learning finance.\n\t* Against: Less emphasis on deep RL/optimization research; on-site expectations; corporate pace vs. research intensity.",
+        "preferred_pitch": 1,
+        "id": 169
+    },
+    {
+        "evaluation_grid": "- Advanced degree: Master's/PhD accepted (+1.5)\n- Unfamiliar expertise required: distributed training at scale (-1)\n- Top-three requirement: yes (-1)\n- Large-scale training/MLOps experience: required (-1)\n- Company tier: Mistral AI (+2)\n- Company size: >150 employees (-1)\n- Remote option: EU/UK remote possible (+2)",
+        "score": 1.5,
+        "synthesis and decision": "## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python/ML background, research-engineering mindset, PhD aligns with ML track, proven algorithm design and rigorous experimentation.\n\t* Against: Limited hands-on with DeepSpeed/FSDP/SLURM/K8s and multi-node LLM training; CUDA not a strength.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Top-tier AI lab building frontier/open models; exposure to thousand-GPU training; EU-remote/Paris option; strong impact potential.\n\t* Against: Heavier emphasis on distributed training infra vs. my RO/RL core; steep ramp-up on cluster tooling.\nDecision: Positive but conditional fit. Apply targeting Embedded RE; explicitly plan rapid upskilling on DeepSpeed/FSDP and K8s, and showcase prior large experiments and clean research-to-prod code.",
+        "preferred_pitch": "2",
         "id": 4
     },
     {
-        "evaluation_grid": "# Job Offer Evaluation Grid - Datadog\n\n## The Job\n- RL required/skill: Yes, agents & on-policy RL (+2)\n- OR/optimization/planning: Multi-step planning mentioned (+2)\n- AI workflows: Agentic training/eval; multi-modal FMs (+3)\n- Requires expertise I'm missing: Large-scale FM training & distributed stacks (-1)\n\n## The Company\n- >150 employees: Yes (-1)\n\n---\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: PhD with strong RO/RL/algorithms; built simulations; Python/PyTorch; research rigor and product impact (Thales); interest in agents/workflows.\n\t* Against: Limited hands-on with LLM/FM pre/post-training, DeepSpeed/Megatron; CUDA only light; new to observability domain.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Agentic systems, on-policy training, simulated envs; opportunity to publish/open-source; large-scale infra to learn; real-world impact at scale.\n\t* Against: Not defense/robotics; big-company context; remote not explicit.",
-        "score": 5,
-        "preferred_pitch": 3,
-        "id": 5
+        "evaluation_grid": "- Go required; I'm not fluent: (-1)\n- Fully remote: (+2)",
+        "score": 1,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n\t* For: Strong debugging/testing mindset, rigorous experimentation, clear technical writing, autonomy/async work style.\n\t* For: Experience curating tasks/tests from research/industry work; attention to detail fits benchmark validation.\n\t* Against: No strong Go proficiency; role explicitly requires strong Go.\n\t* Against: Recent coding focus mainly Python; Go assessment risk.\n\nMain arguments for/against why the job is of interest to me:\n\t* For: Excellent rate ($200/h), fully remote, flexible 15\u201320h/week, immediate start, short 1\u2011month commitment.\n\t* For: Exposure to AI evaluation/benchmarking, which relates to improving AI systems quality.\n\t* Against: Tech stack misalignment (Go-centric), limited relevance to RL/RO/agentic workflows I want to pursue.\n\t* Against: Time to ramp in Go could distract from core job search goals.\n\nDecision: Apply only if willing to fast-track Go (small prep sprint + sample test suites). Otherwise, deprioritize.",
+        "preferred_pitch": "3",
+        "id": 234
     },
     {
-        "evaluation_grid": "# Job Offer Evaluation Grid - Dassault Syst\u00e8mes\n\n## The Job\n### Required expertise\n- RL mentioned as a plus (+2)\n- Prototyping AI components/workflows central (+3)\n- Strong 3D modeling required; my exposure is limited (-1)\n- C++ required; my experience is rusty (-1)\n\n## The Company\n- Very large enterprise (>150 employees) (-1)\n\n---\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: PhD-level rigor in ML/optimization; strong algorithmic mindset; experience building prototypes and simulations; solid Python/Deep Learning expertise; familiarity with RL.\n\t* Against: Limited recent C++ and 3D modeling; little direct VLM hands-on; less direct experience in industrial 3D twin environments.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Cutting-edge research on AI in mixed real/virtual 3D, VLMs and new learning paradigms; building innovative prototypes with tech transfer and potential patents; aligns with autonomous systems/agentic interests.\n\t* Against: Big-company environment; likely on-site/hybrid; emphasis on C++ and 3D modeling may reduce initial velocity.",
-        "score": 6.5,
+        "evaluation_grid": "# Job Offer Evaluation Grid - ACT-ON DATA (ACT-ON Group)\n\n## The Job\n- Strong expertise unfamiliar: Power BI/SSAS/SSIS heavy (-1)\n- Top-three requirement: 3\u20135 years Power BI (-1)\n- Infra/BI focus over algorithms: Azure/SSIS/SSAS/PowerBI (-3)\n\n## The Company\n- Company size >150: ~600 employees (-1)\n- Standard consulting firm: Yes (-2)",
+        "score": -8,
+        "synthesis and decision": "Main arguments for/against fit: Strong mismatch with required MS BI stack (Power BI, SSIS/SSAS/SSRS) and 3\u20135y experience expectation; role centered on dataviz/ETL over algorithms, RL/OR, or agentic work. Limited overlap with your core strengths (optimization/RL/CV). Potential partial fit only if you pivot to BI and quickly ramp up on DAX/Power Query/SSAS.\n\nMain arguments for/against interest: If you want client-facing consulting and to build Microsoft BI/Azure skills, it could be a stable path in France. However, it doesn\u2019t align with your target domains (RL/RO/agentic workflows/robotics/defense) and lacks full-remote. Overall, low priority unless you choose a BI career pivot.",
+        "preferred_pitch": "4",
+        "id": 213
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - [Unknown] - Senior AI Engineer (Azure + DevOps Automatisering) - Netherlands\n\n## The Job\n- Agentic workflows (agents/NL interfaces, LangChain/SK): (+3)\n- New/weak domain expertise required (Azure AI Foundry, Bicep, GitOps/Azure DevOps): (-1)\n- This weakness is in top-3 requirements: (-1)\n- Requires non-Python language I don\u2019t master (Go/PowerShell): (-1)\n- Infra/DevOps-heavy vs algorithms: (-3)\n\n## The Company\n- [No company-specific signals provided]",
+        "score": -3,
+        "synthesis and decision": "Main arguments for fit:\n- Strong Python, solid algorithmic/agent mindset; recent agentic workflow training\n- Comfortable building intelligent agents and NL interfaces; daily LLM usage\n\nMain arguments against fit:\n- Lacks Azure AI Foundry, Bicep, GitHub Actions/Azure DevOps experience (core asks)\n- Limited Go/PowerShell; role skews infra/DevOps over algorithms\n- Dutch language requirement likely blocking\n\nMain arguments for interest:\n- Heavy focus on LLM agents/GitOps automation aligns with current interests\n- Opportunity to learn Azure stack and ship real agentic DevOps tools\n\nMain arguments against interest:\n- Significant infra/DevOps focus vs. my preferred algorithmic/decision-systems work\n- Compliance/sovereign-cloud/observability may be less aligned with strengths\n\nDecision: Medium\u2013low fit due to Azure/DevOps/Dutch gaps, but interesting for agentic workflows. Worth considering only if language is flexible and team supports upskilling on Azure/Bicep.",
+        "preferred_pitch": "3",
+        "id": 268
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - PVH Europe - Data Scientist (Supply Chain) - Amsterdam\n\n- Algorithmic optimization/OR focus: Yes (+2)\n- PhD accepted/valued in relevant fields: Yes (+1.5)\n- Company size >150 employees: Yes (-1)",
+        "score": 2.5,
+        "synthesis and decision": "- Main arguments for/against why I am a good fit for the job:\n  * For: Strong match on optimization/OR, Python, and building ML models; experience translating complex math into actionable insights; PhD aligns with requirement; proven problem-solving/algorithm design.\n  * Against: Limited direct supply chain domain expertise; BI/Power BI and cloud/ETL tools not a core strength yet (but learnable).\n- Main arguments for/against why the job is of interest to me:\n  * For: Optimization and predictive modeling on real operational problems; end-to-end ownership (models + ETL); close stakeholder collaboration with measurable impact.\n  * Against: Not focused on RL/agentic workflows or robotics/defense; hybrid (not full-remote); large corporate environment.\n- Decision: Strong skills fit and solid career option; apply using a problem-solving/algorithmic angle, emphasize OR+ML, Python, ETL experience, and fast upskilling plan for Power BI/SQL/cloud.",
+        "preferred_pitch": 3,
+        "id": 242
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Deeptech AI for Science (Startup) - Machine Learning Engineer - Paris (On-site)\n\n## The Job\n\n## Type of role\n\n## The Company",
+        "score": 0,
+        "synthesis and decision": "## Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python + PyTorch/JAX; 3+ years applied ML; GPU familiarity; built data/training pipelines; proven research-to-prod mindset (Thales PhD + CV project).\n\t* For: Comfortable collaborating with scientists; rigorous experimental frameworks; autonomy and problem-solving.\n\t* Against: Limited explicit experience with multi-node distributed training and large-scale MLOps in production.\n\t* Against: Domain focus (foundation models for science) may demand domain tooling/datasets not yet used.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Deeptech startup, cutting-edge models; chance to shape roadmap/vision; strong R&D-to-production bridge; Paris on-site aligns with location.\n\t* Against: Not RL/OR- or agentic-workflow-centric; on-site only (no remote flexibility).\n\nDecision: Apply. Position aligns well with my ML engineering strengths and research-engineering profile; address scaling/MLOps gaps with concrete examples and readiness to ramp on DDP/Ray/Lightning.",
+        "preferred_pitch": 2,
+        "id": 178
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - AImera Group - Machine Learning Engineer - Germany (unspecified)\n\n## The Job\n- Tasks are generic/vague (-1)\n\n## The Company",
+        "score": -1,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python + ML frameworks background; ownership/structure mindset; experience building end-to-end experiments and pipelines.\n  * Against: German C2 required (major blocker); 7+ years experience requested vs ~6; Docker/MLOps experience lighter than expected.\n- Main arguments for/against why the job is of interest to me:\n  * For: Impact-focused projects; small tech-driven boutique; top compensation; autonomy.\n  * Against: Consulting-style ambiguity on tasks; potential emphasis on deployment/MLOps over advanced algorithms; language requirement limits immediate fit.",
+        "preferred_pitch": 2,
+        "id": 222
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Sogeti - Lead Machine Learning Engineer - Netherlands\n\nThe Job\n- Requires strong expertise I'm not familiar with: Presales/consultancy + E2E MLOps emphasis (-1)\n- In top-three requirements: Yes, consultancy + operationalization (-1)\n- PhD accepted/valued: Yes (+1.5)\n\nType of role\n\nThe Company\n- Company size >150: Yes (-1)\n- Standard consulting firm role: Yes (-2)",
+        "score": -3.5,
+        "synthesis and decision": "Main arguments for/against fit:\n- For: Strong Python/ML/DL foundations, solid algorithmic rigor (PhD), experience building PoCs, good communicator/knowledge sharing.\n- Against: Dutch C1 requirement likely unmet; limited 2+ years consultancy/presales track; limited production-grade MLOps/cloud deployment experience.\n\nMain arguments for/against interest:\n- For: Broad ML scope from PoC to production; exposure to LLM/CV/time-series; leadership and knowledge-sharing culture; strong learning budget.\n- Against: Consulting environment with client-site work; heavy operationalization focus vs. your preference for decision systems (RL/OR/agentic); language gate (Dutch C1).\n\nDecision: Low fit now due to Dutch C1 and consultancy/MLOps gaps. Consider only if you meet Dutch C1 and can evidence presales + production MLOps; otherwise, deprioritize.",
+        "preferred_pitch": 3,
+        "id": 253
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Sopra Steria - Data Scientist (LLMs/NLP) - Nieuwegein\n\n## The Job\n### Required expertise\n- Agentic workflows/tools (LangChain, LLMs) emphasized: Yes (+3)\n\n## The Company\n- Company size >150 employees: Yes (-1)\n- Consulting role (standard large integrator): Yes (-2)",
+        "score": 0,
+        "synthesis and decision": "## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python/ML background, research rigor, fast learner; tangible interest and initial training in agentic workflows; able to mentor and communicate clearly.\n\t* Against: No proven NLP/LLM production portfolio; limited HuggingFace/spaCy/LangChain-in-prod experience; limited Docker/K8s/CI-CD hands-on; likely not fluent in Dutch (hard requirement).\n- Main arguments for/against why the job is of interest to me:\n\t* For: Direct work on LLMs/NLP; chance to build agentic systems; strong learning culture (hackathons, talks); stable large organization with resources.\n\t* Against: Consulting context vs product/defense focus; large-company pace; hybrid on-site in Nieuwegein; Dutch fluency requirement.\n\nDecision: Medium fit if Dutch is covered and I can quickly ship a small HF/LangChain portfolio + containerized deployment. Otherwise, low priority\u2014consider after building 1\u20132 concrete LLM apps (RAG/agent) with Docker/K8s basics.",
+        "preferred_pitch": "3",
+        "id": 241
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - soonami - Technical AI Founder (EIR Program) - N/A\n\n## The Job\n- Heavily features agentic workflows (ie. langchain, tool use, prompt engineering, etc.): Agents/LLMs focus (+3)",
+        "score": 3,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong ML background with RL/RO and practical CV; fast learner/builder proven by ambitious solo projects.\n  * For: Clear motivation for agentic workflows; daily LLM use; just completed agentic workflow course.\n  * Against: Limited shipped LLM-agent product in production; LangChain/LangGraph experience to formalize.\n  * Against: Need to crystallize a concise AI/agent MVP idea for the 10-day sprint.\n- Main arguments for/against why the job is of interest to me:\n  * For: Direct path to build agent/LLM product with funding and co-founder matching; part-time start aligns with current situation.\n  * For: Mentorship and feedback loop over 12\u201315 weeks suits my iterative, rigorous build style.\n  * Against: Stipend is minimal; funding not guaranteed; program timeline is intensive.\n  * Against: Less alignment if I pivot away from agents/LLMs to pure RO/RL-only topics.",
+        "preferred_pitch": 2,
+        "id": 228
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - BNP Paribas Leasing Solutions - Senior Data Scientist Expert - France (unspecified)\n\n## The Job\n### Required expertise\n- Strong expertise unfamiliar to me (data governance focus): Yes (-1)\n- Unfamiliar expertise is top-3 requirement: Yes (-1)\n- France-based and English required: Yes (+0.5)\n\n## The Company\n- Big company (>150 employees): Yes (-1)",
+        "score": -2.5,
+        "synthesis and decision": "Fit: Strong hands-on ML/modeling, rigorous coding/industrialization mindset, and clear communication align with the role\u2019s build-and-ship plus stakeholder-facing aspects. However, the job emphasizes data governance, change management, and 10+ years seniority; your background is lighter on formal data governance in enterprise settings and on Dataiku/enterprise DS platforms.\nInterest: Offers high-impact cross-functional role, GenAI use case development, and visibility with CDO in a large, stable group. But it\u2019s less about advanced RL/OR research and more about governance, operationalization, and community/strategy\u2014likely less aligned with your preferred algorithmic/agentic focus.\nDecision: Medium/low priority unless you want to pivot toward data governance/enterprise DS leadership with some GenAI. If applying, highlight your end-to-end rigor, stakeholder collaboration, and ability to set standards; close gaps by quickly upskilling on Dataiku and core data governance frameworks.",
+        "preferred_pitch": "1",
+        "id": 97
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Servier - Senior Data Scientist (Knowledge Graphs) - Gif-sur-Yvette, FR\n\n## The Job\n- Requires strong expertise in a topic I\u2019m not familiar with: Knowledge graphs/RDF/biomed ontologies (-1)\n- In the top-three requirements: Core to role (-1)\n- Requires a programming language I\u2019m not familiar with (not Python): Cypher/advanced SQL (-1)\n- More focused on infrastructure/data than algorithms: Data ingestion, KGs, databases (-3)\n- Job in France, good English required: Yes (+0.5)\n- PhD required in a field close to mine: CS/Comp/AI adjacent (+1.5)\n\n## The Company\n- More than 150 employees: 21,900 (-1)",
+        "score": -5.0,
+        "synthesis and decision": "- Fit: Methodological rigor, Python/ML strength, pipelines; but lacks hands-on KG stack (Neo4j, RDF/OWL, ontologies) and biomedical/cheminformatics exposure.\n- Interest: Solid pharma R&D impact and AI-for-drug-discovery angle; however role is KG/data-integration heavy, less aligned with RL/OR focus.\nDecision: Deprioritize unless strongly motivated to pivot to biomedical knowledge graphs. If applying, position as senior DS with fast ramp-up plan (SQL/Cypher, RDF/OWL, Neo4j, MeSH/ChEBI/GO), showcase pipeline/productization work and interactive tooling in Python.",
+        "preferred_pitch": 3,
+        "id": 93
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Unknown Consulting Firm - Data Scientist (Consulting) - France (unspecified)\n\n## The Job\n\n## The Company\n- Consulting role in standard DS firm: Yes, multi-sector consulting (-2)",
+        "score": -2,
+        "synthesis and decision": "Main arguments for/against fit:\n- For: Strong Python and ML fundamentals; prior DS consulting internship; rigorous experimental mindset; excellent communication/teaching skills; 3+ years via PhD.\n- Against: Limited hands-on SQL/Dataiku/R/SAS; focus to date more on RO/RL/vision than marketing analytics; consulting test/QCM may emphasize tools you used less.\n\nMain arguments for/against interest:\n- For: Varied missions (forecasting, reco, churn, segmentation) could broaden DS toolbox; good platform to strengthen SQL/Dataiku quickly; strong emphasis on client impact and communication suits you.\n- Against: Standard consulting environment; little alignment with RL/RO/agentic workflows; unlikely to touch defense/robotics topics you favor.\n\nDecision: Proceed only if you want to pivot into generalist DS consulting and are ready to quickly level up SQL/Dataiku; otherwise deprioritize.",
+        "preferred_pitch": 3,
+        "id": 24
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Sopra Steria - Medior/Senior Data Scientist - Nieuwegein (NL)\n\n- Significant MLOps experience demanded: (-1)\n- MLOps/cloud stack beyond my current depth (Azure, K8s, Terraform, Airflow): (-1)\n- Large enterprise (51k employees): (-1)\n- Consulting role at a mainstream integrator: (-2)",
+        "score": -5,
+        "synthesis and decision": "Fit: Strong Python/ML and algorithmic rigor align; experience with simulations/digital twins adjacent. Gaps: Dutch fluency required; heavy production MLOps (Azure/K8s/Terraform/CI-CD/MLflow/Airflow) not yet demonstrated; consulting/client-facing delivery expected. Interest: Variety of DS/AI projects, innovation culture, LLM-related products are appealing. Downsides: Consulting focus, enterprise processes, and MLOps-heavy requirements over core OR/RL. Decision: Low-to-medium fit now. Consider only if you can (1) demonstrate rapid MLOps ramp with concrete repos (Dockerized project, CI/CD, MLflow, K8s on Azure) and (2) address Dutch requirement; otherwise deprioritize.",
+        "preferred_pitch": 3,
+        "id": 237
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - QuantCube - NLP/LLM Scientist - Paris, France\n\n## The Job\n- Top requirement I lack: 2+ years in NLP (-1)\n- France-based; English required (+0.5)",
+        "score": -0.5,
+        "synthesis and decision": "This is an applied NLP/LLM IC role focused on end-to-end modeling, pipelines, and real economic/financial use cases. Strong match to my Python/Linux, research rigor, and problem-solving; I\u2019ll need to bridge the explicit 2+ years NLP gap by highlighting LLM usage, rapid upskilling, and any NLP/LLM side projects. No heavy infra/MLOps burdens and English is required in a France-based context, which suits me.\n\nMain arguments for fit:\n- Strong Python, research mindset, end-to-end project delivery; LLM interest and daily use.\n- Comfortable with data pipelines, experimentation, and clear communication.\n\nMain arguments against fit:\n- Lacks formal 2+ years professional NLP track record.\n- Limited finance/econometrics exposure (though only a nice-to-have).\n\nMain arguments for interest:\n- Hands-on LLM/NLP with real-world impact; opportunity to build pipelines and ship to prod.\n- Chance to learn alternative data and apply rigorous methods.\n\nMain arguments against interest:\n- Less alignment with RL/RO core specialty; finance focus may reduce overlap with defense/robotics interests.",
+        "preferred_pitch": 2,
+        "id": 25
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Proofpoint - Staff Security Research Engineer - Remote (US/Canada/EMEA)\n\nThe Job\n- Unfamiliar domain required (malware RE, browser evasion, TLS/PCAP): Yes (-1)\n- Unfamiliar domain is in top-3 requirements (Python/Docker/browser automation/network analysis): Yes (-1)\n- Requires non-Python language I don't master (C/C++/Windows APIs): Yes (-1)\n\nThe Company\n- Company size >150 employees: Yes (-1)\n- Full-remote option available: Yes (+2)",
+        "score": -2,
+        "synthesis and decision": "- Fit: Strong Python, research rigor, automation mindset, and LLM familiarity help, but the role is centered on security-engineering skills I lack (browser automation at scale, TLS/PCAP analysis, JS/DOM anti-fingerprinting, C/C++ OS-level work). Ramp-up would be significant.\n- Interest: Mission-driven cybersecurity, cutting-edge evasion/counter-evasion work, remote flexibility, and room to use AI are appealing, but it's not aligned with my RO/RL focus and would require rapid upskilling in malware/browser-fingerprinting domains.\n- Decision: Light pass unless I\u2019m ready to commit to a fast, targeted upskilling plan (Docker, Selenium/Playwright+Chrome DevTools, TLS/PCAP with Scapy/Wireshark/mitmproxy, JS reverse engineering, basic C++/Windows internals) and can show tangible demos.",
+        "preferred_pitch": 3,
+        "id": 164
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Integral Ad Science (IAS) - Senior Machine Learning Engineer - Unknown\n\n## The Job\n- Requires lots of experience in large scale training/inference/MLOps: Yes, 5+ years prod ML and deployment (-1)\n- Requires a PhD in a field close to mine (or even if it is just a plus): Yes, advanced degree (MSc/PhD) (+1.5)\n\n## The Company\n- More than 150 employees: Yes, large global company (-1)",
+        "score": -0.5,
+        "synthesis and decision": "Main arguments for being a good fit:\n- PhD in a relevant field; strong Python/DL fundamentals; hands-on CV project demonstrating rigor and iteration.\n- Experience collaborating cross-functionally and translating complex requirements into algorithms.\n\nMain arguments against being a good fit:\n- Lacks 5+ years of industry experience delivering ML systems to production.\n- Limited hands-on with production inference frameworks (TensorRT/ONNX/Triton) and large-scale serving.\n- Adtech/multimodal content classification not a core past domain.\n\nMain arguments for why the job is interesting:\n- Deep learning on image/video and multimodal classification, clear applied impact, collaborative environment.\n- Opportunity to learn scalable deployment/tooling and operate ML models in production.\n\nMain arguments against why the job is interesting:\n- Less alignment with RL/RO and agentic workflows focus.\n- Likely US-based; remote not specified; domain (adtech) may be less aligned with long-term interests.\n\nDecision: Borderline fit. Apply if willing to pivot toward production CV at scale. Lead with PhD, Python/DL strength, and the CV calibration project; state clear ramp-up plan for Triton/ONNX/TensorRT and cloud tooling.",
+        "preferred_pitch": 3,
+        "id": 85
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - CrowdStrike - Senior Applied AI Engineer - Remote-friendly\n\n## The Job\n### Required expertise\n- RL explicitly mentioned: yes (+2)\n- Math/OR optimization mentioned: yes (+2)\n- Agentic workflows (LangChain, tools): heavy focus (+3)\n- Strong LLM prod/eval expertise required: yes (-1)\n- Unfamiliar skill is top-3: yes (-1)\n- Go required (not my strength): yes (-1)\n\n## The Company\n- Company size >150: yes (-1)\n- Remote-friendly: yes (+2)",
+        "score": 5,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong algorithms/optimization + RL background aligns with adaptive systems and optimization methods.\n- For: Rigorous evaluation mindset from PhD maps well to LLM evaluation/quality gates.\n- For: Motivated by agentic workflows; recent coursework and personal agents project relevant.\n- Against: No production LLM systems shipped yet; RAG/eval/orchestration experience mostly academic/self-driven.\n- Against: Limited Go experience; will need ramp-up.\n\nMain arguments for/against why the job is of interest to me:\n- For: Heavy focus on agentic workflows, safety/guardrails, evaluation\u2014exact interests.\n- For: Impactful ops copilots and automation at scale in a top cyber context.\n- For: Remote-friendly culture and strong platform/infra partnerships to learn from.\n- Against: Less direct overlap with defense/robotics; primarily ops/SRE contexts.\n\nDecision: Proceed. Position is aligned with agentic AI interests; address Go gap and highlight evaluation/optimization strengths. Emphasize rapid upskilling in LangChain/LangGraph/MCP and concrete mini-projects before applying.",
+        "preferred_pitch": "1",
+        "id": 312
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - AWS - Generative AI and Machine Learning Specialist Seller - Paris\n\n## The Job\n- Domain expertise required that I lack: senior enterprise AI sales (-1)\n- Top-3 requirement mismatch: 12+ yrs sales, 5+ yrs AI sales (-1)\n- Location/language: France; strong English implied (+0.5)\n\n## Type of role\n- Role nature: specialist sales/business over technical (-2)\n\n## The Company\n- Company tier: top-tier hyperscaler (+2)\n- Company size: very large (>150) (-1)",
+        "score": -2.5,
+        "synthesis and decision": "Main arguments for fit:\n- Strong AI/ML depth; can converse with DS/ML/C\u2011suite and craft value props.\n- Bilingual FR/EN; comfortable presenting and writing.\n\nMain arguments against fit:\n- No track record in enterprise sales (12+ yrs) or AI sales (5+ yrs), quotas, GTM.\n- Limited AWS product-selling experience; role is business-first, not research/algorithms.\n\nMain arguments for interest:\n- Top-tier platform; exposure to GenAI initiatives across industries; Paris-based.\n- Could open a pathway to AWS technical roles (SA/ML Specialist) if internal mobility later.\n\nMain arguments against interest:\n- Sales-heavy, quota-driven; minimal algorithmic/RO/RL or agentic workflow focus.\n- Likely travel and partner management; far from desired hands-on R&D/agentic build work.\n\nDecision: Low fit. Recommend passing or targeting AWS ML Solutions Architect / Specialist SA GenAI / Applied Scientist roles instead. Only consider if intentionally pivoting to enterprise sales and ready to upskill in AWS GTM and partner motions.",
+        "preferred_pitch": 4,
+        "id": 207
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Temelion - Senior Machine Learning Engineer - [Location N/A]\n\n## The Job\n- Agentic workflows prominent (tools, multi-agent, prompt, CoT): Yes (+3)\n- Strong expertise outside my core (advanced LLMs/agents, knowledge graphs): Yes (-1)\n- In top-three requirements: Yes (-1)",
+        "score": 1,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python/ML background, rigorous algorithms mindset (RO/RL), autonomy, problem-solver; motivated by agentic AI; can influence roadmap and work closely with CTO.\n  * Against: Limited hands-on production experience in LLM fine-tuning/agents frameworks and knowledge graphs; limited cloud-at-scale deployments; 7+ years requirement may be tight.\n- Main arguments for/against why the job is of interest to me:\n  * For: Heavy focus on agentic workflows and LLMs; chance to design end-to-end data/UX/agents; high impact in early-stage startup; close collaboration with CTO.\n  * Against: Domain (building design) may be new; expectations on advanced LLM/KG may require rapid upskilling.",
+        "preferred_pitch": 2,
+        "id": 61
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - PHC Global - Senior AI Engineer - Remote (US)\n\nThe Job\n- Agentic workflows emphasis: RAG + agents central (+3)\n- Full-remote option: remote-first US (+2)\n- Defense sector: biosecurity/defense customers (+2)",
+        "score": 7,
+        "synthesis and decision": "Strong fit on algorithmic ML, Python, and interest/skills in agentic workflows. Time-series anomaly detection and uncertainty quantification are core; you have some relevant background (predictive maintenance, stats) and can ramp. Clear emphasis on RAG/agents, LLM fine-tuning, vector DBs, and evaluation\u2014aligned with your current focus. MLOps (Docker/K8s/CI/CD) is required; you can close gaps quickly by containerizing a project and practicing basic k8s. Biggest risk: US-only remote and clearance-eligible expectations; confirm work authorization and clearance path.\n\nDecision: Good technical and mission fit if US work eligibility is feasible. Proceed if you can quickly demonstrate a small RAG/agent system with evals and show a time-series anomaly baseline (Prophet/ARIMA + LSTM/TCN) plus simple Docker/K8s deployment.\n\nAction steps:\n- Build a tiny domain-RAG demo with eval (e.g., Ragas/LangSmith) and a tool-using agent orchestrating a simple pipeline.\n- Prepare a time-series anomaly detection notebook (ARIMA/Prophet baseline \u2192 LSTM/TCN), with uncertainty estimates.\n- Dockerize and add basic k8s manifest; connect to a vector DB (FAISS/PGVector/Weaviate).\n- Highlight defense/mission experience and cross-functional work with domain experts.",
+        "preferred_pitch": "2",
+        "id": 291
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - BNP Paribas - AI Engineer - Paris (75002)\n\n## The Job\n- Domain expertise gap (NLP): Yes (-1)\n- Top-3 requirement: Yes (-1)\n- Optimization focus (prod/inference/MLOps): Yes (-3)\n\n## The Company\n- Company size: Very large (>150) (-1)",
+        "score": -6,
+        "synthesis and decision": "## Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong applied math/optimization background; experience building algorithms end-to-end; exposure to CV; interest and early practice with LLMs/agents; French-speaking and comfortable in large organizations.\n\t* Against: Role expects being a reference in NLP; limited hands-on NLP/LLM-in-production track record; optimization emphasis appears system/performance rather than OR/RL; less alignment with my RO/RL core.\n- Main arguments for/against why the job is of interest to me:\n\t* For: High-visibility group-wide initiatives; chance to work on advanced virtual assistants and metrics; stable large group with internal mobility and benefits; Paris location with hybrid rhythm.\n\t* Against: Limited RL/OR focus; more production optimization than research; need to quickly close NLP/LLM productization gaps to be competitive.\n\nDecision: Borderline fit. Apply if I can present concrete LLM/NLP deliverables (e.g., RAG, LangChain/LangGraph agents, evaluation framework, cost/latency optimization) and position myself on metric-driven assistant systems.",
+        "preferred_pitch": "4",
+        "id": 65
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Unknown startup (spin-off) - Lead Backend Engineer / Architect \u2013 AI-Driven SaaS Product - Utrecht (Hybrid)\n\nThe Job\n- Unfamiliar strong expertise: backend architecture/FastAPI; top requirement (-2)\n- Infrastructure/architecture focus over algorithms (-3)",
+        "score": -5,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python, fast learner, AI/ML interest, can bridge DS and product, startup-ready mindset.\n  * Against: Limited FastAPI/production backend architecture experience; role is backend-heavy vs my core strengths (OR/RL/algorithms); leadership as a backend TL may not leverage my PhD work.\n- Main arguments for/against why the job is of interest to me:\n  * For: Early-stage impact, chance to shape architecture, exposure to productizing AI, high autonomy, growth potential.\n  * Against: Not focused on RL/OR/agentic workflows; more infra/scalability than algorithmic R&D; hybrid in Utrecht.",
+        "preferred_pitch": 2,
+        "id": 258
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Theodo Data & AI - AI Engineer - Paris, France\n\n## The Job\n- Agentic workflows featured: RAG, agents (+3)\n- Company size: ~700 employees (-1)\n- Consulting role: Tech consulting firm (-2)\n- Domain not in profile (top requirement): Hyperscaler exp. required; not shown (-1)",
+        "score": -1,
+        "synthesis and decision": "Fit looks moderate. Strong match on algorithmic mindset and interest in generative AI/agents. Clear gap on hyperscaler experience, and consulting context may dilute deep algorithmic focus. Still attractive for hands-on delivery of AI (RAG/Agents, CV, predictive models) with coaching and lean culture. If willing to quickly upskill on AWS/GCP/Azure and accept consulting trade-offs, worth pursuing.\n\nMain arguments for/against why I am a good fit:\n- For: Strong algorithmic background (RO/RL), end-to-end build/iterate, CV project, interest and early training in agentic workflows, ability to coach.\n- Against: No explicit hyperscaler experience; consulting requires rapid context-switching and client pragmatism over research depth.\n\nMain arguments for/against why the job is of interest to me:\n- For: Projects with RAG/Agents, variety of industries, strong training/lean culture, chances to speak/write and contribute internally.\n- Against: Consulting firm structure, less focus on deep RL/OR research, cloud/MLOps expectations.",
+        "preferred_pitch": 3,
+        "id": 94
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - IDEMIA - Computer Vision Research Engineer (Road Safety AI) - France\n\n## The Job\n- Location/language: France + English required (+0.5)\n- PhD preferred: Yes (+1.5)\n\n## The Company\n- Company size: >150 employees (-1)",
+        "score": 1.0,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python/PyTorch, DL fundamentals, and practical CV project (segmentation, optical flow, geometry); research rigor from PhD; ability to design, optimize, and evaluate algorithms; fluent FR/EN; comfortable with SOTA review and experimental frameworks.\n  * Against: Limited hands-on in object detection/tracking pipelines at scale; less experience in monocular 3D; fewer productionized CV deployments.\n- Main arguments for/against why the job is of interest to me:\n  * For: End-to-end applied CV with societal impact (Vision Zero); algorithms deployed on real devices; opportunity to iterate with operational data; room for publishing/patents; aligns with my interest in perception for autonomous systems.\n  * Against: Less exposure to RL/RO hybrid topics or agentic workflows; likely on-site/hybrid and within a large organization pace.",
+        "preferred_pitch": 3,
+        "id": 9
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Commonwealth Bank (Business Bank AiCE) - Data Scientist - Australia (hybrid)\n\n## The Job\n- Agentic workflows central (RAG, guardrails, LangChain/LangGraph/LlamaIndex): Yes (+3)\n- Strong expertise gap vs my background (prod GenAI on AWS): Yes (-1)\n- That gap is in top-3 requirements: Yes (-1)\n\n## The Company\n- Company size >150 employees: Yes (-1)",
+        "score": 0,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python/ML foundation; rapid learner with agentic workflow training; rigorous research/algorithms mindset useful for quality and evaluation.\n  * Against: No production GenAI deployments yet; limited AWS Bedrock/SageMaker experience; SQL/big data not recently practiced.\n- Main arguments for/against why the job is of interest to me:\n  * For: Heavy on agentic/RAG/prompting\u2014exactly the area I want to grow; real business impact in lending/customer interactions; opportunity to ship to production at scale.\n  * Against: Less focus on RL/OR; hybrid on-site in Australia; emphasis on cloud platform specifics over algorithmic research.",
         "preferred_pitch": 1,
-        "id": 6
+        "id": 135
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Storio Group - Senior Data Scientist - Location: Not specified\n\n## The Job\n- Causal inference/experimentation central; not my core: (-1)\n- In top-three requirements (stats/causal/exp design): (-1)\n- SQL/Snowflake required; SQL not solid yet: (-1)\n- PhD welcome/plus: (+1.5)\n\n## The Company\n",
+        "score": -1.5,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong ML foundations, end-to-end modeling experience, rigorous experimental mindset from PhD, solid Python, good communication/ownership.\n\t* Against: Limited hands-on causal inference/A-B testing for web/CRO; SQL/Snowflake/MLflow not yet strong; limited web analytics (GA/Adobe) exposure.\n- Main arguments for/against why the job is of interest to me:\n\t* For: High business impact, ownership across ML lifecycle, chance to influence MLOps/data infra, collaborative product environment.\n\t* Against: Focus on product analytics/CRO over RL/RO/agentic systems; less aligned with defense/robotics interests; possible right-to-work constraints depending on location.",
+        "preferred_pitch": 3,
+        "id": 256
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Microsoft - Data Scientist (ISE) - [Location unspecified]\n\n## The Job\n- Degree expectation: PhD valued/option (+1.5)\n\n## The Company\n- Company tier: Microsoft top-tier (+2)\n- Company size: Huge, >150 (-1)",
+        "score": 2.5,
+        "synthesis and decision": "Strong fit for a customer-facing, production-oriented data science role at a top-tier company. Your PhD and algorithmic rigor map well to the role\u2019s emphasis on ML modeling, evaluation, and writing production-quality code with stakeholders. Limited explicit MLOps-at-scale exposure is a minor gap; highlight prior deployment, data pipelines, and privacy/ethics awareness. Emphasize mentoring, collaboration with engineers, and comfort working with customers and travel.\n\nMain arguments for fit:\n- PhD with strong ML/optimization rigor; proven coding, experimentation, and impact quantification.\n- Prior consulting exposure and ability to collaborate cross-functionally; mentoring capability.\n\nMain arguments against fit:\n- Less emphasis on large-scale MLOps/production operations in your background.\n- Role is broad data science (not RL/RO-focused), less aligned with your core niche.\n\nMain reasons the job is interesting:\n- Top-tier environment, diverse customer problems, strong learning culture, open-source mindset.\n- Direct business impact and opportunities to broaden tech stack (cloud, deployment, privacy/ethics).\n\nReasons it might be less appealing:\n- Not centered on RL/OR or agentic workflows; travel and consulting cadence.\n\nDecision: Apply. Tailor CV to customer-facing DS delivery, productionizing models, and collaborative coding. Prepare 2\u20133 customer-impact stories (Thales, IBM, CV project) with metrics and trade-offs.",
+        "preferred_pitch": 1,
+        "id": 143
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Stravito - AI Engineer - Remote-first\n\n- Agentic workflows and orchestration central (LLMs, tools, Langfuse/OpenAI Agents): Yes (+3)\n- Strong JVM/Kotlin/Java required; my weaker stack vs Python: Yes (-1)\n- Remote-first, full-remote possible: Yes (+2)",
+        "score": 4,
+        "synthesis and decision": "- Main arguments for/against why I am a good fit for the job:\n  * For: Strong in algorithm design, rigorous experimentation, and Python ML pipelines; matches building reliable AI workflows, evaluation, and fallbacks.\n  * For: Hands-on with agentic workflows (Andrew Ng agentic course, LangGraph, JobseekerAgent) aligns with multi-model orchestration and tool use.\n  * Against: Limited JVM/Kotlin/Java production depth; need a focused ramp-up.\n  * Against: Less direct experience shipping LLM features at enterprise scale.\n- Main arguments for/against why the job is of interest to me:\n  * For: Build agentic systems on unique proprietary research corpora with real strategic impact for Fortune 500; end-to-end ownership.\n  * For: Remote-first culture and collaboration with product/engineering; strong fit with my interest in evaluation/monitoring and reliability.\n  * Against: Not in defense/robotics; minimal RO/RL emphasis vs my thesis core.\n  * Against: Potentially substantial JVM-centric backend work.\n- Decision: Proceed. Apply using Startup pitch; emphasize agentic orchestration, reliability, and evaluation strengths; outline a 6\u20138 week JVM ramp-up plan and showcase JobseekerAgent/LangGraph work.",
+        "preferred_pitch": "2",
+        "id": 270
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Bexton Consulting - Senior AI Engineer - Melbourne (Hybrid)\n\n## The Job\n### Required expertise\n- Niche domain expertise (search/HFT) required; unfamiliar; top requirement: (-2)\n- Vague task description; few concrete responsibilities: (-1)\n\n## The Company\n- Consulting role in a standard consulting firm (not top-tier list): (-2)",
+        "score": -5,
+        "synthesis and decision": "Main arguments for/against why I am a good fit:\n- For: Strong algorithmic and optimization background (RO/RL), history of building performant heuristics and dynamic programming solutions, ability to lead and structure technical efforts, rigorous experimentation mindset.\n- Against: No direct search/HFT experience, likely less exposure to ultra\u2013low-latency systems and performance engineering beyond Python, consulting context may demand domain-specific credibility fast.\n\nMain arguments for/against why the job is of interest to me:\n- For: Chance to lead and shape a data & AI practice, exposure to a world-class AI-mature client, performance-centric problems align with my algorithmic interests.\n- Against: Niche requirement (search/HFT) misaligned with my track record, hybrid/on-site in Melbourne, consulting delivery may limit deep research-style work.\n\nDecision: Proceed only if I can credibly bridge the HFT/search gap (e.g., highlight algorithmic performance wins, readiness to ramp on C++/systems) and if relocation/hybrid Melbourne is feasible.",
+        "preferred_pitch": "3",
+        "id": 141
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - [Unknown] - Data Scientist - Sydney\n\n## The Job\n- Cloud platforms/MLOps beyond my current depth: (-1)\n- In top-three requirements (cloud platforms): (-1)\n- Skills listed, tasks not clearly defined: (-1)\n- Strong large-scale/MLOps experience expected: (-1)",
+        "score": -4,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong Python and ML algorithms; rigorous experimentation and optimization mindset; proven end-to-end project delivery; clear communication to technical/non-technical stakeholders.\n- Against: Limited hands-on with Databricks/SageMaker/Vertex/Azure ML and CI/CD for ML; little production experience with Spark/Ray/Dask; hybrid in Sydney implies relocation/visa.\n\nMain arguments for/against why the job is of interest to me:\n- For: Fast track to solid MLOps, cloud, and distributed data skills; exposure to responsible AI and interpretability; business impact focus.\n- Against: Less aligned with RL/RO/agentic workflows; infra-heavy vs algorithmic focus; 12-month FTC and non-remote location.",
+        "preferred_pitch": 3,
+        "id": 313
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Eviden - Machine Learning Engineer - France (hybrid)\n\n## The Job\n- MLOps/cloud-native emphasis over algorithms: (-3)\n- \"Optimization\" about data architectures/pipelines (infra): (-3)\n- Strong MLOps/cloud expertise demanded; top requirement: (-2)\n- 4+ years MLOps/tools experience required: (-1)\n- France-based, bilingual FR/EN required: (+0.5)\n\n## The Company\n- Very large company (>150 employees): (-1)\n- IT services/consulting context: (-2)",
+        "score": -11.5,
+        "synthesis and decision": "This is a cloud-native/MLOps-heavy MLE role in a large IT services firm, with less focus on core algorithms/RO/RL. You match on Python, ML fundamentals, bilingual FR/EN, and prior data-pipeline exposure, but fall short on the explicitly required depth in MLOps/cloud-native and containerization, and only moderate JS.\n\nMain arguments for/against fit:\n- For: Strong Python ML background; proven end-to-end project delivery; bilingual; prior data pipeline work; fast learner.\n- Against: Core of the role is MLOps/cloud-native; lacks 4+ years MLOps; limited Docker/K8s/CI-CD; JS not a strength; little direct cloud production experience.\n\nMain arguments for/against interest:\n- For: Exposure to modern MLOps stacks; structured training; diverse projects; stable large group; hybrid work.\n- Against: Consulting/services context; reduced emphasis on RL/RO/agentic work; infra-first focus may not align with research/algorithmic interests; no full-remote.\n\nDecision: Deprioritize unless you want to pivot into MLOps. If you proceed, close gaps fast (Docker/K8s, CI/CD, one cloud provider, JS/TS basics) and emphasize your IBM pipeline, deployment-minded CV project, and bilingual agility.",
+        "preferred_pitch": 3,
+        "id": 54
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Oracle Health AI - Machine Learning Engineer (IC4) - Location not specified\n\nThe Job\n- Infra-heavy focus: Yes (-3)\n- Large-scale MLOps experience: Required (-1)\n\nThe Company\n- Company size: >150 employees (-1)",
+        "score": -5,
+        "synthesis and decision": "Main fit: Strong ML/algorithms background, hands-on coding, LLM interest; experience building complex systems and experimentation rigor.\nGaps: Infra/MLOps at scale, cloud deployment/monitoring, API/service engineering depth; no healthcare domain experience.\nInterest: High-impact healthcare problems and GenAI are appealing; access to large-scale resources; mentorship opportunities.\nRisks: Role skews toward production infrastructure over algorithmic research (RO/RL), potential bureaucracy of large org.\nDecision: Proceed if aiming to pivot into production GenAI/MLE and ready to upskill quickly in MLOps/cloud. Otherwise, may be a stretch versus algorithm-focused roles.",
+        "preferred_pitch": "1",
+        "id": 318
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - RavenPack - Senior AI/Quant Solutions Lead - Marbella, Spain\n\n- Agentic workflows (LLMs, multi-agent, orchestration): +3\n- Strong expertise in unfamiliar domain (quant finance, top-3 req): -2\n- PhD relevant/valued (MSc/PhD in related fields): +1.5\n- Company size >150 employees: -1",
+        "score": 1.5,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong Python and applied algorithmic background; agentic workflows interest and hands-on (LangGraph/LLM usage); PhD-level rigor and POC-to-production mindset; excellent communication/client-facing ability.\n- For: Experience leading R&D, building decision systems, and iterating quickly on complex problems aligns with POC/pilot cycles.\n- Against: No direct buyside/sell-side experience or proven alpha track record; limited time-series/finance-specific modeling; no concrete LLM fine-tuning-in-prod example yet.\n\nMain arguments for/against why the job is of interest to me:\n- For: Heavy focus on LLMs, multi-agent systems, and workflow automation\u2014exactly my current passion.\n- For: International environment in Spain (Spanish skills), senior role with impact, exposure to top-tier financial institutions.\n- Against: Strong finance domain focus may require steep ramp-up; success depends on quickly building credible alpha-generation stories and finance-specific artifacts.\n\nDecision: Proceed if willing to quickly build a targeted finance portfolio (alpha toy strategies, time-series pipelines, LLM agent demos for financial workflows) to bridge the domain gap.",
+        "preferred_pitch": 2,
+        "id": 264
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Unknown - Data Scientist - Remote\n\n- Full-remote: Yes (+2)\n- Non-Python stack required (R/SAS): Yes (-1)",
+        "score": 1,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* Pro: Strong ML/predictive modeling background (IBM PoC), rigorous experimental mindset from PhD, Python expertise, analytical rigor, comfort communicating insights.\n\t* Con: Limited R/SAS/R Shiny and enterprise DB exposure; role is classic analytics rather than RL/OR focus.\n- Main arguments for/against why the job is of interest to me:\n\t* Pro: Remote, meaningful healthcare impact, clear applied modeling and experimentation, mentoring element.\n\t* Con: Less aligned with RL/OR/agentic interests; likely heavy on BI/SQL/R Shiny and legacy stacks.",
+        "preferred_pitch": 3,
+        "id": 287
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Dailymotion - Machine Learning Engineer - Issy-les-Moulineaux (France)\n\nThe Job\n- France + English required: +0.5\n- Large-scale prod ML/MLOps emphasized: -1\n\nThe Company\n- ~400 employees: -1",
+        "score": -1.5,
+        "synthesis and decision": "Fit: Strong Python/ML, rigorous experimentation, end-to-end mindset, bilingual FR/EN, autonomy. Gaps: Limited AdTech exposure, modest hands-on with Docker/Airflow/cloud at scale, SQL to strengthen, limited distributed frameworks. Interest: High-impact ML on petabyte data, clear product metrics/A-B testing loop, France-based, strong benefits/career support. Reservations: Less alignment with RL/RO/agentic focus; likely MLOps-heavy and on-site/flex rather than remote. Decision: Worth applying if ready to quickly upskill on SQL, Docker, Airflow, and a cloud (GCP preferred) and to position optimization background toward ad targeting/pricing. Emphasize prior prod data pipelines (IBM), rigorous model lifecycle, and bilingual stakeholder comms.",
+        "preferred_pitch": 3,
+        "id": 45
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - DoorDash - Data Scientist (International Analytics) - NYC or Remote (US)\n\n## The Job\n### Required expertise\n- Requires strong expertise I'm not familiar with: Heavy SQL/A-B testing emphasis (-1)\n- It's among top-three requirements: Yes (-1)\n\n## The Company\n- More than 150 employees: Yes, large public company (-1)\n- Offers a full-remote option: NYC-associated remote noted (+2)",
+        "score": -1,
+        "synthesis and decision": "## Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong quantitative background (PhD), experimental rigor, hypothesis-driven problem solving, Python proficiency, experience turning ambiguous problems into structured solutions.\n\t* Against: Not yet very experienced with SQL/ETL and A/B testing/causal inference; limited BI/dashboarding exposure.\n- Main arguments for/against why the job is of interest to me:\n\t* For: High-impact analytics, experimentation focus, marketplace dynamics, cross-functional work; remote possibility.\n\t* Against: Less alignment with RL/RO/agentic interests; heavier on analytics tooling (SQL, dashboards) than algorithmic research.",
+        "preferred_pitch": "3",
+        "id": 315
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Unknown - Energy Research Scientist (AI Chatbot Evaluator) - Remote (US-only)\n\nThe Job\n- Requires strong expertise unfamiliar to me: Expert physics required (-1)\n- Top-three requirement: Physics is core (-1)\n- PhD close to mine is a plus: Preferred in physics/applied math (+1.5)\n\nThe Company\n- Full-remote option: Yes (+2)",
+        "score": 1.5,
+        "synthesis and decision": "## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong applied math/algorithmic rigor; PhD-level research; fluent English; experience evaluating model outputs and building test frameworks; detail-oriented.\n\t* Against: Not US-based (US-only requirement is likely a blocker); lacks expert-level physics across classical mechanics/E&M/thermo/quantum.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Remote, flexible hours, paid per hour; direct work evaluating AI chatbots aligns with LLM interest; part-time feasible.\n\t* Against: Physics-heavy focus not aligned with my core strengths (RO/RL/agentic workflows); contractor role, PayPal-only; limited growth toward decision systems/agentic tooling.",
+        "preferred_pitch": "4",
+        "id": 278
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Safran - Chef-fe de projet IA/Data (Service data 4.0) - France (unspecified site)\n\n## The Job\n### Required expertise\n- Support & Services domain expertise; top requirement (-2)\n\n### Type of role\n- Managerial/project-focused role (-2)\n\n## The Company\n- Very large company (>150) (-1)\n- Aerospace/defense group (+2)",
+        "score": -3,
+        "synthesis and decision": "This is a project/program management role in Safran Analytics (Sell & Service 4.0), focused on coordinating stakeholders, delivering AI/data products, change management, and product lifecycle. Strong domain experience in Support & Services is expected, which is not your core background. The role is less hands-on algorithmic (no RL/OR emphasis) and more about governance and delivery. It is within a reputable aerospace/defense group, which aligns with your sector experience, but may not match your preference for technical, algorithmic work.\n\nMain arguments for/against fit:\n- For: Aerospace/defense context aligns with your Thales/FCAS background; strong ability to bridge business-data-tech and manage complex projects; solid communication and rigor from PhD.\n- Against: Core requirement in Support & Services domain not your strength; role is managerial/product over algorithmic R&D.\n\nMain arguments for/against interest:\n- For: Impactful cross-entity AI initiatives in a major defense group; stability and visibility; exposure to end-to-end AI productization.\n- Against: Limited algorithmic depth (no RL/OR/agentic focus); big-company processes; potential misalignment with your desired technical trajectory.",
+        "preferred_pitch": "1",
+        "id": 109
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - CloudBees - Data Scientist \u2013 AI & Agentic Applications & Benchmarking - Remote (United States)\n\nThe Job\n- Agentic workflows focus: Yes (+3)\n\nThe Company\n- Company size >150: Yes (-1)\n- Full-remote offered: Yes (+2)",
+        "score": 4,
+        "synthesis and decision": "Main arguments for/against why I am a good fit:\n- For: Strong Python + notebooks; rigorous experimental design, metrics, and benchmarking from PhD and projects.\n- For: Clear communicator; practiced at turning results into narratives (reports, blog, scientific comms).\n- For: Strong interest and initial hands-on with agentic workflows (Andrew Ng course, LangGraph project).\n- Against: Limited direct experience with LLM eval stacks/telemetry tooling (LangSmith/OpenInference) and A/B at product scale.\n- Against: Role is US-remote; likely work authorization/location mismatch if not US-based.\n\nMain arguments for/against why the job is of interest to me:\n- For: Directly centered on agentic AI, evals, telemetry, and benchmarks\u2014matches my current focus and motivation.\n- For: Builder/evaluator/communicator blend suits my strengths and autonomy in ambiguous settings.\n- Against: DevTools/DevSecOps domain is new; some domain ramp-up needed.\n- Against: US-only remote limits feasibility unless relocation/visa is possible.",
+        "preferred_pitch": "2",
+        "id": 292
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Point & Click - Founding Software Engineer - Paris\n\nThe Job\n- Agentic workflows: Yes (+3)\n- Unfamiliar domain required (frontend/Svelte): Yes (-1) and top-3 (-1)\n- Non-Python primary language (JS/TS/Svelte): Yes (-1)\n\nThe Company\n",
+        "score": 0,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python and algorithmic rigor; fast learner/problem-solver; genuine interest and hands-on start with agentic workflows; comfortable working closely with founders; fluent French/English.\n\t* Against: Core responsibilities are Svelte 5 frontend and UX/UI, which are not in my current strengths; limited JS/TS/Svelte and browser extension experience.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Direct work on AI web agents/browser automation; founding-engineer ownership and velocity; Paris hybrid fits; culture aligns with outcome-driven shipping.\n\t* Against: Frontend-heavy scope may reduce exposure to my core RO/RL strengths; compensation modest vs. market.\nDecision: Apply if willing to ramp Svelte/TS quickly. Emphasize owning core agent logic/tools while committing to ship frontend in Svelte within weeks; include agentic workflow project (LangGraph) and a small Svelte/Chrome-extension demo.",
+        "preferred_pitch": "2",
+        "id": 196
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Akur8 - Senior Sales Specialist - Paris/Milan/London\n\n## The Job\n- Requires strong expertise I'm not familiar with: Enterprise B2B SaaS sales in insurance (-1)\n- Top-three requirement I'm not familiar with: 10+ years enterprise sales track record (-1)\n- Based in France and requires good English: Paris option + EN/FR (+0.5)",
+        "score": -1.5,
+        "synthesis and decision": "This is a senior enterprise sales role focused on long, complex cycles with insurers for a pricing deployment engine. It requires deep sales experience, contract negotiation, and account strategy\u2014far from my technical research/engineering background. While I can engage technical stakeholders and speak EN/FR, I lack the 10+ years enterprise sales track record and insurance sales experience. Decision: Pass.\n\nMain arguments for/against why I am a good fit:\n- For: Strong technical credibility for actuarial/IT discussions; analytical, data-driven; fluent EN/FR.\n- Against: No enterprise SaaS sales background; no insurance sales network; role is sales-focused, not technical; seniority mismatch (10+ years sales).\n\nMain arguments for/against why the job is of interest to me:\n- For: Intersection of actuarial/tech; international environment (Paris/London/Milan); solid benefits.\n- Against: Minimal alignment with my RO/RL/agentic workflow interests; heavy travel and quota-bearing sales; long sales cycles not aligned with my career goals.",
+        "preferred_pitch": 4,
+        "id": 327
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Audensiel - Consultant senior en IA (Azure) - France\n\nThe Job\n- Azure expertise required: Yes (-1)\n- Azure in top-3 requirements: Yes (-1)\n- Focused on cloud/architecture over algorithms: Yes (-3)\n\nThe Company\n- Consulting role at a standard consulting firm: Yes (-2)\n- Company size >150 employees: Yes (-1)",
+        "score": -8,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong AI/ML research background, end-to-end problem solving; able to bridge strategy and implementation.\n- For: Experience with LLM assistants/agentic workflows; can contribute to assistants/chatbots topics.\n- Against: No proven mastery of Azure stack (Azure AI/ML, Data Factory, Synapse).\n- Against: Limited pure consulting track vs 4+ years requirement.\n\nMain arguments for/against why the job is of interest to me:\n- For: Hands-on exposure to assistants IA/chatbots in industry; chance to build strategic advisory skills.\n- For: Opportunity to upskill on Azure and broaden toolbox.\n- Against: Cloud/architecture-heavy vs my preferred algorithmic/decision focus (RO/RL).\n- Against: Standard consulting model; potentially less long-term product ownership.\n\nDecision: Low-to-moderate fit. Consider applying only if a clear Azure ramp-up is acceptable and the role includes tangible delivery on assistants/ML, not just Azure architecture.",
+        "preferred_pitch": "3",
+        "id": 328
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Trident Consulting - Data Scientist with LLaMA - Remote\n\nThe Job\n- Agentic stack (LangChain/RAG) emphasized: Yes (+3)\n- Unfamiliar domain required: LLM fine-tuning/LoRA/vLLM (-1)\n- Unfamiliar domain in top-3 requirements: Yes (-1)\n- Description of tasks: Skills-only JD (-1)\n\nThe Company\n- Full-remote option: Yes (+2)\n- Consulting via staffing firm: Yes (-2)",
+        "score": 0,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python/ML background; fast learner; recent focus on agentic workflows; solid research/algorithms experience.\n  * Against: Limited hands-on with PEFT/LoRA/vLLM, vector DBs, and production RAG; 12+ years requirement likely unmet.\n- Main arguments for/against why the job is of interest to me:\n  * For: Direct work with open-source LLMs, LangChain, RAG\u2014aligned with agentic interests; remote setup.\n  * Against: Consulting/staffing context with vague responsibilities; potentially infra-heavy and less aligned with RO/RL strengths.",
+        "preferred_pitch": 3,
+        "id": 294
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Global AI Consulting Firm (unnamed) - Junior AI Engineer / Data Scientist - Remote/Distributed\n\nThe Job\n\nThe Company\n- Full-remote option: Yes (distributed/async) (+2)",
+        "score": 2,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python/ML/experimentation and data pipelines; proven autonomy and async work; rigorous methodology and clear communication; can ramp up cloud quickly.\n  * Against: Limited hands-on large-scale cloud/MLOps; consulting pace/context-switching may be a shift from research focus.\n- Main arguments for/against why the job is of interest to me:\n  * For: Applied ML across enterprises; growth path to lead; distributed/remote work; chance to solidify production ML and cloud skills.\n  * Against: Less direct alignment with RL/RO/robotics focus; consulting may dilute depth on a single domain.",
+        "preferred_pitch": "2",
+        "id": 131
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Moss - Senior/Lead ML Engineer (LLM Agents) - Berlin, DE\n\n## The Job\n- Agentic workflows central (LLM agents, tools, RAG, guardrails): (+3)\n- Significant MLOps required (cloud, containers, orchestration, monitoring): (-1)\n\n## The Company\n- Company size >150 employees: (-1)",
+        "score": 1,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong end-to-end problem framing, modeling, and evaluation from PhD/Thales; advanced Python/ML stack.\n- For: Clear interest and growing hands-on in agentic workflows (Andrew Ng course, LangGraph project); fast learner.\n- Against: Limited production track-record for LLM agents; MLOps (cloud/Docker/orchestration) not yet deep.\n- Against: Limited prior exposure to finance workflow specifics (invoices/approvals), though domain ramps are feasible.\n\nMain arguments for/against why the job is of interest to me:\n- For: High alignment with building LLM agents + classical ML models with real product impact.\n- For: Scale-up environment, ownership, top-of-market comp/equity; problems span anomaly detection, ranking, recommendations.\n- Against: Office-centric culture; less flexibility than full-remote.\n- Against: Not in defense/robotics; less overlap with long-term RO/RL vision, though agentic focus is compelling.",
+        "preferred_pitch": "2",
+        "id": 251
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - [Unknown Company] - AI Engineer - [Unknown Location]\n\n## The Job\n- Optimization focused on model/inference performance and production scalability: Yes (-3)",
+        "score": -3,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: Strong Python + DL stack (TensorFlow/PyTorch), CV project shows end-to-end modeling, optimization, and deployment mindset; prior PoC delivery at IBM; research rigor and SOTA implementation ability.\n- Against: Limited production NLP track record; unclear emphasis on RL/OR which are my core strengths; unknown MLOps scale requirements.\n\nMain arguments for/against why the job is of interest to me:\n- For: Hands-on AI engineering, building and deploying DL models; opportunity to strengthen NLP in production; space to apply optimization and model performance tuning.\n- Against: May skew toward performance/MLOps over decision-making/RL/OR; no clear robotics/defense angle; unknown company context and remote options.",
+        "preferred_pitch": "3",
+        "id": 132
+    },
+    {
+        "evaluation_grid": "- Strong JS/full-stack expertise required; not my core (-1)\n- This is in the top requirements (-1)\n- JavaScript (Node/React) mandatory; my JS minimal (-1)\n- Infra-heavy: APIs/cloud/databases emphasized over algorithms (-3)\n- Full-remote from Germany (+2)",
+        "score": -4,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python; experience integrating ML into apps; end-to-end delivery mindset (IBM pipeline, CV project); rigorous problem-solving and fast learning; comfortable collaborating across teams.\n\t* Against: Limited professional experience in React/Node and modern frontend; not 2\u20134 years full-stack; limited cloud/DevOps in production; role is application-heavy vs my algorithmic focus.\n- Main arguments for/against why the job is of interest to me:\n\t* For: High ownership, ship AI features end-to-end; remote in Germany; startup pace and cross-regional collaboration; chance to broaden into full-stack ML product work.\n\t* Against: Insurtech domain not my top passion; emphasis on JS/web stack and infra over RL/RO/agentic systems.",
+        "preferred_pitch": 2,
+        "id": 225
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Sancare - Machine Learning Engineer (F/H) - Paris (Ch\u00e2telet)\n\n## The Job\n### Required expertise\n- Focus: MLOps/industrialization over algorithms: (-3)\n- Core requirement unfamiliar: MLOps stack expertise: (-1)\n- Unfamiliar requirement is top-3: yes: (-1)",
+        "score": -5,
+        "synthesis and decision": "Synthesis: This role is strongly MLOps/production-focused (industrialization, automation, prod bug-fixing). Your strengths in Python, rigor, and end-to-end problem solving align, but you currently lack hands-on MLOps depth (Docker/K8s/MLflow/CI-CD), which is central here.\n\nDecision: Yellow. Pursue if you\u2019re ready to position yourself as an MLE ramping fast on MLOps. In interviews, highlight Python excellence, Linux comfort, prior pipeline work (IBM), debugging mindset, and autonomy; proactively address the MLOps gap with a concrete upskilling plan (e.g., dockerize your CV project, add CI, track with MLflow/DVC). Ask about their stack (cloud/HDS, orchestration, model registry, monitoring) and on-call/production expectations.",
+        "preferred_pitch": 2,
+        "id": 171
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - top itservices AG (Client: f\u00fchrendes Unternehmen) - Data Scientist/ML Engineer (Zeitreihenprognosen Energie) - Remote (Germany)\n\n## The Job\n\n## The Company\n- Remote option: Yes (+2)\n- Consulting/staffing: Yes (-2)",
+        "score": 0,
+        "synthesis and decision": "Main fit: Strong Python + ML; prior time-series/predictive maintenance exposure; rigorous modeling/simulation experience maps to forecasting + integration tasks. Main gaps: Very good German required; Azure ML/Cloud only desirable but not core; role not aligned with RL/RO focus.\nInterest: Remote flexibility and concrete algorithmic work on forecasting are positives. Downsides: Consulting/staffing setup and German language requirement may be blockers; limited overlap with RL/agentic interests.\nDecision: Worth a quick exploratory call only if German fluency is adequate; otherwise deprioritize.",
+        "preferred_pitch": 3,
+        "id": 223
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Onepoint - AI Scientist Lead \u2013 Lead Data Scientist R&D - Paris, France\n\n## The Job\n- Heavily features agentic workflows: Yes (+3)\n- Requires strong expertise I'm less experienced with (LLM/agentic R&D top-3): Yes (-1)\n\n## The Company\n- More than 150 employees: Yes (-1)",
+        "score": 1,
+        "synthesis and decision": "Fit is moderate-positive. Strong alignment on agentic AI focus, benchmarking/optimization mindset, R&D culture, and cross-team collaboration. Your PhD-driven rigor, experimental frameworks, and ability to document/evangelize are strong assets. Main gap: limited hands-on track record in large-scale LLM/agentic benchmarking/optimization and 10+ years post-studies seniority expectations. Consulting context implies client-facing breadth and rapid tech adoption.\nDecision: Worth pursuing if you position yourself as technical R&D lead on agentic evaluation/benchmarks, emphasize your RO/RL rigor, and showcase concrete agentic/LLM experiments (LangGraph, RAG/evals, tool-use) rapidly.",
+        "preferred_pitch": 3,
+        "id": 325
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Hexaly - Senior Operations Research Scientist - France (on-site)\n\n## The Job\n- Strong focus on mathematical optimization: Yes (+2)\n- Based in France, strong English required: Yes (+0.5)\n- PhD (or Master's) in OR/CS/Applied Math: Yes (+1.5)",
+        "score": 4.0,
+        "synthesis and decision": "This role is squarely in mathematical optimization with clear, hands-on algorithmic work on a commercial solver and client-facing services. Your PhD in OR, proven algorithm design (heuristics, DP), and industry-facing CIFRE context align well. Potential gaps: likely C++/low-level systems for solver development not explicitly stated; your experience is heavier in Python. Limited RL/agentic scope.\n\nMain arguments for fit:\n- PhD in OR with concrete combinatorial/stochastic optimization and algorithm design results (33% gain).\n- Strong coding/algorithm passion, rigorous experimentation, client-impact mindset from CIFRE/Thales.\n\nMain arguments against fit:\n- Possible C++/systems-level requirement vs. your Python-centric background.\n- 5+ years in optimization may be borderline if counting strictly; thesis + projects likely acceptable.\n\nMain arguments for interest:\n- Direct work on core OR solver features; exposure to top-tier industrial use cases.\n- France-based, strong growth, structured onboarding and code quality culture.\n\nMain arguments against interest:\n- Less alignment with RL/agentic workflows you want to explore.\n- On-site/less-remote flexibility likely; includes support/training duties.",
+        "preferred_pitch": 2,
+        "id": 10
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - The Paradigm Shifters (TPS) - zK Research Engineer - Remote (US)\n\nThe Job\n- ZK cryptography core requirement (unfamiliar): (-1)\n- Unfamiliar skill among top requirements: (-1)\n- Requires Rust/Go/C++ (not my main): (-1)\n\nThe Company\n- Full-remote option: Yes (+2)",
+        "score": -1,
+        "synthesis and decision": "Main arguments for/against why I am a good fit for the job:\n- For: PhD-level researcher; strong math/algorithms rigor; fast learner; strong technical writing (thesis, detailed reports); bridge research\u2194engineering.\n- Against: No hands-on ZK/cryptography; limited Rust/Go/C++; new to blockchain specifics.\n\nMain arguments for/against why the job is of interest to me:\n- For: Frontier ZK R&D; mix of research + whitepaper/docs; remote-first; collaborate with top cryptographers; meaningful token/equity upside.\n- Against: Steep ramp in ZK and Rust/Go; less aligned with RL/RO/agentic focus; potential US-only location constraint.",
+        "preferred_pitch": "2",
+        "id": 284
+    },
+    {
+        "evaluation_grid": "Full-remote: Yes (+2)\nDefense sector: Yes (+2)\nDomain requires epidemiology/ID expertise unfamiliar to me: Yes (-1)\nThis domain is a top-3 requirement: Yes (-1)\nSecurity clearance eligibility (non-French org): Yes (-1.5)",
+        "score": 0.5,
+        "synthesis and decision": "Mission and domain are compelling (biodefense, AI/ML, LLM contribution) and alignment with defense context and remote setup is strong. However, the role is explicitly Principal Epidemiologist with 5\u20137+ years applied epidemiology/ID and biostatistics expected; this is a critical gap. Security clearance eligibility and likely US-based requirement further reduce feasibility. Overall: not a fit for this specific role; consider adjacent AI/ML or data science roles at PHC focused on product/LLM/analytics rather than epidemiology leadership.",
+        "preferred_pitch": 2,
+        "id": 308
+    },
+    {
+        "evaluation_grid": "",
+        "score": 0,
+        "synthesis and decision": "- Main fit: Strong Python and ML/data analysis match; stakeholder communication aligns; real-estate knowledge optional. Major gap: Dutch language requirement; on-site Amsterdam.\n- Interest: Solid applied DS role; little to no RL/OR/agentic workflow; not infra-heavy; startup-like environment. If Dutch is a blocker, probability of success low unless you can credibly commit to quick acquisition.\n- Decision: Proceed only if you can meet the Dutch requirement (or they\u2019re flexible). Otherwise deprioritize.",
+        "preferred_pitch": "2",
+        "id": 247
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Jerry.ai - Data Scientist - Not specified\n\n## The Job\n\n## The Company\n- Company size: ~225 employees (-1)\n",
+        "score": -1,
+        "synthesis and decision": "Fit: Solid for product/growth DS if you lean into experimentation, SQL, and business impact. Your strengths in rigorous modeling, experimentation mindset, and Python are valuable; you\u2019ll need a quick ramp on product analytics, SQL-heavy workflows, and growth/marketing metrics.\nInterest: High-impact, data-centric, pre-IPO startup with strong traction and C-suite exposure. However, the role is less aligned with your preferred RL/RO/robotics focus and is more analytics/experimentation than algorithmic research.",
+        "preferred_pitch": 2,
+        "id": 349
+    },
+    {
+        "evaluation_grid": "- Location/language: Paris; fluent English (+0.5)\n- Role balance: Manager DS, client-facing (-2)\n- Company type: Consulting/digital transformation firm (-2)\n- Company size: 20k+ (-1)\n- Gap vs skills: Cloud (AWS/Azure/BigQuery) required; limited hands-on (-1)",
+        "score": -5.5,
+        "synthesis and decision": "Main fit arguments (for): Strong Python/ML/CV and math foundations; clear communication; interest and initial practice in GenAI/agents aligns with nice-to-have; prior consulting exposure at IBM.\nMain fit arguments (against): Managerial/consulting-heavy vs hands-on research preference; limited Cloud production experience; GenAI industrialization (LangChain/LangSmith, agents) only recent; core RO/RL strengths under-leveraged.\nInterest (for): Broad AI/Data community, learning culture, exposure to GenAI projects, international environment in Paris.\nInterest (against): Consulting cadence and management focus; less emphasis on advanced decision/optimization work. Decision: Proceed only if open to consulting/manager track and ready to upskill fast on Cloud + GenAI industrialization.",
+        "preferred_pitch": 3,
+        "id": 86
+    },
+    {
+        "evaluation_grid": "- France-based; English required: yes (+0.5)\n- SQL required alongside Python: moderate gap (-1)\n- Company size ~500: large org (-1)",
+        "score": -1.5,
+        "synthesis and decision": "This is a marketing-focused Data Analyst consulting role: SQL + R/Python, classical statistics (tests, regression, clustering), client presentations, and actionable business recommendations. Strong match with your analytical rigor, Python, experimentation mindset, and communication; weaker match with your RL/OR focus and limited current SQL/marketing analytics exposure. If you\u2019re open to consulting and marketing data work, it\u2019s viable after a quick SQL ramp-up and brushing up on marketing KPIs/segmentation and Tableau; otherwise, deprioritize in favor of roles closer to RL/OR/agents.",
+        "preferred_pitch": 4,
+        "id": 189
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - CFM (Capital Fund Management) - Distributed ML Engineer, ML Platform - Location not specified\n\n## The Job\n### Required expertise\n- More focused on infrastructure (databases, cloud, Docker) than on algorithms: Yes, MLOps/platform focus (-3)\n- Requires lots of experience in large scale training/inference/MLOps: Yes, 3+ yrs prod ML, MLOps, AWS, Triton (-1)\n- Requires strong expertise in a topic/domain I am not familiar with: MLOps/AWS depth; limited prior exposure (-1)\n\n## The Company\n- More than 150 employees: Yes, established quant fund (-1)",
+        "score": -6,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python; rigorous experimentation/reproducibility mindset; time-series exposure; ability to train/mentor and communicate; UNIX fluency; fast learner with solid ML fundamentals.\n\t* Against: Limited hands-on production MLOps at scale (AWS, containers, MLFlow, Triton) and fewer platform-engineering achievements; finance domain not previously covered.\n- Main arguments for/against why the job is of interest to me:\n\t* For: High-impact platform role in a top quant environment; chance to level up MLOps/infra skills; close collaboration with researchers; scalable ML systems exposure.\n\t* Against: Infra/platform-heavy vs my preference for algorithmic decision-making (RO/RL/agents); less direct work on RL/optimization/agentic workflows.\n\nDecision: Apply only if willing to pivot toward MLOps/platform. If proceeding, rapidly shore up gaps: dockerize a project, stand up MLFlow on AWS (ECR/ECS/S3), practice Triton inference, and highlight time-series, reproducibility, and user-enablement work. Emphasize ability to drive best practices and self-service tooling.",
+        "preferred_pitch": "3",
+        "id": 50
+    },
+    {
+        "evaluation_grid": "- PhD in CV/AI listed as a plus (+1.5)\n- French required and fluent English; likely France-based (+0.5)",
+        "score": 2.0,
+        "synthesis and decision": "Main arguments for fit:\n- Strong Python/PyTorch, DL/CV fundamentals; rigorous research and algorithm design background.\n- Concrete CV project (optic flow, segmentation, optimization), end-to-end experimentation and analysis.\n- Fluent FR/EN; experience presenting and reading scientific work.\n\nMain arguments against fit:\n- Limited direct production experience in object detection/tracking pipelines and embedded/real-time constraints.\n- CV depth narrower than specialists; road-safety domain not previously covered.\n\nDecision: Apply. Emphasize CV project, experimental rigor, and fast-learning track record; prepare to discuss MOT/OD baselines (YOLO/DeepSORT/ByteTrack), monocular 3D cues, and deployment constraints. Highlight PhD as a plus and ability to close the loop with ops data.",
+        "preferred_pitch": 1,
+        "id": 7
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - N/A - Alternant Data Scientist / Data Analyst (Assurance) - France\n\n## The Job\n### Required expertise\n- Focus: DataMarts/SQL/reporting over algorithms (-3)\n- Strong SQL required; currently limited (-1)\n- SQL is a top-3 requirement (-1)\n",
+        "score": -5,
+        "synthesis and decision": "## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t+ Solid Python and ML fundamentals; prior DS experience (IBM).\n\t+ Strong analytical rigor; capable of churn modeling and EDA.\n\t- SQL/Oracle and DataMart/BI experience limited relative to requirement.\n\t- Role is an alternance targeted at Bac+5 students; overqualification risk.\n- Main arguments for/against why the job is of interest to me:\n\t+ Could strengthen SQL/BI and applied ML in insurance.\n\t- Not aligned with core interests (RO/RL/agentic); tasks lean BI/reporting.\n\t- Start date Jan 2026 may not match current availability.\nDecision: Low fit/interest unless intentionally pivoting to BI/SQL and open to alternance structure.",
+        "preferred_pitch": 3,
+        "id": 62
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - EY - Business Analyst AI Projects - Amsterdam\n\n## The Job\n- Reinforcement Learning mentioned as a skill: Yes (+2)\n- Strong BA/requirements/stakeholder expertise required: Core focus of role (-1)\n- PhD (or Master's/PhD) valued as a plus: Yes (+1.5)\n\n## The Company\n- Company size >150 employees: Yes (-1)",
+        "score": 1.5,
+        "synthesis and decision": "This is a Business Analyst role centered on translating business needs to AI solutions, stakeholder management, and change/adoption. Your AI/ML background (incl. RL, CV, experimentation, KPIs) is a strong asset, and a PhD is valued. However, the day-to-day emphasizes BA fundamentals (requirements, workshops, UAT, agile ceremonies, documentation, Power BI/Tableau/SQL basics) more than hands-on algorithm design or agentic workflow engineering.\n\nMain arguments for/against fit:\n- For: Deep AI literacy (RL/ML/CV), strong analytical rigor, modeling and KPI mindset, experience bridging tech and ops from your PhD, clear communication and documentation skills.\n- Against: Limited formal BA experience (requirements elicitation, stakeholder facilitation, UAT, change management), lighter exposure to BI tools and SQL compared to expectations.\n\nMain arguments for/against interest:\n- For: Large, stable organization with broad AI exposure across industries; strong training, benefits, and hybrid work; chance to influence AI adoption and ROI at scale.\n- Against: Less hands-on algorithmic/build work and minimal agentic workflow focus; consulting cadence and BA deliverables may not align with your preference for deep technical/agentic systems work.\n\nDecision: Good fit if you want to pivot into AI Business Analysis/Consulting and leverage your technical depth to drive ROI and adoption. If your priority is building agentic systems and algorithmic R&D, deprioritize.",
+        "preferred_pitch": 3,
+        "id": 340
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Mercor - Go Engineer - Remote\n\n## The Job\n- Programming language not my main (Go): (-1)\n- Domain unfamiliar; top requirement (strong Go): (-2)\n\n## The Company\n- Full-remote: (+2)",
+        "score": -1,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong debugging/testing mindset; experience building evaluation frameworks and reproducible experiments; solid technical writing; can work independently/async; ML/DS background matches broad experience requirement.\n  * Against: No real Go experience; role requires immediate strong Go proficiency; backend SDE focus vs my core strengths (RO/RL/algorithms in Python).\n- Main arguments for/against why the job is of interest to me:\n  * For: Remote, part-time, short-term, high rate; opportunity to learn Go and strengthen software engineering/testing skills; exposure to AI-lab benchmarking context.\n  * Against: Not aligned with my strategic focus (RO/RL/agentic workflows); ramp-up in Go may be heavy for a 1-month contract; limited long-term relevance.\nDecision: Borderline fit (score -1). Apply only if willing to rapidly upskill in Go (build a small Go repo with unit/integration tests and benchmarks within a week) to demonstrate capability; otherwise likely not worth the time for a 1\u2011month engagement.",
+        "preferred_pitch": 3,
+        "id": 343
+    },
+    {
+        "evaluation_grid": "- More than 150 employees: Large adtech (DoubleVerify) (-1)",
+        "score": -1,
+        "synthesis and decision": "This is a senior Sales Engineer role in adtech, very client-facing and analytical, focused on onboarding, troubleshooting campaigns, reporting, and bridging AM/Sales with Data Science/Product. Strong match with your analytical rigor, troubleshooting, experimentation, and communication/documentation skills. No RL/RO or agentic workflow focus, and limited pure algorithmic R&D; domain is adtech where you have limited experience (but only a plus, not a must). Good Paris location fit; expect significant business/stakeholder work rather than research-heavy tasks. If you want a hands-on, business-impact role and are open to adtech, it\u2019s viable; if you prioritize RO/RL/robotics/agentic systems, alignment is weaker.",
+        "preferred_pitch": 3,
+        "id": 115
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Coca-Cola Europacific Partners (CCEP) - Lead Machine Learning Engineer - Location not specified\n\n## The Job\n- Focus on infra/MLOps over algorithms: Yes (-3)\n- Optimization context = performance/latency/drift/cost (MLOps): Yes (-3)\n- Strong expertise needed in areas I'm less familiar with (cloud/K8s/Spark/feature stores): Yes (-1)\n- This requirement is among the top three: Yes (-1)\n- Heavy large-scale MLOps experience expected: Yes (-1)\n\n## The Company\n- Company size >150 employees: Yes (-1)",
+        "score": -10,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python/ML background; rigorous experimental mindset; experience building end-to-end prototypes; can mentor and structure best practices.\n  * Against: Limited hands-on with cloud/Kubernetes/Spark/feature stores/model registry; role is MLOps-heavy vs my RL/RO strengths.\n- Main arguments for/against why the job is of interest to me:\n  * For: Chance to lead ML engineering practices at scale; accelerate MLOps skillset; broad applied business impact (forecasting, supply chain, marketing).\n  * Against: Low alignment with RL/RO/agentic interests; less algorithmic research depth; large enterprise may be process-heavy.",
+        "preferred_pitch": "1",
+        "id": 368
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - N/A - Data Scientist - Courbevoie\n\nThe Job\n- Unfamiliar strong expertise required: Big data stack (Postgres/Teradata/Hadoop/Spark); top-3 requirement (-2)\n- Infra/data-stack focus over algorithms: Emphasis on Postgres/Teradata/Hadoop/Spark (-3)",
+        "score": -5,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python, statistical modeling, and experimentation; prior predictive modeling PoC at IBM; rigorous problem-solving from PhD; good communication and collaboration; quick upskilling ability.\n\t* Against: Limited hands-on with Teradata/Hadoop/Spark and heavy SQL; role leans data engineering/big-data tooling; energy domain experience only a plus (not present).\n- Main arguments for/against why the job is of interest to me:\n\t* For: Tangible impact on energy transition; clear missions; structured SAFe environment; cross-functional collaboration; visibility via internal Data Committee.\n\t* Against: Less alignment with RO/RL/agentic interests; heavier on data platforms than core algorithms; partial on-site requirement; likely large-org pace and practices.\nDecision: Pursue only if willing to pivot short-term toward big-data DS. If applying, position as Python DS with strong modeling/optimization rigor and explicitly plan rapid upskilling in SQL/Spark; prepare concrete learning path and quick wins.",
+        "preferred_pitch": "1",
+        "id": 64
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - GenBio AI - Research Scientist, Biological Foundation Models - Silicon Valley (HQ) | Paris | Abu Dhabi\n\n## The Job\n- Bio/omics expertise required: Yes (-1)\n- Top-three requirement (bio modalities): Yes (-1)\n- PhD close to mine: Yes (+1.5)",
+        "score": -0.5,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong ML background (PyTorch/JAX), PhD-level research rigor, experience designing/validating algorithms, autonomy in fast-paced environments.\n\t* Against: Limited biology/omics expertise (scRNA-seq, epigenetics, proteomics), no bio-focused publications, limited track record in generative models for biological data and multi-omics integration.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Cutting-edge generative AI, foundation models across modalities, high-caliber team and impactful mission, startup context fits autonomy/ownership.\n\t* Against: Significant domain ramp-up needed in computational biology and datasets; expectations for prior bio ML experience may be a blocker.",
+        "preferred_pitch": "2",
+        "id": 1
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Autodesk - Senior Responsible AI Research Scientist-Manager - San Francisco, Toronto, London, or Remote\n\n## The Job\n- Strong Responsible AI expertise required; not my domain (top requirement): (-2)\n- PhD in AI/ML required; close to mine: (+1.5)\n\n## Type of role\n- Lead/manage a small Responsible AI research team; domain unfamiliar: (-2)\n\n## The Company\n- Very large company (>150 employees): (-1)\n- Remote option available: (+2)",
+        "score": -1.5,
+        "synthesis and decision": "This is a senior research scientist-manager role centered on Responsible/Trustworthy AI with publication expectations and team growth. While I match the PhD and strong Python/ML fundamentals, my track record in Responsible AI (safety, robustness, governance, FAccT-style work) and management experience are limited. The remote option and research culture are attractive, but the domain mismatch and managerial expectations make it a stretch without clear RAI evidence.\n\n---\n## Synthesis & Decision \n- Main arguments for/against why I am a good fit for the job:\n\t* For: PhD in AI-related field; strong Python/PyTorch/JAX; rigorous research background; cross-domain adaptability.\n\t* Against: No demonstrated Responsible AI/safety publications; limited experience with governance/robustness/uncertainty quantification; managerial expectations exceed current experience.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Research-focused, publishing at top venues; cross-functional impact; remote flexibility; aligns with interest in safe autonomous systems.\n\t* Against: Heavy emphasis on RAI domain and leadership may reduce hands-on algorithmic focus and requires a steep pivot.\n\nDecision: Only pursue if I\u2019m committed to a fast, credible pivot to Responsible AI (e.g., produce a focused RAI project/preprint on robustness/uncertainty, open-source contributions, and a clear team-lead narrative). Otherwise, deprioritize.",
+        "preferred_pitch": "3",
+        "id": 285
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - BCG X (Boston Consulting Group) - AI Software Engineer - Unspecified\n\n## The Job\n### Required expertise\n- Optimization mentioned primarily for performance/infrastructure: Yes, computational efficiency (-3)\n- Vague description of actual tasks for a data scientist/engineer job: Yes, broad consulting bullets (-1)\n\n### Type of role\n\n## The Company\n- Top-tier company: Yes, BCG/BCG X (+2)\n- More than 150 employees: Yes, very large (-1)",
+        "score": -3,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python and algorithmic mindset; end-to-end experimentation-to-software experience; accustomed to rigorous validation and scientific communication which aligns with thought leadership.\n\t* For: Comfortable guiding non-technical stakeholders; client-facing from IBM consulting internship.\n\t* Against: Little explicit use of RL/RO or decision-optimization; emphasis appears more on software engineering and performance tuning than on my core RO/RL specialization.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Top-tier brand and network; broad industry exposure; chances to ship AI solutions and build consulting credibility.\n\t* Against: Limited alignment with defense/robotics or agentic workflows; consulting cadence and broad scope may dilute deep RL/RO focus.",
+        "preferred_pitch": 3,
+        "id": 66
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Air France-KLM - Senior Data Scientist - \u00cele-de-France\n\nThe Job\nRequired expertise\n- Based in France and English required: Yes (+0.5)\n- Requires a programming language I'm not fluent in: SQL required (-1)\n\nThe Company\n- Company size: >>150 employees (-1)",
+        "score": -1.5,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n  * For: Strong Python, ML fundamentals, quantitative rigor, experimental design, and clear communication/teaching; senior IC with ability to coach.\n  * For: Experience translating complex specs into models; Bayesian optimization, causality awareness; international environment fit (English OK, French native).\n  * Against: Limited direct experience in customer analytics/marketing DS (churn, segmentation, uplift/causal); SQL not yet solid; R not used.\n- Main arguments for/against why the job is of interest to me:\n  * For: High-impact DS in aviation/commercial domain; opportunity to practice causal inference and collaborate cross-functionally; stable large group with benefits.\n  * Against: Not aligned with core passions (RO/RL/agentic workflows/robotics); minimal optimization or RL; likely on-site/limited remote; large-corp pace/bureaucracy.",
+        "preferred_pitch": "1",
+        "id": 74
+    },
+    {
+        "evaluation_grid": "Job Offer Evaluation Grid - Audiens - Data Scientist H/F - Vanves (92)\n\n- Company size: ~600 employees (-1)\n- Requires R/SQL in addition to Python: Yes (-1)",
+        "score": -2,
+        "synthesis and decision": "This is a classic data science role in marketing/assurance: dashboards, segmentation, predictive scoring, campaign targeting, fraud detection, and model industrialization. Strong emphasis on Python/R/SQL and Power BI, less on advanced RL/OR or agentic workflows. Score is slightly negative mainly due to R/SQL requirements and large company size.\n\nMain arguments for/against why I am a good fit for the job:\n- For: Solid Python and ML background; proven ability to industrialize models and build experiments; strong analytical rigor and communication.\n- For: Prior DS experience (IBM predictive maintenance) and statistics orientation map to predictive scoring/fraud/segmentation use cases.\n- Against: Limited hands-on R/SQL/Power BI; less direct experience in marketing analytics/assurtech KPIs and campaign targeting.\n- Against: My core expertise (RO/RL/CV) is tangential to the role's primary focus.\n\nMain arguments for/against why the job is of interest to me:\n- For: Stable CDI in France with strong benefits; mix of DS and light data engineering; opportunities in fraud detection and model deployment.\n- Against: Less alignment with my long-term focus (RO/RL/agentic workflows); stack preference for R/Power BI; not full-remote.",
+        "preferred_pitch": "3",
+        "id": 22
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - ista - Alternant(e) Data Scientist - Massy (91)\n\n## The Company\n- Company size >150 employees: Yes (-1)",
+        "score": -1,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python/ML background, prior DS experience (IBM), good communication and methodological rigor align with the role\u2019s expectations.\n\t* Against: Position is an alternance (requires Bac+4/5 student status); I\u2019m PhD-level and likely not eligible without re-enrollment. SQL is required at a strong level; my mastery may need refreshing.\n- Main arguments for/against why the job is of interest to me:\n\t* For: Tangible impact on energy efficiency; end-to-end DS workflow (needs understanding \u2192 data exploration \u2192 modeling \u2192 restitution) fits my way of working.\n\t* Against: Not aligned with my core RL/RO/agentic focus; limited exposure to advanced research topics; on-site in Massy with no remote option mentioned; alternance structure may not fit my situation.",
+        "preferred_pitch": 3,
+        "id": 176
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Unknown Company - Biotech Research Scientist (AI Chatbot Evaluator) - United States (Remote)\n\n## The Job\n- Domain unfamiliar: Expert biology required (-1); Top-three requirement: Yes (-1)\n\n## The Company\n- Remote option: Full-remote (+2)",
+        "score": 0,
+        "synthesis and decision": "Main fit pros: strong evaluation rigor, LLM usage experience, excellent English, detail-oriented, autonomous. Main fit cons: lacks expert biology (core requirement), likely not US-based (eligibility blocker). Interest pros: remote, flexible hours, work on AI chatbot evaluation aligns with LLM interests. Interest cons: heavy biology focus misaligned with RO/RL trajectory; limited algorithmic depth; contract-only US-only. Decision: Low fit\u2014pass unless I can partner with a biology SME and confirm US eligibility.",
+        "preferred_pitch": "4",
+        "id": 279
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Unknown - Research Scientist (Physics) - Remote (US-only)\n\n## The Job\n### Required expertise\n- Expert physics focus; outside my core (-2)\n- PhD preferred; close to mine (+1.5)\n\n## The Company\n- Full-remote option (+2)",
+        "score": 1.5,
+        "synthesis and decision": "Role centers on evaluating AI chatbots via complex physics questions; strong domain physics depth is a primary requirement. My strengths in applied math, rigorous evaluation, and algorithmic thinking transfer well, but lack of expert-level classical/E&M/thermo/quantum is a gap. Flexible remote contractor setup is attractive; pay is decent. Critical blocker: US-only eligibility. If eligible and willing to quickly refresh physics fundamentals, this could fit as an evaluation-focused role; otherwise, limited alignment with my RO/RL trajectory.",
+        "preferred_pitch": 4,
+        "id": 277
+    },
+    {
+        "evaluation_grid": "# Job Offer Evaluation Grid - Sancare - Senior ML Engineer (MLOps) - Paris\n\n## The Job\n- Infra/MLOps-focused: Yes (-3)\n- Significant MLOps experience: 7+ years emphasis (-1)\n- Unfamiliar domain: MLOps/system design (-1)\n- Top-3 requirement: Yes (-1)",
+        "score": -6,
+        "synthesis and decision": "Synthesis & Decision\n- Main arguments for/against why I am a good fit for the job:\n\t* For: Strong Python, solid ML fundamentals, rigorous research/engineering mindset, production-minded from past DS/engineering work; comfortable with Linux.\n\t* Against: Limited hands-on MLOps in production (CI/CD, Docker/K8s, model serving/monitoring), limited system design at scale; 7+ years in similar MLOps role may be a stretch.\n- Main arguments for/against why the job is of interest to me:\n\t* For: High real-world impact in healthcare; exposure to full ML production stack; small, dynamic team.\n\t* Against: Role is infra/MLOps-heavy with little RL/RO/agentic workflows; less algorithmic research focus than my core interests.",
+        "preferred_pitch": 2,
+        "id": 170
     }
 ]

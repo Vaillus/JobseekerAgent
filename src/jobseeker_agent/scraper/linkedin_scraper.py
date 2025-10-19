@@ -231,15 +231,17 @@ def main():
         builder.build_primary_query(), 
         builder.build_secondary_query()
     ]
+    max_jobs = 100
+    max_time = "day"
     scraper = LinkedInJobsScraper()
     for request in requests:
         for query in queries:
             params = {
                 "keywords": query,
                 "location": request["location"],
-                "max_jobs": 100,
+                "max_jobs": max_jobs,
                 "remote_type": request["remote_type"],
-                "max_time": "week"
+                "max_time": max_time
             }
             new_jobs_added = scraper.scrape_jobs(**params)
             print(f"Finished scraping. Added {new_jobs_added} new jobs.")

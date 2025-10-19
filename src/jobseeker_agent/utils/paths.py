@@ -11,6 +11,16 @@ def get_data_path() -> Path:
     """Retourne le chemin vers les données."""
     return get_project_root() / "data"
 
+
+def load_cv_template(lang: str = "en") -> str:
+    """Loads the CV template from the file."""
+    if lang not in ["en", "fr"]:
+        raise ValueError("Language not supported, please choose 'en' or 'fr'")
+    cv_path = get_data_path() / "resume" / "template" / f"cv-{lang}.tex"
+    with open(cv_path, "r") as f:
+        return f.read()
+
+
 def get_evaluator_path() -> Path:
     """Retourne le chemin vers le dossier evaluator."""
     evaluator_dir = get_data_path() / "evaluator"

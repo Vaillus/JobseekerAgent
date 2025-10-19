@@ -10,6 +10,7 @@ from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
 load_dotenv()
 
 
+
 def evaluate_job(job, job_details):
     """Evaluates a job and returns a score."""
     evaluation_prompt = load_prompt("evaluation")

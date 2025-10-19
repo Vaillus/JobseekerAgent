@@ -79,11 +79,15 @@ En revanche, ce projet ne me permettra pas d'obtenir un top job en computer visi
 ### D. Agentic Workflow
 Depuis la sortie de GPT-2, je suis fasciné par les LLMs et leur utilisation. Je les utilise tous les jours dans ma vie pro et personnelle, que ce soit pour programmer avec Cursor ou faire mes cartes anki avec mon prompt [[anki prompt]] que j'ai pas mal affiné avec le temps.
 J'ai vu des offres passer qui proposent de faire des agents basés sur des LLMs pour faire des tâches diverses.
-Ce [tweet de François CHollet](https://x.com/JacksonAtkinsX/status/1975556245617512460) a peut-être créé le déclic chez moi. Les gens arrivent vraiment à faire des choses cool.
+Ce [tweet de François Chollet](https://x.com/JacksonAtkinsX/status/1975556245617512460) a peut-être créé le déclic chez moi. Les gens arrivent vraiment à faire des choses cool.
 Je pense que j'aimerais bien travailler sur des programmes agentiques.
 C'est pas du RL ni de la RO, mais c'est des agents autonomes, plus ou moins, et je trouve ça super cool. En plus j'ai le sentiment que je vais pouvoir recouper ça avec mes autres skills à un moment ou à un autre.
 J'ai donc suivi le cours sur les [[agentic workflow Andrew Ng]] pour comprendre comment fonctionne tout ça. Par hasard, il se trouve que je suis probablement un des premiers élèves au monde à avoir fini le cours puisque je l'ai commencé le jour de sa sortie et que je l'ai bourriné sur le weekend!
 Maintenant, je me lance dans la full automatisation de mon workflow de recherche d'emploi avec des agents.
+Le projet est déjà pas mal avancé maintenant (https://github.com/Vaillus/JobseekerAgent).
+Je prends en main langgraph et langchain.
+keywords: tool-augmented workflow, agent frameworks
+
 ## 4. Expériences (Format détaillé pour préparation d'entretiens)
 ### Projet | Workflow de recherche d'emploi (Octobre 2025)
 Maintenant que j'ai fini le cours de Andrew Ng, j'avais déjà commencé à faire des prompts qui m'aident à faire, qui m'assistent, pour que des agents m'assistent dans ma recherche d'emploi. Donc par exemple un prompt qui m'aide à évaluer des offres, si c'est un bon fit pour moi, et j'utilise Cursor pour corriger mon CV. J'ai déjà fait une petite partie du travail, et maintenant l'objectif c'est de complètement automatiser la pipeline de postulation avec des agents, grâce à ce que j'ai appris dans le cours.
@@ -155,6 +159,7 @@ Ensuite, j'ai un peu étudié le C++ et le java, j'ai fait des projets avec dans
 - dockerisation (dockeriser mon projet de calibration)
 - agentic workflow
 - vector databases ?
+- RAG/eval/orchestration ?
 
 # Divers
 Je parle couremment anglais, français et mon voyage de sept mois en amérique du sud m'a permis d'acquérir une bonne maîtrise de l'espagnol. Genre je peux avoir des conversations d'une heure sans problème, même si j'ai jamais lu de livre en espagnol.
