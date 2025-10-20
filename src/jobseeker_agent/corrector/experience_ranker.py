@@ -16,16 +16,16 @@ class ExperienceRankerResponse(TypedDict):
     ranking: Annotated[List[str], ..., "Ranking of the experiences in decreasing order of relevance for the job. eg. ['Thales', 'CameraCalibration', 'JobseekerAgent', 'IBM']"]
     resume: Annotated[str, ..., "The same resume as the template, but with the experiences ranked in the order of the ranking."]
 
-def rank_experiences(job_description: str, profil_pro: str, cv_template: str) -> ExperienceRankerResponse:
+def rank_experiences(job_description: str, profil_pro: str, cv_template: str, model: str="gpt-5-main") -> ExperienceRankerResponse:
     """Ranks experiences in decreasing order of relevance for the job."""
     experience_ranker_prompt = load_prompt("experience_ranker")
-    llm = get_llm("gpt-5-mini")
+    llm = get_llm(model)
     llm = llm.with_structured_output(ExperienceRankerResponse)
     message = HumanMessage(
         content=experience_ranker_prompt.format(job_description=job_description, profil_pro=profil_pro, cv_template=cv_template)
     )
     response = llm.invoke([message])
-    return response["ranking"], response["resume"]
+    return response
 
 if __name__ == "__main__":
     from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job

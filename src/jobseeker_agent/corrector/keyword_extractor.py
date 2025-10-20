@@ -19,12 +19,11 @@ class KeywordExtractionResponse(TypedDict):
 
 
 
-def extract_keywords(job_details: dict) -> KeywordExtractionResponse:
+def extract_keywords(job_details: dict, profil_pro: str, cv_template: str, model: str="gpt-5-main") -> KeywordExtractionResponse:
     """Extracts keywords from a job description."""
     keyword_extractor_prompt = load_prompt("keyword_extractor")
-    profil_pro = load_prompt("profil_pro")
-    cv_template = load_cv_template()
-    llm = get_llm("gpt-5")
+    
+    llm = get_llm(model)
     llm = llm.with_structured_output(KeywordExtractionResponse)
 
     message = HumanMessage(
@@ -35,6 +34,8 @@ def extract_keywords(job_details: dict) -> KeywordExtractionResponse:
         )
     )
     response = llm.invoke([message])
+    # convert to dict
+    # response = response.model_dump()
 
     return response
 
@@ -42,6 +43,9 @@ def extract_keywords(job_details: dict) -> KeywordExtractionResponse:
 if __name__ == "__main__":
     from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
     from jobseeker_agent.utils.paths import load_raw_jobs
+
+    profil_pro = load_prompt("profil_pro")
+    cv_template = load_cv_template()
 
     JOB_ID = 312
 
@@ -51,6 +55,6 @@ if __name__ == "__main__":
     print(f"Extracting keywords for job: {job['id']} - {job['title']}")
     job_details = analyze_linkedin_job(job["job_link"])
     if job_details:
-        keywords = extract_keywords(job_details)
+        keywords = extract_keywords(job_details, profil_pro, cv_template)
         print(keywords)
         # print(json.dumps(keywords.dict(), indent=4))
