@@ -1,20 +1,30 @@
 
 import requests
 import html2text
+import time
 from bs4 import BeautifulSoup
 
 
 
 
-def fetch_job_page(url):
-    """Fetches the content of the job posting URL."""
-    try:
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-        return response.text
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching URL {url}: {e}")
-        return None
+def fetch_job_page(url, retries=5, backoff_factor=0.5):
+    """Fetches the content of the job posting URL with retries on failure."""
+    for i in range(retries):
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  # Raise an exception for HTTP errors
+            return response.text
+        except requests.exceptions.RequestException as e:
+            # Check if the exception has a response and if the status code is 429
+            if hasattr(e, 'response') and e.response is not None and e.response.status_code == 429:
+                wait_time = backoff_factor * (2 ** i)
+                print(f"Rate limited. Retrying in {wait_time:.2f} seconds...")
+                time.sleep(wait_time)
+            else:
+                print(f"Error fetching URL {url}: {e}")
+                return None
+    print(f"Failed to fetch URL {url} after {retries} retries.")
+    return None
 
 def analyze_linkedin_job(url):
     """Analyzes a LinkedIn job posting and returns its details:

@@ -221,18 +221,18 @@ def main():
         {
             "location": "Netherlands",
             "remote_type": "remote"
-        },
-        {
-            "location": "California, USA",
-            "remote_type": "remote"
         }
+        # {
+        #     "location": "California, USA",
+        #     "remote_type": "remote"
+        # }
     ]
     queries = [
         builder.build_primary_query(), 
         builder.build_secondary_query()
     ]
     max_jobs = 100
-    max_time = "day"
+    max_time = "week"
     scraper = LinkedInJobsScraper()
     for request in requests:
         for query in queries:

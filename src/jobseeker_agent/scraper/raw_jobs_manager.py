@@ -65,7 +65,10 @@ def add_new_job(job_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     job_data["posted_date"] = parse_relative_date(job_data.get("posted_date", ""))
 
     # Déterminer le nouvel ID
-    new_id = max([job.get("id", 0) for job in jobs] + [0]) + 1
+    if jobs:
+        new_id = jobs[-1].get("id", -1) + 1
+    else:
+        new_id = 1
     
     # Ajouter le nouvel emploi
     new_job = {"id": new_id, **job_data}
