@@ -47,7 +47,7 @@ if __name__ == "__main__":
     profil_pro = load_prompt("profil_pro")
     cv_template = load_cv_template()
 
-    JOB_ID = 312
+    JOB_ID = 73
 
     raw_jobs = load_raw_jobs()
     job = next((j for j in raw_jobs if j["id"] == JOB_ID), None)
@@ -55,6 +55,6 @@ if __name__ == "__main__":
     print(f"Extracting keywords for job: {job['id']} - {job['title']}")
     job_details = analyze_linkedin_job(job["job_link"])
     if job_details:
-        keywords = extract_keywords(job_details, profil_pro, cv_template)
-        print(keywords)
-        # print(json.dumps(keywords.dict(), indent=4))
+        keywords = extract_keywords(job_details, profil_pro, cv_template, model="gpt-5-mini")
+        # print(keywords)
+        print(json.dumps(keywords, indent=4))
