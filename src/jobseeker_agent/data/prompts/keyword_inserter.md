@@ -10,8 +10,11 @@ You are an expert in job-candidates matching and in resume optimization.
 ## Candidate resume
 {cv_template}
 
+## Keywords already present in the resume
+{keywords_present}
+
 ## Keywords to insert
-{keywords}
+{keywords_absent}
 
 Please first remove the keywords that do not fit my profile if any.
 For the remaining groups, please insert some or all of the keywords in the resume where it fits best.It can be in the "experience" or "skill" section.
