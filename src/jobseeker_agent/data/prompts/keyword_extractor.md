@@ -29,6 +29,12 @@ you should have a dictionary with the following structure:
     "simulation": ["godot", "godot game engine", "simulator"],
     "computer vision": ["camera calibration", "computer vision", "opencv", "yolov8", "optical flow"]
 
+Avoid grouping keywords as in "Vector databases / semantic search / RAG".
+Split them into separate keywords: 
+    "vector databases",
+    "semantic search",
+    "RAG"
+
 ### Keyword Extraction Rules:
 1.  **Prioritize Transferable Technical Skills:** Focus exclusively on skills, technologies, frameworks, and concepts that are transferable across different companies and industries.
     - **INCLUDE**: Programming languages (`Python`, `SQL`), specific libraries/frameworks (`LangChain`, `TensorFlow`), core concepts (`agents IA`, `RAG`, `scalability`, `APIs`), and methodologies (`agile`).

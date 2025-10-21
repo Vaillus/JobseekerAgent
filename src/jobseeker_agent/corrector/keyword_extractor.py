@@ -12,9 +12,9 @@ load_dotenv()
 class KeywordExtractionResponse(TypedDict):
     """Response structure for keyword extraction from job descriptions."""
     raw: Annotated[List[str], ..., "All raw keywords extracted from the job description. No groups here. Just a raw list. Put them in decreasing order of relevance for the job."]
-    match_present: Annotated[Dict[str, List[str]], ..., "Keywords that are in the job description, correspond to candidate's profile and are present in the resume (grouped by domain)."]
-    match_absent: Annotated[Dict[str, List[str]], ..., "Keywords that are in the job description, are mentioned in candidate's profile but are absent in the resume (grouped by domain)."]
-    mismatch_absent: Annotated[Dict[str, List[str]], ..., "Remaining keywords."]
+    match_present: Annotated[Dict[str, List[str]], ..., "Keywords strictly extracted from 'raw' that correspond to candidate's profile and are present in the resume (grouped by domain)."]
+    match_absent: Annotated[Dict[str, List[str]], ..., "Keywords strictly extracted from 'raw' that are mentioned in candidate's profile but are absent in the resume (grouped by domain)."]
+    mismatch_absent: Annotated[Dict[str, List[str]], ..., "Remaining keywords strictly extracted from 'raw'"]
     irrelevant: Annotated[Dict[str, List[str]], ..., "keywords, skills and domains that are present in the resume, but likely to be irrelevant for the job (grouped by domain)."]
 
 
@@ -25,7 +25,7 @@ def extract_keywords(job_details: dict, profil_pro: str, cv_template: str, model
     
     llm = get_llm(model)
     llm = llm.with_structured_output(KeywordExtractionResponse)
-
+    
     message = HumanMessage(
         content=keyword_extractor_prompt.format(
             job_description=job_details["description"],
@@ -33,7 +33,11 @@ def extract_keywords(job_details: dict, profil_pro: str, cv_template: str, model
             cv_template=cv_template,
         )
     )
+    import time
+    start_time = time.time()
     response = llm.invoke([message])
+    end_time = time.time()
+    print(f"Keyword extraction took {end_time - start_time:.2f} seconds")
     # convert to dict
     # response = response.model_dump()
 
@@ -47,7 +51,7 @@ if __name__ == "__main__":
     profil_pro = load_prompt("profil_pro")
     cv_template = load_cv_template()
 
-    JOB_ID = 73
+    JOB_ID = 270
 
     raw_jobs = load_raw_jobs()
     job = next((j for j in raw_jobs if j["id"] == JOB_ID), None)
