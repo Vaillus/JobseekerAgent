@@ -12,3 +12,4 @@ You are an expert in job-candidates matching and in resume optimization.
 
 Choose a title for the resume that is a good fit for the job description and the candidate profile.
 Do not use the word "senior" in the title.
+Keep it simple, ideally 4 words maximum, down to 2.

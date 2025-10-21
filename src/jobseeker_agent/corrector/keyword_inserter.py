@@ -5,8 +5,7 @@ from langchain.schema import HumanMessage
 from jobseeker_agent.utils.paths import load_prompt
 from jobseeker_agent.utils.llm import get_llm
 
-from jobseeker_agent.corrector.keyword_extractor import extract_keywords
-from jobseeker_agent.corrector.keyword_corrector import correct_keywords
+from jobseeker_agent.utils.paths import load_cv_template
 
 load_dotenv()
 
@@ -33,7 +32,7 @@ if __name__ == "__main__":
     from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
     from jobseeker_agent.utils.paths import load_raw_jobs
 
-    JOB_ID = 312
+    JOB_ID = 73
 
     raw_jobs = load_raw_jobs()
     job = next((j for j in raw_jobs if j["id"] == JOB_ID), None)
@@ -43,5 +42,15 @@ if __name__ == "__main__":
     job_description = job_details["description"]
     profil_pro = load_prompt("profil_pro")
     cv_template = load_cv_template()
-    keywords = extract_keywords(job_details, profil_pro, cv_template)
-    print(keywords)
+
+    import json
+    from jobseeker_agent.utils.paths import get_data_path
+    
+    keywords_file = get_data_path() / "resume" / "kw_73.json"
+    with open(keywords_file, "r", encoding="utf-8") as f:
+        keywords = json.load(f)
+    print(keywords["match_absent"])
+
+    response = insert_keywords(job_description, profil_pro, cv_template, keywords["match_absent"], model="gpt-5-mini")
+    print(*response["report"], sep="\n")
+    # print(response["resume"])

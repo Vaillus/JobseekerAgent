@@ -15,14 +15,17 @@ if __name__ == "__main__":
     from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
     from jobseeker_agent.utils.paths import load_raw_jobs
 
-    JOB_ID = 312
-    model = "gpt-4o-mini"
+    JOB_ID = 73
+    model = "gpt-5-mini"
     raw_jobs = load_raw_jobs()
     job = next((j for j in raw_jobs if j["id"] == JOB_ID), None)
     job_details = analyze_linkedin_job(job["job_link"])
     job_description = job_details["description"]
     profil_pro = load_prompt("profil_pro")
     resume = load_cv_template()
+
+    print(job["job_link"])
+
     response = rank_experiences(job_description, profil_pro, resume, model)
     print(response["ranking"])
     resume = response["resume"]
@@ -31,13 +34,13 @@ if __name__ == "__main__":
     import json
     print(json.dumps(keywords, indent=2, ensure_ascii=False))
 
-    response = insert_keywords(job_description, profil_pro, resume, keywords, model)
-    print(response["report"])
+    response = insert_keywords(job_description, profil_pro, resume, keywords["match_absent"], model)
+    print(*response["report"], sep="\n")
     resume = response["resume"]
 
-    response = correct_keywords(job_description, profil_pro, resume, keywords, model)
+    response = correct_keywords(job_description, profil_pro, resume, keywords["mismatch_absent"], model)
     if response["any_correction"]:
-        print(response["report"])
+        print(*[json.dumps(r, indent=2, ensure_ascii=False) for r in response["report"]], sep="\n")
         resume = response["resume"]
 
     response = rank_skills(job_description, profil_pro, resume, model)
@@ -47,10 +50,10 @@ if __name__ == "__main__":
     print(response["title"])
     resume = response["resume"]
 
-    response = correct_experiences(job_description, profil_pro, resume, model)
-    if response["any_correction"]:
-        print(response["report"])
-        resume = response["resume"]
+    # response = correct_experiences(job_description, profil_pro, resume, model)
+    # if response["any_correction"]:
+    #     print(response["report"])
+    #     resume = response["resume"]
 
     file_path = get_data_path() / "resume" / "test" / f"cv-test.tex"
     try:

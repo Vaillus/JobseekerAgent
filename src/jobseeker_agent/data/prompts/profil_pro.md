@@ -92,6 +92,8 @@ keywords: tool-augmented workflow, agent frameworks
 ### Projet | Workflow de recherche d'emploi (Octobre 2025)
 Maintenant que j'ai fini le cours de Andrew Ng, j'avais déjà commencé à faire des prompts qui m'aident à faire, qui m'assistent, pour que des agents m'assistent dans ma recherche d'emploi. Donc par exemple un prompt qui m'aide à évaluer des offres, si c'est un bon fit pour moi, et j'utilise Cursor pour corriger mon CV. J'ai déjà fait une petite partie du travail, et maintenant l'objectif c'est de complètement automatiser la pipeline de postulation avec des agents, grâce à ce que j'ai appris dans le cours.
 En revanche, si je postule à un job qui demande l'utilisation de workflow d'agent, il faut que je me présente comme ayant déjà ces compétences. (eg. langchain, langgraph, ...) Je pense que ça va aller vite et peu de gens maîtrisent déjà ça.
+J'ai pas utilisé de RAG sur ce projet. Par contre, j'ai utilisé LangChain pour la gestion des agents et des pipelines, et je projette d'utiliser langgraph très prochainement.
+
 
 ### Projet | Calibration de Caméra (Mai - Août 2025)
 - **Situation** : Après ma thèse et un retour d'entretien m'orientant vers le CV, j'ai décidé de construire un projet public et techniquement profond pour démontrer mes compétences. J'ai choisi le challenge de calibration de Comma.ai.
