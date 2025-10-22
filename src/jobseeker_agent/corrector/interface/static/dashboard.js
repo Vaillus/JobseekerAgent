@@ -249,7 +249,7 @@ function renderData(keywordsData, titlesData) {
             labelsDiv.className = 'keyword-labels';
             keywords.forEach(keyword => {
                 if (typeof keyword !== 'string') { return; }
-                const cleanKeyword = keyword.replace(/[\\r\\n]+/g, ' ').trim();
+                const cleanKeyword = keyword.replace(/[\r\n]+/g, ' ').trim();
                 const labelSpan = document.createElement('span');
                 labelSpan.className = 'keyword-label';
                 labelSpan.classList.add(subGroupTitle.replace(/_/g, '-'));
