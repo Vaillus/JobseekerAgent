@@ -70,7 +70,8 @@ def dashboard():
             .container { display: flex; height: 100%; }
             .left-pane { flex: 1; padding: 1em; border-right: 1px solid #ddd; overflow-y: auto; }
             .right-pane { flex: 1; display: flex; flex-direction: column; }
-            .toolbar { padding: 10px; border-bottom: 1px solid #ddd; background-color: #f8f8f8; flex-shrink: 0; display: flex; align-items: center; }
+            .toolbar { padding: 10px; border-bottom: 1px solid #ddd; background-color: #f8f8f8; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+            .toolbar-center { flex-grow: 1; text-align: center; }
             .content-view { flex-grow: 1; }
             embed { width: 100%; height: 100%; border: none; }
             #tex-viewer { height: 100%; }
@@ -391,8 +392,12 @@ def dashboard():
             </div>
             <div class="right-pane">
                 <div class="toolbar">
-                    <button id="refresh-btn" class="toolbar-btn action-btn">Refresh</button>
-                    <button id="save-btn" class="toolbar-btn action-btn" style="display: none;">Save</button>
+                    <div class="toolbar-left">
+                        <button id="refresh-btn" class="toolbar-btn action-btn">Refresh</button>
+                        <button id="save-btn" class="toolbar-btn action-btn" style="display: none;">Save</button>
+                    </div>
+                    <div class="toolbar-center">
+                    </div>
                     <div class="view-switcher">
                         <button id="view-pdf-btn" class="toolbar-btn active">PDF</button>
                         <button id="view-tex-btn" class="toolbar-btn">TeX</button>
@@ -411,8 +416,8 @@ def dashboard():
             </div>
         </div>
         <script>
-            const refreshBtn = document.getElementById('refresh-btn');
             const saveBtn = document.getElementById('save-btn');
+            const refreshBtn = document.getElementById('refresh-btn');
             const pdfViewer = document.getElementById('pdf-viewer');
             const texViewer = document.getElementById('tex-viewer');
             const jobViewer = document.getElementById('job-viewer');
@@ -482,7 +487,23 @@ def dashboard():
                 });
             }
 
-            refreshBtn.addEventListener('click', refreshPdf);
+            refreshBtn.addEventListener('click', () => {
+                // If in TeX view, recompile. If in PDF view, just refresh.
+                if (texViewer.style.display === 'block') {
+                    fetch("{{ url_for('recompile_tex') }}", { method: 'POST' })
+                        .then(res => res.json())
+                        .then(data => {
+                            if(data.success) {
+                                alert('Recompilation successful!');
+                                refreshPdf();
+                            } else {
+                                alert('Recompilation failed: ' + data.error);
+                            }
+                        });
+                } else {
+                    refreshPdf();
+                }
+            });
             
             viewPdfBtn.addEventListener('click', function() {
                 pdfViewer.style.display = 'block';
@@ -499,7 +520,7 @@ def dashboard():
                 pdfViewer.style.display = 'none';
                 texViewer.style.display = 'block';
                 jobViewer.style.display = 'none';
-                refreshBtn.style.display = 'none';
+                refreshBtn.style.display = 'inline-block';
                 saveBtn.style.display = 'inline-block';
                 viewPdfBtn.classList.remove('active');
                 viewTexBtn.classList.add('active');
@@ -724,6 +745,8 @@ def dashboard():
                 .then(data => {
                     if (data.success) {
                         console.log('Title updated successfully.');
+                        texEditor.value = ""; // Force refresh on next view
+                        refreshTex();
                         refreshPdf();
                         viewPdfBtn.click(); // Switch to PDF to show the change
                     } else {
@@ -832,6 +855,7 @@ def dashboard():
                 .then(data => {
                     if (data.success) {
                         alert('File saved and recompiled successfully!');
+                        texEditor.value = ""; // Force refresh on next view
                         // Switch to PDF view and refresh to see changes
                         viewPdfBtn.click();
                         refreshPdf();
@@ -889,6 +913,19 @@ def save_tex():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@app.route("/recompile-tex", methods=["POST"])
+def recompile_tex():
+    """Just recompiles the existing TeX file."""
+    try:
+        success, error_log = compile_tex()
+        if success:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False, "error": f"Compilation failed:\n{error_log}"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @app.route("/update-title", methods=["POST"])
 def update_title():
     """Finds and replaces the title in the resume.tex file."""
@@ -901,14 +938,12 @@ def update_title():
         resume_file = get_data_path() / "resume" / str(JOB_ID) / "resume.tex"
         content = resume_file.read_text(encoding="utf-8")
 
-        # Use regex to replace the content of \title{...}
+        # Use regex to replace the content of \textbf{\LARGE ...}
         import re
-        # This regex is non-greedy and handles nested braces to a degree, common in LaTeX
-        new_content, count = re.subn(r'(\\title\{)(.*?)(\})', r'\\title{' + new_title + r'}', content, count=1)
+        new_content, count = re.subn(r'(\\textbf{\\LARGE )(.*?)(\})', r'\\textbf{\\LARGE ' + new_title + r'}', content, count=1)
 
         if count == 0:
-            return jsonify({"success": False, "error": "\\title{...} tag not found in resume.tex"}), 404
-
+            return jsonify({"success": False, "error": "\\textbf{\\LARGE ...} tag not found in resume.tex"}), 404
         resume_file.write_text(new_content, encoding="utf-8")
 
         compile_success, compile_log = compile_tex()
@@ -1178,8 +1213,6 @@ def serve_pdf(filename: str):
 def main():
     """Main function to run the Flask app."""
     url = "http://127.0.0.1:5001/"
-    # Open browser slightly after server starts
-    threading.Timer(1.25, lambda: webbrowser.open(url)).start()
     print(f"Starting the dashboard server at {url}")
     print("Press CTRL+C to stop the server.")
     app.run(port=5001, debug=True)
