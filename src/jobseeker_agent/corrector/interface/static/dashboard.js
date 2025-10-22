@@ -332,6 +332,84 @@ function updateTitle(title, clickedButton = null) {
     });
 }
 
+function startAndPollRanking() {
+    function pollRankingStatus() {
+        fetch("/ranking-status")
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'complete') {
+                fetch("/ranking-report")
+                .then(res => res.json())
+                .then(reportData => {
+                    const reportContainer = document.getElementById('ranking-report');
+                    reportContainer.innerHTML = '';
+                    
+                    const expTitle = document.createElement('h5');
+                    expTitle.textContent = 'Experience Ranking';
+                    reportContainer.appendChild(expTitle);
+                    const expList = document.createElement('ul');
+                    reportData.experience_ranking.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = item;
+                        expList.appendChild(li);
+                    });
+                    reportContainer.appendChild(expList);
+
+                    const skillTitle = document.createElement('h5');
+                    skillTitle.textContent = 'Skill Ranking';
+                    reportContainer.appendChild(skillTitle);
+                    for (const category in reportData.skill_ranking) {
+                        const catTitle = document.createElement('h6');
+                        catTitle.textContent = category.replace(/_/g, ' ');
+                        reportContainer.appendChild(catTitle);
+                        const skillList = document.createElement('ul');
+                        reportData.skill_ranking[category].forEach(item => {
+                            const li = document.createElement('li');
+                            li.textContent = item;
+                            skillList.appendChild(li);
+                        });
+                        reportContainer.appendChild(skillList);
+                    }
+                    
+                    alert('Ranking successful! PDF is being updated.');
+                    setTimeout(() => {
+                        refreshPdf();
+                        viewPdfBtn.click();
+                    }, 2500);
+                })
+                .catch(error => console.error("Failed to fetch ranking report:", error))
+                .finally(() => {
+                    const btn = document.getElementById('rank-resume-btn');
+                    btn.textContent = 'Rank Resume';
+                    btn.disabled = false;
+                });
+            } else if (data.status === 'pending') {
+                setTimeout(pollRankingStatus, 2000);
+            } else if (data.status === 'failed') {
+                const reportContainer = document.getElementById('ranking-report');
+                reportContainer.innerHTML = `<p style="color: red;">Ranking failed: ${data.error || 'Unknown error'}</p>`;
+                const btn = document.getElementById('rank-resume-btn');
+                btn.textContent = 'Rank Resume';
+                btn.disabled = false;
+            }
+        });
+    }
+
+    fetch("/start-ranking", { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'started') {
+            pollRankingStatus();
+        } else {
+            const reportContainer = document.getElementById('ranking-report');
+            reportContainer.innerHTML = `<p style="color: red;">Could not start ranking: ${data.status}</p>`;
+            const btn = document.getElementById('rank-resume-btn');
+            btn.textContent = 'Rank Resume';
+            btn.disabled = false;
+        }
+    });
+}
+
 // --- Main script execution ---
 console.log("DOMContentLoaded event will not fire, script running directly.");
 
@@ -443,6 +521,8 @@ function pollInitialLoadStatus() {
                     logLine.textContent = "Execution successful, but no report was generated.";
                     reportContainer.appendChild(logLine);
                 }
+                document.getElementById('rank-resume-btn').style.display = 'block';
+
 
                 alert('Execution successful! PDF is being updated.');
                 setTimeout(() => {
@@ -474,6 +554,14 @@ function pollInitialLoadStatus() {
             btn.textContent = 'Run Keyword Executor';
             btn.disabled = false;
         });
+    });
+
+    document.getElementById('rank-resume-btn').addEventListener('click', function() {
+        const btn = this;
+        btn.textContent = 'Ranking...';
+        btn.disabled = true;
+        
+        startAndPollRanking();
     });
 
     document.getElementById('finalize-btn').addEventListener('click', function() {

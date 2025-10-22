@@ -251,6 +251,35 @@ def initial_load_status():
     return jsonify(state.DATA_LOADING_STATUS)
 
 
+@bp.route("/start-ranking", methods=["POST"])
+def start_ranking():
+    """Starts the ranking in a background thread."""
+    if state.RANKING_THREAD is None or not state.RANKING_THREAD.is_alive():
+        print("Starting ranking thread...")
+        state.RANKING_THREAD = threading.Thread(target=tasks.run_ranker_task)
+        state.RANKING_THREAD.daemon = True
+        state.RANKING_THREAD.start()
+        return jsonify({"status": "started"})
+    else:
+        return jsonify({"status": "already_running"})
+
+
+@bp.route("/ranking-status")
+def ranking_status():
+    """Checks the status of the ranking."""
+    return jsonify(state.RANKING_STATUS)
+
+
+@bp.route("/ranking-report")
+def get_ranking_report():
+    """Serves the ranking report JSON file."""
+    report_file = get_data_path() / "resume" / str(state.JOB_ID) / "ranking_report.json"
+    try:
+        return send_from_directory(report_file.parent, report_file.name)
+    except FileNotFoundError:
+        return jsonify({"error": "Ranking report file not found"}), 404
+
+
 @bp.route("/job-description")
 def get_job_description():
     """Serves the job description text."""

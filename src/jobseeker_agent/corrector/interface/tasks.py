@@ -10,6 +10,7 @@ from jobseeker_agent.utils.paths import (
 from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
 from jobseeker_agent.corrector.keyword_extractor_2 import extract_keywords
 from jobseeker_agent.corrector.keyword_executor import execute_keywords
+from jobseeker_agent.corrector.ranker import rank
 
 
 def run_keyword_extraction_task():
@@ -31,7 +32,7 @@ def run_keyword_extraction_task():
         print("    [THREAD] ...LinkedIn page analyzed.")
 
         print("    [THREAD] Calling LLM to extract keywords...")
-        extraction_response = extract_keywords(
+        extraction_response = extract_keywords(job,
             job_details, profil_pro, resume, model="gpt-5-mini"
         )
         print("    [THREAD] ...LLM response received.")
@@ -116,3 +117,42 @@ def run_initial_load_task():
         print(f"❌ Background initial data load failed: {e}")
         state.DATA_LOADING_STATUS["status"] = "failed"
         state.DATA_LOADING_STATUS["error"] = str(e)
+
+
+def run_ranker_task():
+    """The actual ranking logic to be run in a background thread."""
+    try:
+        print("➡️ [THREAD] Ranker task started.")
+        state.RANKING_STATUS["status"] = "pending"
+
+        print("    [THREAD] Loading job, prompt, and resume...")
+        profil_pro = load_prompt("profil_pro")
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        resume_content = resume_file.read_text(encoding="utf-8")
+        print("    [THREAD] ...data loaded.")
+
+        print("    [THREAD] Calling LLM to rank experiences and skills...")
+        response = rank(state.JOB_DESCRIPTION, profil_pro, resume_content)
+        print("    [THREAD] ...LLM response received.")
+
+        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+        ranking_report_file = job_dir / "ranking_report.json"
+        ranking_report = {
+            "experience_ranking": response["experience_ranking"],
+            "skill_ranking": response["skill_ranking"],
+        }
+        with open(ranking_report_file, "w", encoding="utf-8") as f:
+            json.dump(ranking_report, f, indent=4)
+
+        resume_file.write_text(response["resume"], encoding="utf-8")
+
+        print("    [THREAD] Compiling ranked TeX file...")
+        utils.compile_tex()
+        print("    [THREAD] ...TeX file compiled.")
+
+        state.RANKING_STATUS["status"] = "complete"
+        print("✅ Background ranking complete.")
+    except Exception as e:
+        print(f"❌ Background ranking failed: {e}")
+        state.RANKING_STATUS["status"] = "failed"
+        state.RANKING_STATUS["error"] = str(e)

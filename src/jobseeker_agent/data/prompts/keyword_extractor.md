@@ -59,12 +59,10 @@ Split them into separate keywords:
 
 # Observations
 
-- Proficiency in spanish/french is always good to mention.
-- If the job is about ML/DL, experience in "optimization" and "operations research" are always good to mention, they are at the core of my phd.
 - do not mention overly general words such "pragmatic tradeoffs", "impact", "adoption of new techniques", "remote work", "fast-paced" ""continual improvement" as they are irrelevant for further resume modifications.
 - years of experience are not relevant here.
-- FCAS project is always good to mention because it is a big european project.
 - Avoid keywords like "automatic report generation (conceptual via projects with LLM prompts)" -> just output "automatic report generation".
+- do not make groups containing only keywords that are already present in the candidate's resume. Discard them.
 
 Also, provide 3 suggestions for the title of the resume that are good fits for the job description and the candidate profile.
 If the job title from the offer it is a valid title for the candidate, put it in the suggestions.
