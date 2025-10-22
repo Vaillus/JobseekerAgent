@@ -260,6 +260,25 @@ def dashboard():
                 cursor: not-allowed;
             }
 
+            /* Log display styles */
+            #executor-report {
+                background-color: #f8f8f8;
+                border: 1px solid #ddd;
+                padding: 1em;
+                border-radius: 5px;
+                min-height: 200px;
+                overflow-y: auto;
+            }
+            .log-line {
+                padding: 2px 5px;
+                border-bottom: 1px solid #eee;
+                font-family: monospace;
+                white-space: pre-wrap; /* Allows wrapping long lines */
+            }
+            .log-line:last-child {
+                border-bottom: none;
+            }
+
             /* Tab styles */
             .tabs {
                 display: flex;
@@ -386,7 +405,7 @@ def dashboard():
                     <div id="executor-tab" class="tab-content" style="display: none;">
                         <button id="run-executor-btn" class="toolbar-btn action-btn" style="width: 100%; margin-bottom: 1em;">Run Keyword Executor</button>
                         <h4>Execution Report:</h4>
-                        <pre id="executor-report" style="background-color: #f8f8f8; border: 1px solid #ddd; padding: 1em; border-radius: 5px; min-height: 200px;"></pre>
+                        <div id="executor-report"></div>
                     </div>
                 </div>
             </div>
@@ -468,22 +487,36 @@ def dashboard():
                         return;
                     }
 
+                    // Clear previous content
+                    container.innerHTML = '';
+
+                    // --- Build the job details view safely ---
                     const score = data.score !== null && data.score !== undefined ? `(${data.score})` : '';
 
-                    container.innerHTML = `
-                        <div class="job-header">
-                            <h1>${ data.title || 'N/A' }</h1>
-                            <h2>${ data.company_name || 'N/A' } - ${ data.location || 'N/A' }</h2>
-                            <p>Posted: ${ data.posted_date || 'N/A' } | Workplace: ${ data.workplace_type || 'N/A' }</p>
-                        </div>
-                        <hr>
-                        <h3>Full Job Description</h3>
-                        <pre>${ data.description || 'Not available.' }</pre>
-                        <h3>Synthesis and Decision</h3>
-                        <pre>${ data.synthesis || 'Not available.' }</pre>
-                        <h3>Evaluation Grid ${score}</h3>
-                        <pre>${ data.evaluation_grid || 'Not available.' }</pre>
+                    // Header
+                    const header = document.createElement('div');
+                    header.className = 'job-header';
+                    header.innerHTML = `
+                        <h1>${data.title || 'N/A'}</h1>
+                        <h2>${data.company_name || 'N/A'} - ${data.location || 'N/A'}</h2>
+                        <p>Posted: ${data.posted_date || 'N/A'} | Workplace: ${data.workplace_type || 'N/A'}</p>
                     `;
+                    container.appendChild(header);
+                    container.appendChild(document.createElement('hr'));
+
+                    // Helper to create sections
+                    function createSection(title, content) {
+                        const h3 = document.createElement('h3');
+                        h3.textContent = title;
+                        const pre = document.createElement('pre');
+                        pre.textContent = content || 'Not available.';
+                        container.appendChild(h3);
+                        container.appendChild(pre);
+                    }
+
+                    createSection('Full Job Description', data.description);
+                    createSection('Synthesis and Decision', data.synthesis);
+                    createSection(`Evaluation Grid ${score}`, data.evaluation_grid);
                 });
             }
 
@@ -574,7 +607,13 @@ def dashboard():
                             setTimeout(pollExtractionStatus, 2000);
                         } else if (data.status === 'failed') {
                             const loader = document.getElementById('keyword-loading-container');
-                            loader.innerHTML = `<h4>Extraction Failed</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
+                            loader.innerHTML = ''; // Clear previous content
+                            const h4 = document.createElement('h4');
+                            h4.textContent = 'Extraction Failed';
+                            const p = document.createElement('p');
+                            p.textContent = data.error || 'An unknown error occurred.';
+                            loader.appendChild(h4);
+                            loader.appendChild(p);
                         }
                     });
                 }
@@ -585,8 +624,14 @@ def dashboard():
                     if (data.status === 'started' || data.status === 'complete') {
                         pollExtractionStatus();
                     } else {
-                         const loader = document.getElementById('keyword-loading-container');
-                         loader.innerHTML = `<h4>Could not start extraction</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
+                        const loader = document.getElementById('keyword-loading-container');
+                        loader.innerHTML = ''; // Clear previous content
+                        const h4 = document.createElement('h4');
+                        h4.textContent = 'Could not start extraction';
+                        const p = document.createElement('p');
+                        p.textContent = data.error || 'An unknown error occurred.';
+                        loader.appendChild(h4);
+                        loader.appendChild(p);
                     }
                 });
             }
@@ -599,22 +644,20 @@ def dashboard():
                 const titlesList = document.getElementById('title-suggestions-list');
                 if (titlesList && Array.isArray(titlesData) && titlesData.length > 0) {
                     titlesData.forEach(title => {
+                        if (typeof title !== 'string') { return; }
+                        const cleanTitle = title.replace(/[\\r\\n]+/g, ' ').trim();
                         const btn = document.createElement('button');
                         btn.className = 'title-suggestion-btn';
-                        btn.textContent = title;
-                        btn.onclick = () => updateTitle(title, btn);
+                        btn.textContent = cleanTitle;
+                        btn.onclick = () => updateTitle(cleanTitle, btn);
                         titlesList.appendChild(btn);
                     });
                     titlesContainer.style.display = 'block';
-                } else {
-                    console.error("No titles found or error loading titles:", titlesData);
                 }
 
                 const container = document.getElementById('keywords-container');
-                if (!container || keywordsData.error) {
-                    console.error("Error loading keywords:", keywordsData.error);
-                    return;
-                }
+                if (!container || keywordsData.error) { return; }
+
                 container.innerHTML = '';
                 for (const groupTitle in keywordsData) {
                     const groupData = keywordsData[groupTitle];
@@ -642,10 +685,12 @@ def dashboard():
                         const labelsDiv = document.createElement('div');
                         labelsDiv.className = 'keyword-labels';
                         keywords.forEach(keyword => {
+                            if (typeof keyword !== 'string') { return; }
+                            const cleanKeyword = keyword.replace(/[\\r\\n]+/g, ' ').trim();
                             const labelSpan = document.createElement('span');
                             labelSpan.className = 'keyword-label';
                             labelSpan.classList.add(subGroupTitle.replace(/_/g, '-'));
-                            labelSpan.textContent = keyword;
+                            labelSpan.textContent = cleanKeyword;
                             const labelRemoveBtn = document.createElement('button');
                             labelRemoveBtn.className = 'remove-btn';
                             labelRemoveBtn.innerHTML = '&times;';
@@ -720,18 +765,21 @@ def dashboard():
                         if (data.status === 'complete') {
                             document.getElementById('initial-loading-container').style.display = 'none';
                             document.getElementById('main-content').style.display = 'block';
-                            // Now that initial data is loaded, start the keyword extraction
                             startAndPollExtraction();
                         } else if (data.status === 'pending') {
-                            setTimeout(pollInitialLoadStatus, 2000); // Poll again
+                            setTimeout(pollInitialLoadStatus, 2000);
                         } else if (data.status === 'failed') {
                             const loader = document.getElementById('initial-loading-container');
-                            loader.innerHTML = `<h4>Failed to load job data</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
+                            loader.innerHTML = '';
+                            const h4 = document.createElement('h4');
+                            h4.textContent = 'Failed to load job data';
+                            const p = document.createElement('p');
+                            p.textContent = data.error || 'An unknown error occurred.';
+                            loader.appendChild(h4);
+                            loader.appendChild(p);
                         }
                     });
                 }
-
-                console.log("Starting initial data load fetch...");
                 fetch("{{ url_for('start_initial_load') }}", { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
@@ -739,7 +787,13 @@ def dashboard():
                         pollInitialLoadStatus();
                     } else {
                         const loader = document.getElementById('initial-loading-container');
-                        loader.innerHTML = `<h4>Could not start data loading</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
+                        loader.innerHTML = '';
+                        const h4 = document.createElement('h4');
+                        h4.textContent = 'Could not start data loading';
+                        const p = document.createElement('p');
+                        p.textContent = data.error || 'An unknown error occurred.';
+                        loader.appendChild(h4);
+                        loader.appendChild(p);
                     }
                 });
 
@@ -771,22 +825,48 @@ def dashboard():
                 // Executor logic
                 document.getElementById('run-executor-btn').addEventListener('click', function() {
                     const btn = this;
-                    const reportPre = document.getElementById('executor-report');
+                    const reportContainer = document.getElementById('executor-report');
                     btn.textContent = 'Executing...';
                     btn.disabled = true;
-                    reportPre.textContent = 'Running... please wait.';
+                    reportContainer.innerHTML = '<div class="log-line">Running... please wait.</div>';
 
                     fetch("{{ url_for('run_executor') }}", { method: 'POST' })
                     .then(response => response.json())
                     .then(data => {
+                        reportContainer.innerHTML = ''; // Clear the container
                         if (data.success) {
-                            reportPre.textContent = data.report.join('\\n');
+                            if (Array.isArray(data.report)) {
+                                data.report.forEach(line => {
+                                    const logLine = document.createElement('div');
+                                    logLine.className = 'log-line';
+                                    logLine.textContent = line;
+                                    reportContainer.appendChild(logLine);
+                                });
+                            } else if (data.report) {
+                                const logLine = document.createElement('div');
+                                logLine.className = 'log-line';
+                                logLine.textContent = data.report;
+                                reportContainer.appendChild(logLine);
+                            } else {
+                                const logLine = document.createElement('div');
+                                logLine.className = 'log-line';
+                                logLine.textContent = "Execution successful, but no report was generated.";
+                                reportContainer.appendChild(logLine);
+                            }
+
                             alert('Execution successful! PDF is being updated.');
-                            refreshPdf(); // Refresh the PDF to show changes
-                            viewPdfBtn.click(); // Switch to PDF view
+                            setTimeout(() => {
+                                refreshPdf();
+                                viewPdfBtn.click();
+                            }, 1500);
                         } else {
-                            reportPre.textContent = "Error during execution:\\n" + data.error;
-                            alert('Execution failed: ' + (data.error || 'Unknown error'));
+                            const safeError = String(data.error || 'Unknown error');
+                            const errorLine = document.createElement('div');
+                            errorLine.className = 'log-line';
+                            errorLine.style.color = 'red';
+                            errorLine.textContent = "Error during execution: " + safeError;
+                            reportContainer.appendChild(errorLine);
+                            alert('Execution failed: ' + safeError.substring(0, 500));
                         }
                     })
                     .finally(() => {
@@ -1076,18 +1156,21 @@ def run_initial_load_task():
     """Loads all necessary data in a background thread."""
     global DATA_LOADING_STATUS, JOB_DESCRIPTION, JOB_DETAILS
     try:
+        print("➡️ [THREAD] Initial load task started.")
         DATA_LOADING_STATUS['status'] = 'pending'
 
         # --- Data Pre-processing ---
-        # print(f"Loading job {JOB_ID}...")
         job = load_raw_job(JOB_ID)
+        print("    [THREAD] Analyzing LinkedIn job page...")
         job_details_live = analyze_linkedin_job(job["job_link"])
-        # print(f"Job details loaded: {job_details_live}")
+        print("    [THREAD] ...LinkedIn page analyzed.")
+
         if not job_details_live:
             raise Exception("Failed to fetch live job details from LinkedIn.")
 
         JOB_DESCRIPTION = job_details_live.get("description", "Could not fetch job description.")
 
+        print("    [THREAD] Loading evals.json...")
         evals_path = get_data_path() / "evaluator" / "evals.json"
         job_eval = {}
         try:
@@ -1098,6 +1181,7 @@ def run_initial_load_task():
                 job_eval = job_eval_data
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Could not load or parse evals.json: {e}")
+        print("    [THREAD] ...evals.json loaded.")
 
         JOB_DETAILS = {
             "title": job.get("title"),
@@ -1117,7 +1201,10 @@ def run_initial_load_task():
         resume = load_cv_template()
         with open(job_dir / "resume.tex", "w", encoding="utf-8") as f:
             f.write(resume)
+        
+        print("    [THREAD] Compiling initial TeX file...")
         compile_tex()
+        print("    [THREAD] ...TeX file compiled.")
 
         DATA_LOADING_STATUS['status'] = 'complete'
         print("✅ Background initial data load complete.")
