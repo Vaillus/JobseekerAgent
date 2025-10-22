@@ -23,6 +23,8 @@ from jobseeker_agent.corrector.keyword_extractor import extract_keywords
 from jobseeker_agent.corrector.keyword_inserter import insert_keywords
 from jobseeker_agent.corrector.keyword_corrector import correct_keywords
 from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.corrector.keyword_executor import execute_keywords
+from jobseeker_agent.corrector.keyword_extractor_2 import extract_keywords
 
 
 def save_results(to_save: List[Tuple[str, Any, str]], process_name: str) -> None:
@@ -46,6 +48,11 @@ app = Flask(__name__)
 
 JOB_ID = 270
 JOB_DESCRIPTION = ""
+JOB_DETAILS = {}
+EXTRACTION_THREAD = None
+EXTRACTION_STATUS = {"status": "idle", "error": None}
+DATA_LOADING_THREAD = None
+DATA_LOADING_STATUS = {"status": "idle", "error": None}
 
 
 @app.route("/")
@@ -71,6 +78,10 @@ def dashboard():
             #job-viewer { height: 100%; overflow-y: auto; }
             #job-viewer pre { white-space: pre-wrap; word-wrap: break-word; padding: 1em; margin: 0; }
             h1 { color: #2c3e50; }
+            .info { background-color: #eaf2f8; border-left: 5px solid #3498db; padding: 1em; margin-bottom: 1em; border-radius: 5px; }
+            .job-header h1, .job-header h2 { margin: 0 0 0.25em 0; }
+            .job-header h2 { font-weight: normal; color: #555; }
+            #job-viewer h3 { border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-top: 1.5em;}
             .toolbar-btn {
                 background-color: #ecf0f1;
                 color: #34495e;
@@ -248,14 +259,74 @@ def dashboard():
                 cursor: not-allowed;
             }
 
+            /* Tab styles */
+            .tabs {
+                display: flex;
+                border-bottom: 1px solid #ddd;
+                margin-bottom: 1em;
+                background-color: #f8f8f8;
+                padding: 5px 10px;
+                border-radius: 5px;
+                overflow-x: auto; /* Allow horizontal scrolling for many tabs */
+            }
+            .tab-btn {
+                background-color: #ecf0f1;
+                color: #34495e;
+                border: 1px solid #bdc3c7;
+                padding: 8px 15px;
+                border-radius: 5px 5px 0 0;
+                cursor: pointer;
+                font-size: 0.9em;
+                margin-right: 5px;
+                transition: background-color 0.2s, color 0.2s;
+                white-space: nowrap; /* Prevent text wrapping */
+            }
+            .tab-btn:hover {
+                background-color: #dce4e7;
+            }
+            .tab-btn.active {
+                background-color: #3498db;
+                color: white;
+                border-color: #3498db;
+            }
+            .tab-content {
+                display: none; /* Hidden by default */
+                padding: 1em;
+                border: 1px solid #ddd;
+                border-top: none;
+                border-radius: 0 5px 5px 5px;
+                background-color: #f8f8f8;
+                overflow-y: auto; /* Allow scrolling for long content */
+            }
+            .tab-content.active {
+                display: block; /* Show the active tab */
+            }
+
         </style>
     </head>
     <body>
         <div class="container">
             <div class="left-pane">
                 <h1>Workspace</h1>
-                <div id="keywords-container"></div>
-                <button id="finalize-btn" disabled>Finalize & Save Keywords</button>
+                <div id="initial-loading-container">
+                    <h4>Loading Job Data...</h4>
+                    <p>This may take a moment. The interface will appear here once the process is complete.</p>
+                </div>
+                <div id="main-content" style="display: none;">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="keywords">Keywords</button>
+                        <button class="tab-btn" data-tab="executor">Executor</button>
+                    </div>
+                    <div id="keywords-tab" class="tab-content">
+                        <div id="keywords-container"></div>
+                        <button id="finalize-btn" disabled>Finalize & Save Keywords</button>
+                    </div>
+                    <div id="executor-tab" class="tab-content" style="display: none;">
+                        <button id="run-executor-btn" class="toolbar-btn action-btn" style="width: 100%; margin-bottom: 1em;">Run Keyword Executor</button>
+                        <h4>Execution Report:</h4>
+                        <pre id="executor-report" style="background-color: #f8f8f8; border: 1px solid #ddd; padding: 1em; border-radius: 5px; min-height: 200px;"></pre>
+                    </div>
+                </div>
             </div>
             <div class="right-pane">
                 <div class="toolbar">
@@ -272,8 +343,8 @@ def dashboard():
                     <div id="tex-viewer" style="display: none;">
                         <textarea id="tex-editor"></textarea>
                     </div>
-                    <div id="job-viewer" style="display: none;">
-                        <pre id="job-content"></pre>
+                    <div id="job-viewer" style="display: none; padding: 1em;">
+                        <!-- Content will be injected by JS -->
                     </div>
                 </div>
             </div>
@@ -285,7 +356,6 @@ def dashboard():
             const texViewer = document.getElementById('tex-viewer');
             const jobViewer = document.getElementById('job-viewer');
             const texEditor = document.getElementById('tex-editor');
-            const jobContent = document.getElementById('job-content');
             const viewPdfBtn = document.getElementById('view-pdf-btn');
             const viewTexBtn = document.getElementById('view-tex-btn');
             const viewJobBtn = document.getElementById('view-job-btn');
@@ -320,6 +390,35 @@ def dashboard():
                             jobContent.textContent = "Error loading job description: " + (data.error || "Unknown error");
                         }
                     });
+            }
+
+            function fetchJobDetails() {
+                fetch("{{ url_for('get_job_details') }}")
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('job-viewer');
+                    if (data.error) {
+                        container.innerHTML = `<p>Error loading job details: ${data.error}</p>`;
+                        return;
+                    }
+
+                    const score = data.score !== null && data.score !== undefined ? `(${data.score})` : '';
+
+                    container.innerHTML = `
+                        <div class="job-header">
+                            <h1>${ data.title || 'N/A' }</h1>
+                            <h2>${ data.company_name || 'N/A' } - ${ data.location || 'N/A' }</h2>
+                            <p>Posted: ${ data.posted_date || 'N/A' } | Workplace: ${ data.workplace_type || 'N/A' }</p>
+                        </div>
+                        <hr>
+                        <h3>Full Job Description</h3>
+                        <pre>${ data.description || 'Not available.' }</pre>
+                        <h3>Synthesis and Decision</h3>
+                        <pre>${ data.synthesis || 'Not available.' }</pre>
+                        <h3>Evaluation Grid ${score}</h3>
+                        <pre>${ data.evaluation_grid || 'Not available.' }</pre>
+                    `;
+                });
             }
 
             refreshBtn.addEventListener('click', refreshPdf);
@@ -358,8 +457,8 @@ def dashboard():
                 viewPdfBtn.classList.remove('active');
                 viewTexBtn.classList.remove('active');
                 viewJobBtn.classList.add('active');
-                if (!jobContent.textContent) {
-                    fetchJobDescription();
+                if (jobViewer.children.length === 0) {
+                    fetchJobDetails();
                 }
             });
 
@@ -375,85 +474,114 @@ def dashboard():
             }
 
             document.addEventListener('DOMContentLoaded', function() {
-                fetch("{{ url_for('get_keywords') }}")
+                function pollInitialLoadStatus() {
+                    fetch("{{ url_for('initial_load_status') }}")
                     .then(response => response.json())
                     .then(data => {
-                        const container = document.getElementById('keywords-container');
-                        if (!container || data.error) {
-                            console.error("Error loading keywords:", data.error);
-                            return;
-                        }
-
-                        for (const groupTitle in data) {
-                            const groupData = data[groupTitle];
-                            const groupDiv = document.createElement('div');
-                            groupDiv.className = 'keyword-group';
-
-                            const title = document.createElement('h3');
-                            title.textContent = groupTitle;
-                            groupDiv.appendChild(title);
-
-                            const groupRemoveBtn = document.createElement('button');
-                            groupRemoveBtn.className = 'remove-btn group-remove-btn';
-                            groupRemoveBtn.innerHTML = '&times;';
-                            groupRemoveBtn.onclick = () => {
-                                groupDiv.remove();
-                                checkValidationState();
-                            };
-                            groupDiv.appendChild(groupRemoveBtn);
-
-                            for (const subGroupTitle in groupData) {
-                                const keywords = groupData[subGroupTitle];
-                                if (!Array.isArray(keywords) || keywords.length === 0) continue;
-
-                                const subGroupDiv = document.createElement('div');
-                                subGroupDiv.className = 'keyword-subgroup';
-
-                                const subTitle = document.createElement('h4');
-                                subTitle.textContent = subGroupTitle.replace(/_/g, ' ');
-                                subGroupDiv.appendChild(subTitle);
-
-                                const labelsDiv = document.createElement('div');
-                                labelsDiv.className = 'keyword-labels';
-                                keywords.forEach(keyword => {
-                                    const labelSpan = document.createElement('span');
-                                    labelSpan.className = 'keyword-label';
-                                    labelSpan.classList.add(subGroupTitle.replace(/_/g, '-'));
-
-                                    labelSpan.textContent = keyword;
-
-                                    const labelRemoveBtn = document.createElement('button');
-                                    labelRemoveBtn.className = 'remove-btn';
-                                    labelRemoveBtn.innerHTML = '&times;';
-                                    labelRemoveBtn.onclick = () => labelSpan.remove();
-                                    labelSpan.appendChild(labelRemoveBtn);
-
-                                    labelsDiv.appendChild(labelSpan);
-                                });
-                                subGroupDiv.appendChild(labelsDiv);
-                                groupDiv.appendChild(subGroupDiv);
-                            }
-
-                            const inputArea = document.createElement('div');
-                            inputArea.className = 'input-area';
-                            const input = document.createElement('input');
-                            input.type = 'text';
-                            input.placeholder = 'Add a note...';
-                            const validateBtn = document.createElement('button');
-                            validateBtn.className = 'validate-btn';
-                            validateBtn.textContent = '✓';
-                            validateBtn.onclick = () => {
-                                groupDiv.classList.toggle('validated');
-                                checkValidationState();
-                            };
-                            inputArea.appendChild(input);
-                            inputArea.appendChild(validateBtn);
-                            groupDiv.appendChild(inputArea);
-
-                            container.appendChild(groupDiv);
+                        if (data.status === 'complete') {
+                            document.getElementById('initial-loading-container').style.display = 'none';
+                            document.getElementById('main-content').style.display = 'block';
+                            // Now that initial data is loaded, we can fetch keywords
+                             fetch("{{ url_for('get_keywords') }}")
+                                .then(response => response.json())
+                                .then(renderKeywords);
+                        } else if (data.status === 'pending') {
+                            setTimeout(pollInitialLoadStatus, 2000); // Poll again
+                        } else if (data.status === 'failed') {
+                            const loader = document.getElementById('initial-loading-container');
+                            loader.innerHTML = `<h4>Failed to load job data</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
                         }
                     });
+                }
+
+                fetch("{{ url_for('start_initial_load') }}", { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'started' || data.status === 'complete') {
+                        pollInitialLoadStatus();
+                    } else {
+                        const loader = document.getElementById('initial-loading-container');
+                        loader.innerHTML = `<h4>Could not start data loading</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
+                    }
+                });
             });
+
+            function renderKeywords(data) {
+                const container = document.getElementById('keywords-container');
+                if (!container || data.error) {
+                    console.error("Error loading keywords:", data.error);
+                    return;
+                }
+
+                for (const groupTitle in data) {
+                    const groupData = data[groupTitle];
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'keyword-group';
+
+                    const title = document.createElement('h3');
+                    title.textContent = groupTitle;
+                    groupDiv.appendChild(title);
+
+                    const groupRemoveBtn = document.createElement('button');
+                    groupRemoveBtn.className = 'remove-btn group-remove-btn';
+                    groupRemoveBtn.innerHTML = '&times;';
+                    groupRemoveBtn.onclick = () => {
+                        groupDiv.remove();
+                        checkValidationState();
+                    };
+                    groupDiv.appendChild(groupRemoveBtn);
+
+                    for (const subGroupTitle in groupData) {
+                        const keywords = groupData[subGroupTitle];
+                        if (!Array.isArray(keywords) || keywords.length === 0) continue;
+
+                        const subGroupDiv = document.createElement('div');
+                        subGroupDiv.className = 'keyword-subgroup';
+
+                        const subTitle = document.createElement('h4');
+                        subTitle.textContent = subGroupTitle.replace(/_/g, ' ');
+                        subGroupDiv.appendChild(subTitle);
+
+                        const labelsDiv = document.createElement('div');
+                        labelsDiv.className = 'keyword-labels';
+                        keywords.forEach(keyword => {
+                            const labelSpan = document.createElement('span');
+                            labelSpan.className = 'keyword-label';
+                            labelSpan.classList.add(subGroupTitle.replace(/_/g, '-'));
+
+                            labelSpan.textContent = keyword;
+
+                            const labelRemoveBtn = document.createElement('button');
+                            labelRemoveBtn.className = 'remove-btn';
+                            labelRemoveBtn.innerHTML = '&times;';
+                            labelRemoveBtn.onclick = () => labelSpan.remove();
+                            labelSpan.appendChild(labelRemoveBtn);
+
+                            labelsDiv.appendChild(labelSpan);
+                        });
+                        subGroupDiv.appendChild(labelsDiv);
+                        groupDiv.appendChild(subGroupDiv);
+                    }
+
+                    const inputArea = document.createElement('div');
+                    inputArea.className = 'input-area';
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = 'Add a note...';
+                    const validateBtn = document.createElement('button');
+                    validateBtn.className = 'validate-btn';
+                    validateBtn.textContent = '✓';
+                    validateBtn.onclick = () => {
+                        groupDiv.classList.toggle('validated');
+                        checkValidationState();
+                    };
+                    inputArea.appendChild(input);
+                    inputArea.appendChild(validateBtn);
+                    groupDiv.appendChild(inputArea);
+
+                    container.appendChild(groupDiv);
+                }
+            }
 
             document.getElementById('finalize-btn').addEventListener('click', function() {
                 const finalData = {};
@@ -493,6 +621,47 @@ def dashboard():
                 .finally(() => {
                     btn.textContent = 'Finalize & Save Keywords';
                     checkValidationState(); // Re-check state, might need to disable
+                });
+            });
+
+            // Tab switching logic
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+                    document.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.style.display = tab.id === `${tabId}-tab` ? 'block' : 'none';
+                    });
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    button.classList.add('active');
+                });
+            });
+
+            // Executor logic
+            document.getElementById('run-executor-btn').addEventListener('click', function() {
+                const btn = this;
+                const reportPre = document.getElementById('executor-report');
+                btn.textContent = 'Executing...';
+                btn.disabled = true;
+                reportPre.textContent = 'Running... please wait.';
+
+                fetch("{{ url_for('run_executor') }}", { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        reportPre.textContent = data.report.join('\\n');
+                        alert('Execution successful! PDF is being updated.');
+                        refreshPdf(); // Refresh the PDF to show changes
+                        viewPdfBtn.click(); // Switch to PDF view
+                    } else {
+                        reportPre.textContent = "Error during execution:\\n" + data.error;
+                        alert('Execution failed: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .finally(() => {
+                    btn.textContent = 'Run Keyword Executor';
+                    btn.disabled = false;
                 });
             });
 
@@ -567,6 +736,125 @@ def save_tex():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@app.route("/run-executor", methods=["POST"])
+def run_executor():
+    """Runs the keyword executor script."""
+    try:
+        # 1. Load instructions
+        keywords_file = get_data_path() / "resume" / str(JOB_ID) / "keywords_validated.json"
+        with open(keywords_file, "r", encoding="utf-8") as f:
+            instructions = json.load(f)
+
+        # 2. Load current resume
+        resume_file = get_data_path() / "resume" / str(JOB_ID) / "resume.tex"
+        resume_content = resume_file.read_text(encoding="utf-8")
+
+        # 3. Load other necessary data
+        profil_pro = load_prompt("profil_pro")
+        model = "gpt-5-mini" # Or get from request if needed
+
+        # 4. Execute the script
+        response = execute_keywords(JOB_DESCRIPTION, profil_pro, resume_content, instructions, model=model)
+        new_resume = response["resume"]
+        report = response["report"]
+
+        # 5. Overwrite the resume file
+        resume_file.write_text(new_resume, encoding="utf-8")
+
+        # 6. Recompile the PDF
+        compile_success, compile_log = compile_tex()
+        if not compile_success:
+            raise Exception(f"PDF recompilation failed: {compile_log}")
+
+        return jsonify({"success": True, "report": report})
+
+    except FileNotFoundError:
+        return jsonify({"success": False, "error": "keywords_validated.json not found. Please finalize keywords first."}), 404
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+def run_initial_load_task():
+    """Loads all necessary data in a background thread."""
+    global DATA_LOADING_STATUS, JOB_DESCRIPTION, JOB_DETAILS
+    try:
+        DATA_LOADING_STATUS['status'] = 'pending'
+
+        # --- Data Pre-processing ---
+        # print(f"Loading job {JOB_ID}...")
+        job = load_raw_job(JOB_ID)
+        job_details_live = analyze_linkedin_job(job["job_link"])
+        # print(f"Job details loaded: {job_details_live}")
+        if not job_details_live:
+            raise Exception("Failed to fetch live job details from LinkedIn.")
+
+        JOB_DESCRIPTION = job_details_live.get("description", "Could not fetch job description.")
+
+        evals_path = get_data_path() / "evaluator" / "evals.json"
+        job_eval = {}
+        try:
+            with evals_path.open("r", encoding="utf-8") as f:
+                evals_data = json.load(f)
+            job_eval_data = next((item for item in evals_data if item.get("id") == JOB_ID), None)
+            if job_eval_data:
+                job_eval = job_eval_data
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Could not load or parse evals.json: {e}")
+
+        JOB_DETAILS = {
+            "title": job.get("title"),
+            "company_name": job.get("company"),
+            "location": job.get("location"),
+            "posted_date": job.get("posted_date"),
+            "workplace_type": job.get("workplace_type"),
+            "description": JOB_DESCRIPTION,
+            "score": job_eval.get("score"),
+            "evaluation_grid": job_eval.get("evaluation_grid"),
+            "synthesis": job_eval.get("synthesis and decision"),
+        }
+        # print(f"Job details: {JOB_DETAILS}")
+        # --- Initial Resume Setup ---
+        job_dir = get_data_path() / "resume" / f"{JOB_ID}"
+        os.makedirs(job_dir, exist_ok=True)
+        resume = load_cv_template()
+        with open(job_dir / "resume.tex", "w", encoding="utf-8") as f:
+            f.write(resume)
+        compile_tex()
+
+        DATA_LOADING_STATUS['status'] = 'complete'
+        print("✅ Background initial data load complete.")
+        print("JOB DETAILS COLLECTED")
+
+    except Exception as e:
+        print(f"❌ Background initial data load failed: {e}")
+        DATA_LOADING_STATUS['status'] = 'failed'
+        DATA_LOADING_STATUS['error'] = str(e)
+
+
+@app.route("/start-initial-load", methods=["POST"])
+def start_initial_load():
+    """Starts the initial data loading in a background thread."""
+    global DATA_LOADING_THREAD
+    if DATA_LOADING_THREAD is None or not DATA_LOADING_THREAD.is_alive():
+        # Avoid re-running if already complete
+        if DATA_LOADING_STATUS['status'] == 'complete':
+            return jsonify({"status": "complete"})
+            
+        print("Starting initial data load thread...")
+        DATA_LOADING_THREAD = threading.Thread(target=run_initial_load_task)
+        DATA_LOADING_THREAD.daemon = True
+        DATA_LOADING_THREAD.start()
+        return jsonify({"status": "started"})
+    else:
+        return jsonify({"status": "already_running"})
+
+
+@app.route("/initial-load-status")
+def initial_load_status():
+    """Checks the status of the initial data load."""
+    return jsonify(DATA_LOADING_STATUS)
+
+
 @app.route("/job-description")
 def get_job_description():
     """Serves the job description text."""
@@ -574,6 +862,16 @@ def get_job_description():
         return jsonify({"description": JOB_DESCRIPTION})
     else:
         return jsonify({"error": "Job description not loaded"}), 404
+
+
+@app.route("/job-details")
+def get_job_details():
+    """Serves the full job details."""
+    print(f"Serving job details")
+    if JOB_DETAILS:
+        return jsonify(JOB_DETAILS)
+    else:
+        return jsonify({"error": "Job details not loaded"}), 404
 
 
 @app.route("/save-validated-keywords", methods=["POST"])
@@ -621,89 +919,9 @@ def serve_pdf(filename: str):
 
 
 def main():
-    """Main function to prepare resume and run the Flask app."""
-    # --- Resume Preparation ---
-    global JOB_DESCRIPTION
-    model = "gpt-5-mini"
-    job = load_raw_job(JOB_ID)
-    job_details = analyze_linkedin_job(job["job_link"])
-    JOB_DESCRIPTION = job_details.get("description", "Could not fetch job description.")
-    profil_pro = load_prompt("profil_pro")
-    resume = load_cv_template()
-    # create a new directory for the job
-    job_dir = get_data_path() / "resume" / f"{JOB_ID}"
-    os.makedirs(job_dir, exist_ok=True)
-    # save the tex template in the job directory
-    with open(job_dir / "resume.tex", "w", encoding="utf-8") as f:
-        f.write(resume)
-    # compile the tex template
-    compile_tex()
-
-    # --- Old logic from main.py ---
-    # print(job["job_link"])
-
-    # response = rank_experiences(job_description, profil_pro, resume, model)
-    # print(response["ranking"])
-    # resume = response["resume"]
-    # to_save = [("ranking", response["ranking"], "json"), ("resume", resume, "tex")]
-    # save_results(to_save, "1_ranked_experiences")
-
-    # keywords = extract_keywords(job_details, profil_pro, resume, model)
-    # import json
-    # print(json.dumps(keywords, indent=2, ensure_ascii=False))
-    # to_save = [("keywords", keywords, "json")]
-    # save_results(to_save, "2_extracted_keywords")
-
-    # response = insert_keywords(
-    #     job_description,
-    #     profil_pro,
-    #     resume,
-    #     keywords_present=keywords["match_present"],
-    #     keywords_absent=keywords["match_absent"],
-    #     model=model
-    # )
-    # print(*response["report"], sep="\n")
-    # resume = response["resume"]
-    # keywords["match_present"] = response["keywords_present"]
-    # to_save = [("keywords", keywords, "json"), ("resume", resume, "tex"), ("report", response["report"], "json")]
-    # save_results(to_save, "3_inserted_keywords")
-
-    # response = correct_keywords(job_description, profil_pro, resume, keywords["match_present"], keywords["mismatch_absent"], model)
-    # if response["any_correction"]:
-    #     print(*[json.dumps(r, indent=2, ensure_ascii=False) for r in response["report"]], sep="\n")
-    #     resume = response["resume"]
-    #     print(response.keys())
-    #     keywords["match_present"] = response["keywords_present"]
-    # to_save = [("keywords", keywords, "json"), ("resume", resume, "tex"), ("report", response["report"], "json")]
-    # save_results(to_save, "4_corrected_keywords")
-
-    # response = rank_skills(job_description, profil_pro, resume, model)
-    # resume = response["resume"]
-    # to_save = [("resume", resume, "tex")]
-    # save_results(to_save, "5_ranked_skills")
-
-    # response = correct_title(job_description, profil_pro, resume, model)
-    # print(response["title"])
-    # resume = response["resume"]
-    # to_save = [("resume", resume, "tex"), ("title", response["title"], "md")]
-    # save_results(to_save, "6_corrected_title")
-
-    # # response = correct_experiences(job_description, profil_pro, resume, model)
-    # # if response["any_correction"]:
-    # #     print(response["report"])
-    # #     resume = response["resume"]
-
-    # file_path = get_data_path() / "resume" / "test" / f"cv-test.tex"
-    # try:
-    #     with open(file_path, "w", encoding="utf-8") as f:
-    #         f.write(resume)
-    #     print(f"✅ Le fichier '{file_path}' a été créé avec succès !")
-    #     print("Ouvrez-le avec votre éditeur de texte, il sera correctement formaté.")
-    # except Exception as e:
-    #     print(f"❌ Une erreur est survenue : {e}")
-
-    # --- Run Flask App ---
+    """Main function to run the Flask app."""
     url = "http://127.0.0.1:5001/"
+    # Open browser slightly after server starts
     threading.Timer(1.25, lambda: webbrowser.open(url)).start()
     print(f"Starting the dashboard server at {url}")
     print("Press CTRL+C to stop the server.")
