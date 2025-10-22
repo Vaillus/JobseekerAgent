@@ -133,6 +133,7 @@ def update_title():
 def run_executor():
     """Runs the keyword executor script."""
     try:
+        print("Running keyword executor...")
         job_dir = get_data_path() / "resume" / str(state.JOB_ID)
         report_file = job_dir / "insertion_report.json"
         tex_output_file = job_dir / "resume_with_insertion.tex"
@@ -176,11 +177,17 @@ def run_executor():
 
         compile_success, compile_log = utils.compile_tex()
         if not compile_success:
-            raise Exception(f"PDF recompilation failed: {compile_log}")
+            # If compilation fails, add the error to the report instead of raising
+            report.append("--- PDF COMPILATION FAILED ---")
+            report.append(compile_log)
 
-        return jsonify({"success": True, "report": report})
+        print("✅ [SERVER] Process complete. Sending JSON response to browser...")
+        response = jsonify({"success": True, "report": report})
+        print(f"✅ [SERVER] Response object: {response.get_data(as_text=True)}")
+        return response
 
     except FileNotFoundError:
+        print("❌ [SERVER] FileNotFoundError caught. keywords_validated.json likely missing.")
         return (
             jsonify(
                 {

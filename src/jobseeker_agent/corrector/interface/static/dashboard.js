@@ -404,7 +404,8 @@ function pollInitialLoadStatus() {
     });
 
     // Executor logic
-    document.getElementById('run-executor-btn').addEventListener('click', function() {
+    document.getElementById('run-executor-btn').addEventListener('click', function(event) {
+        event.preventDefault(); // Add this line to prevent any default browser action
         const btn = this;
         const reportContainer = document.getElementById('executor-report');
         btn.textContent = 'Executing...';
@@ -412,8 +413,16 @@ function pollInitialLoadStatus() {
         reportContainer.innerHTML = '<div class="log-line">Running... please wait.</div>';
 
         fetch("/run-executor", { method: 'POST' })
-        .then(response => response.json())
+        .then(response => {
+            console.log("Received response from server:", response);
+            if (!response.ok) {
+                // If response is not OK (e.g., 404, 500), throw an error to be caught below
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json(); // Attempt to parse JSON
+        })
         .then(data => {
+            console.log("Successfully parsed JSON:", data);
             reportContainer.innerHTML = ''; // Clear the container
             if (data.success) {
                 if (Array.isArray(data.report)) {
@@ -439,7 +448,7 @@ function pollInitialLoadStatus() {
                 setTimeout(() => {
                     refreshPdf();
                     viewPdfBtn.click();
-                }, 1500);
+                }, 2500); // Increased delay to 2.5 seconds
             } else {
                 const safeError = String(data.error || 'Unknown error');
                 const errorLine = document.createElement('div');
@@ -449,6 +458,17 @@ function pollInitialLoadStatus() {
                 reportContainer.appendChild(errorLine);
                 alert('Execution failed: ' + safeError.substring(0, 500));
             }
+        })
+        .catch(error => {
+            // This will catch network errors and errors from the .then() blocks
+            console.error('Fetch error:', error);
+            reportContainer.innerHTML = ''; // Clear the container
+            const errorLine = document.createElement('div');
+            errorLine.className = 'log-line';
+            errorLine.style.color = 'red';
+            errorLine.textContent = "A critical error occurred: " + error.message;
+            reportContainer.appendChild(errorLine);
+            alert("A critical error occurred. Please check the browser's console for details.");
         })
         .finally(() => {
             btn.textContent = 'Run Keyword Executor';
