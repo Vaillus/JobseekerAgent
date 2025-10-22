@@ -365,7 +365,7 @@ def dashboard():
                         <button class="tab-btn active" data-tab="keywords">Keywords</button>
                         <button class="tab-btn" data-tab="executor">Executor</button>
                     </div>
-                    <div id="keywords-tab" class="tab-content">
+                    <div id="keywords-tab" class="tab-content" style="display: block;">
                         <div id="keyword-loading-container">
                             <h4>Extracting Keywords & Titles...</h4>
                             <p>This may take a moment. The interface will appear here once the process is complete.</p>
@@ -495,7 +495,9 @@ def dashboard():
                         .then(data => {
                             if(data.success) {
                                 alert('Recompilation successful!');
-                                refreshPdf();
+                                setTimeout(() => {
+                                    refreshPdf();
+                                }, 1500); // Wait 1.5 seconds for compilation
                             } else {
                                 alert('Recompilation failed: ' + data.error);
                             }
@@ -555,48 +557,6 @@ def dashboard():
                 finalizeBtn.disabled = !allValidated;
             }
 
-            document.addEventListener('DOMContentLoaded', function() {
-                function pollInitialLoadStatus() {
-                    fetch("{{ url_for('initial_load_status') }}")
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'complete') {
-                            document.getElementById('initial-loading-container').style.display = 'none';
-                            document.getElementById('main-content').style.display = 'block';
-                            // Now that initial data is loaded, start the keyword extraction
-                            startAndPollExtraction();
-                        } else if (data.status === 'pending') {
-                            setTimeout(pollInitialLoadStatus, 2000); // Poll again
-                        } else if (data.status === 'failed') {
-                            const loader = document.getElementById('initial-loading-container');
-                            loader.innerHTML = `<h4>Failed to load job data</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
-                        }
-                    });
-                }
-
-                fetch("{{ url_for('start_initial_load') }}", { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'started' || data.status === 'complete' || data.status === 'already_running') {
-                        pollInitialLoadStatus();
-                    } else {
-                        const loader = document.getElementById('initial-loading-container');
-                        loader.innerHTML = `<h4>Could not start data loading</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
-                    }
-                });
-
-                // Custom title button event
-                document.getElementById('apply-custom-title-btn').addEventListener('click', () => {
-                    const input = document.getElementById('custom-title-input');
-                    const customTitle = input.value.trim();
-                    if (customTitle) {
-                        updateTitle(customTitle);
-                    } else {
-                        alert('Please enter a custom title.');
-                    }
-                });
-            });
-
             function startAndPollExtraction() {
                 function pollExtractionStatus() {
                     fetch("{{ url_for('extraction_status') }}")
@@ -611,7 +571,7 @@ def dashboard():
                                 })
                                 .catch(error => console.error("Failed to fetch final data:", error));
                         } else if (data.status === 'pending') {
-                            setTimeout(pollExtractionStatus, 2000); // Poll again
+                            setTimeout(pollExtractionStatus, 2000);
                         } else if (data.status === 'failed') {
                             const loader = document.getElementById('keyword-loading-container');
                             loader.innerHTML = `<h4>Extraction Failed</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
@@ -635,7 +595,6 @@ def dashboard():
                 document.getElementById('keyword-loading-container').style.display = 'none';
                 document.getElementById('data-container').style.display = 'block';
 
-                // Render titles
                 const titlesContainer = document.getElementById('title-suggestions-container');
                 const titlesList = document.getElementById('title-suggestions-list');
                 if (titlesList && Array.isArray(titlesData) && titlesData.length > 0) {
@@ -651,22 +610,19 @@ def dashboard():
                     console.error("No titles found or error loading titles:", titlesData);
                 }
 
-                // Render keywords
                 const container = document.getElementById('keywords-container');
                 if (!container || keywordsData.error) {
                     console.error("Error loading keywords:", keywordsData.error);
                     return;
                 }
-                container.innerHTML = ''; // Clear previous content
+                container.innerHTML = '';
                 for (const groupTitle in keywordsData) {
                     const groupData = keywordsData[groupTitle];
                     const groupDiv = document.createElement('div');
                     groupDiv.className = 'keyword-group';
-
                     const title = document.createElement('h3');
                     title.textContent = groupTitle;
                     groupDiv.appendChild(title);
-
                     const groupRemoveBtn = document.createElement('button');
                     groupRemoveBtn.className = 'remove-btn group-remove-btn';
                     groupRemoveBtn.innerHTML = '&times;';
@@ -675,39 +631,31 @@ def dashboard():
                         checkValidationState();
                     };
                     groupDiv.appendChild(groupRemoveBtn);
-
                     for (const subGroupTitle in groupData) {
                         const keywords = groupData[subGroupTitle];
                         if (!Array.isArray(keywords) || keywords.length === 0) continue;
-
                         const subGroupDiv = document.createElement('div');
                         subGroupDiv.className = 'keyword-subgroup';
-
                         const subTitle = document.createElement('h4');
                         subTitle.textContent = subGroupTitle.replace(/_/g, ' ');
                         subGroupDiv.appendChild(subTitle);
-
                         const labelsDiv = document.createElement('div');
                         labelsDiv.className = 'keyword-labels';
                         keywords.forEach(keyword => {
                             const labelSpan = document.createElement('span');
                             labelSpan.className = 'keyword-label';
                             labelSpan.classList.add(subGroupTitle.replace(/_/g, '-'));
-
                             labelSpan.textContent = keyword;
-
                             const labelRemoveBtn = document.createElement('button');
                             labelRemoveBtn.className = 'remove-btn';
                             labelRemoveBtn.innerHTML = '&times;';
                             labelRemoveBtn.onclick = () => labelSpan.remove();
                             labelSpan.appendChild(labelRemoveBtn);
-
                             labelsDiv.appendChild(labelSpan);
                         });
                         subGroupDiv.appendChild(labelsDiv);
                         groupDiv.appendChild(subGroupDiv);
                     }
-
                     const inputArea = document.createElement('div');
                     inputArea.className = 'input-area';
                     const input = document.createElement('input');
@@ -723,19 +671,15 @@ def dashboard():
                     inputArea.appendChild(input);
                     inputArea.appendChild(validateBtn);
                     groupDiv.appendChild(inputArea);
-
                     container.appendChild(groupDiv);
                 }
             }
 
             function updateTitle(title, clickedButton = null) {
-                // Visually deselect all buttons
                 document.querySelectorAll('.title-suggestion-btn').forEach(b => b.classList.remove('selected'));
-                // Select the clicked button if it exists
                 if (clickedButton) {
                     clickedButton.classList.add('selected');
                 }
-
                 fetch("{{ url_for('update_title') }}", {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -745,10 +689,12 @@ def dashboard():
                 .then(data => {
                     if (data.success) {
                         console.log('Title updated successfully.');
-                        texEditor.value = ""; // Force refresh on next view
+                        document.getElementById('tex-editor').value = "";
                         refreshTex();
-                        refreshPdf();
-                        viewPdfBtn.click(); // Switch to PDF to show the change
+                        setTimeout(() => {
+                            refreshPdf();
+                            document.getElementById('view-pdf-btn').click();
+                        }, 1500);
                     } else {
                         alert('Error updating title: ' + (data.error || 'Unknown error'));
                     }
@@ -759,113 +705,162 @@ def dashboard():
                 });
             }
 
-            document.getElementById('finalize-btn').addEventListener('click', function() {
-                const finalData = {};
-                document.querySelectorAll('.keyword-group').forEach(groupDiv => {
-                    const title = groupDiv.querySelector('h3').textContent;
-                    const keywords = Array.from(groupDiv.querySelectorAll('.keyword-label')).map(label => {
-                        // Clone node to not include the remove button's text content
-                        const clone = label.cloneNode(true);
-                        clone.querySelector('.remove-btn').remove();
-                        return clone.textContent.trim();
+            // --- Main script execution ---
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("DOMContentLoaded event fired.");
+
+                // Element Declarations
+                console.log("Elements declared:", { saveBtn, refreshBtn, viewPdfBtn });
+
+                // Initial Load
+                function pollInitialLoadStatus() {
+                    fetch("{{ url_for('initial_load_status') }}")
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'complete') {
+                            document.getElementById('initial-loading-container').style.display = 'none';
+                            document.getElementById('main-content').style.display = 'block';
+                            // Now that initial data is loaded, start the keyword extraction
+                            startAndPollExtraction();
+                        } else if (data.status === 'pending') {
+                            setTimeout(pollInitialLoadStatus, 2000); // Poll again
+                        } else if (data.status === 'failed') {
+                            const loader = document.getElementById('initial-loading-container');
+                            loader.innerHTML = `<h4>Failed to load job data</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
+                        }
                     });
-                    const instructions = groupDiv.querySelector('input').value;
+                }
 
-                    finalData[title] = {
-                        keywords: keywords,
-                        instructions: instructions
-                    };
-                });
-
-                const btn = this;
-                btn.textContent = 'Saving...';
-                btn.disabled = true;
-
-                fetch("{{ url_for('save_validated_keywords') }}", {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(finalData)
-                })
+                console.log("Starting initial data load fetch...");
+                fetch("{{ url_for('start_initial_load') }}", { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        alert('Validated keywords saved successfully!');
+                    if (data.status === 'started' || data.status === 'complete' || data.status === 'already_running') {
+                        pollInitialLoadStatus();
                     } else {
-                        alert('Error saving keywords: ' + (data.error || 'Unknown error'));
+                        const loader = document.getElementById('initial-loading-container');
+                        loader.innerHTML = `<h4>Could not start data loading</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
                     }
-                })
-                .finally(() => {
-                    btn.textContent = 'Finalize & Save Keywords';
-                    checkValidationState(); // Re-check state, might need to disable
                 });
-            });
 
-            // Tab switching logic
-            document.querySelectorAll('.tab-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const tabId = button.dataset.tab;
-                    document.querySelectorAll('.tab-content').forEach(tab => {
-                        tab.style.display = tab.id === `${tabId}-tab` ? 'block' : 'none';
+                // Custom title button event
+                document.getElementById('apply-custom-title-btn').addEventListener('click', () => {
+                    const input = document.getElementById('custom-title-input');
+                    const customTitle = input.value.trim();
+                    if (customTitle) {
+                        updateTitle(customTitle);
+                    } else {
+                        alert('Please enter a custom title.');
+                    }
+                });
+
+                // Tab switching logic
+                document.querySelectorAll('.tab-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const tabId = button.dataset.tab;
+                        document.querySelectorAll('.tab-content').forEach(tab => {
+                            tab.style.display = tab.id === `${tabId}-tab` ? 'block' : 'none';
+                        });
+                        document.querySelectorAll('.tab-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        button.classList.add('active');
                     });
-                    document.querySelectorAll('.tab-btn').forEach(btn => {
-                        btn.classList.remove('active');
+                });
+
+                // Executor logic
+                document.getElementById('run-executor-btn').addEventListener('click', function() {
+                    const btn = this;
+                    const reportPre = document.getElementById('executor-report');
+                    btn.textContent = 'Executing...';
+                    btn.disabled = true;
+                    reportPre.textContent = 'Running... please wait.';
+
+                    fetch("{{ url_for('run_executor') }}", { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            reportPre.textContent = data.report.join('\\n');
+                            alert('Execution successful! PDF is being updated.');
+                            refreshPdf(); // Refresh the PDF to show changes
+                            viewPdfBtn.click(); // Switch to PDF view
+                        } else {
+                            reportPre.textContent = "Error during execution:\\n" + data.error;
+                            alert('Execution failed: ' + (data.error || 'Unknown error'));
+                        }
+                    })
+                    .finally(() => {
+                        btn.textContent = 'Run Keyword Executor';
+                        btn.disabled = false;
                     });
-                    button.classList.add('active');
                 });
-            });
 
-            // Executor logic
-            document.getElementById('run-executor-btn').addEventListener('click', function() {
-                const btn = this;
-                const reportPre = document.getElementById('executor-report');
-                btn.textContent = 'Executing...';
-                btn.disabled = true;
-                reportPre.textContent = 'Running... please wait.';
+                document.getElementById('finalize-btn').addEventListener('click', function() {
+                    const finalData = {};
+                    document.querySelectorAll('.keyword-group').forEach(groupDiv => {
+                        const title = groupDiv.querySelector('h3').textContent;
+                        const keywords = Array.from(groupDiv.querySelectorAll('.keyword-label')).map(label => {
+                            const clone = label.cloneNode(true);
+                            clone.querySelector('.remove-btn').remove();
+                            return clone.textContent.trim();
+                        });
+                        const instructions = groupDiv.querySelector('input').value;
 
-                fetch("{{ url_for('run_executor') }}", { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        reportPre.textContent = data.report.join('\\n');
-                        alert('Execution successful! PDF is being updated.');
-                        refreshPdf(); // Refresh the PDF to show changes
-                        viewPdfBtn.click(); // Switch to PDF view
-                    } else {
-                        reportPre.textContent = "Error during execution:\\n" + data.error;
-                        alert('Execution failed: ' + (data.error || 'Unknown error'));
-                    }
-                })
-                .finally(() => {
-                    btn.textContent = 'Run Keyword Executor';
-                    btn.disabled = false;
+                        finalData[title] = {
+                            keywords: keywords,
+                            instructions: instructions
+                        };
+                    });
+
+                    const btn = this;
+                    btn.textContent = 'Saving...';
+                    btn.disabled = true;
+
+                    fetch("{{ url_for('save_validated_keywords') }}", {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(finalData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Validated keywords saved successfully!');
+                        } else {
+                            alert('Error saving keywords: ' + (data.error || 'Unknown error'));
+                        }
+                    })
+                    .finally(() => {
+                        btn.textContent = 'Finalize & Save Keywords';
+                        checkValidationState();
+                    });
                 });
-            });
-
-
-            saveBtn.addEventListener('click', function() {
-                const content = texEditor.value;
-                saveBtn.textContent = 'Saving...';
-                saveBtn.disabled = true;
-                fetch("{{ url_for('save_tex') }}", {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: content })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('File saved and recompiled successfully!');
-                        texEditor.value = ""; // Force refresh on next view
-                        // Switch to PDF view and refresh to see changes
-                        viewPdfBtn.click();
-                        refreshPdf();
-                    } else {
-                        alert('Error saving file: ' + (data.error || 'Unknown error'));
-                    }
-                })
-                .finally(() => {
-                    saveBtn.textContent = 'Save';
-                    saveBtn.disabled = false;
+                
+                saveBtn.addEventListener('click', function() {
+                    const content = texEditor.value;
+                    saveBtn.textContent = 'Saving...';
+                    saveBtn.disabled = true;
+                    fetch("{{ url_for('save_tex') }}", {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: content })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('File saved and recompiled successfully!');
+                            texEditor.value = "";
+                            setTimeout(() => {
+                                viewPdfBtn.click();
+                                refreshPdf();
+                            }, 1500);
+                        } else {
+                            alert('Error saving file: ' + (data.error || 'Unknown error'));
+                        }
+                    })
+                    .finally(() => {
+                        saveBtn.textContent = 'Save';
+                        saveBtn.disabled = false;
+                    });
                 });
             });
         </script>
@@ -873,6 +868,11 @@ def dashboard():
     </html>
     """
     )
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
 
 
 def compile_tex():
@@ -978,6 +978,11 @@ def run_executor():
         response = execute_keywords(JOB_DESCRIPTION, profil_pro, resume_content, instructions, model=model)
         new_resume = response["resume"]
         report = response["report"]
+        job_dir = get_data_path() / "resume" / str(JOB_ID)
+        output_path = job_dir / "insertion_report.json"
+        # Save the report to a JSON file for debugging
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(report, f, indent=4, ensure_ascii=False)
 
         # 5. Overwrite the resume file
         resume_file.write_text(new_resume, encoding="utf-8")
@@ -999,14 +1004,25 @@ def run_keyword_extraction_task():
     """The actual keyword extraction logic to be run in a background thread."""
     global EXTRACTION_STATUS
     try:
+        print("➡️ [THREAD] Keyword extraction task started.")
         EXTRACTION_STATUS['status'] = 'pending'
+        
         # This data needs to be loaded inside the thread
+        print("    [THREAD] Loading job, prompt, and resume...")
         job = load_raw_job(JOB_ID)
         profil_pro = load_prompt("profil_pro")
         resume = load_cv_template()
-        job_details = analyze_linkedin_job(job["job_link"]) # Assuming this is thread-safe
+        print("    [THREAD] ...data loaded.")
 
+        print("    [THREAD] Analyzing LinkedIn job page...")
+        job_details = analyze_linkedin_job(job["job_link"]) # Assuming this is thread-safe
+        if not job_details:
+            raise Exception("Failed to analyze LinkedIn job page.")
+        print("    [THREAD] ...LinkedIn page analyzed.")
+
+        print("    [THREAD] Calling LLM to extract keywords...")
         extraction_response = extract_keywords(job_details, profil_pro, resume, model="gpt-5-mini")
+        print("    [THREAD] ...LLM response received.")
 
         # Save title suggestions
         titles_file = get_data_path() / "resume" / str(JOB_ID) / "titles.json"
