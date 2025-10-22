@@ -1,0 +1,118 @@
+import os
+import json
+from . import state, utils
+from jobseeker_agent.utils.paths import (
+    load_prompt,
+    load_cv_template,
+    get_data_path,
+    load_raw_job,
+)
+from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.corrector.keyword_extractor_2 import extract_keywords
+from jobseeker_agent.corrector.keyword_executor import execute_keywords
+
+
+def run_keyword_extraction_task():
+    """The actual keyword extraction logic to be run in a background thread."""
+    try:
+        print("➡️ [THREAD] Keyword extraction task started.")
+        state.EXTRACTION_STATUS["status"] = "pending"
+
+        print("    [THREAD] Loading job, prompt, and resume...")
+        job = load_raw_job(state.JOB_ID)
+        profil_pro = load_prompt("profil_pro")
+        resume = load_cv_template()
+        print("    [THREAD] ...data loaded.")
+
+        print("    [THREAD] Analyzing LinkedIn job page...")
+        job_details = analyze_linkedin_job(job["job_link"])
+        if not job_details:
+            raise Exception("Failed to analyze LinkedIn job page.")
+        print("    [THREAD] ...LinkedIn page analyzed.")
+
+        print("    [THREAD] Calling LLM to extract keywords...")
+        extraction_response = extract_keywords(
+            job_details, profil_pro, resume, model="gpt-5-mini"
+        )
+        print("    [THREAD] ...LLM response received.")
+
+        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+        titles_file = job_dir / "titles.json"
+        with open(titles_file, "w", encoding="utf-8") as f:
+            json.dump(extraction_response["title_suggestions"], f, indent=4)
+
+        keywords_file = job_dir / "keywords.json"
+        with open(keywords_file, "w", encoding="utf-8") as f:
+            json.dump(extraction_response["classified"], f, indent=4)
+
+        state.EXTRACTION_STATUS["status"] = "complete"
+        print("✅ Background keyword extraction complete.")
+    except Exception as e:
+        print(f"❌ Background keyword extraction failed: {e}")
+        state.EXTRACTION_STATUS["status"] = "failed"
+        state.EXTRACTION_STATUS["error"] = str(e)
+
+
+def run_initial_load_task():
+    """Loads all necessary data in a background thread."""
+    try:
+        print("➡️ [THREAD] Initial load task started.")
+        state.DATA_LOADING_STATUS["status"] = "pending"
+
+        job = load_raw_job(state.JOB_ID)
+        print("    [THREAD] Analyzing LinkedIn job page...")
+        job_details_live = analyze_linkedin_job(job["job_link"])
+        print("    [THREAD] ...LinkedIn page analyzed.")
+
+        if not job_details_live:
+            raise Exception("Failed to fetch live job details from LinkedIn.")
+
+        state.JOB_DESCRIPTION = job_details_live.get(
+            "description", "Could not fetch job description."
+        )
+
+        print("    [THREAD] Loading evals.json...")
+        evals_path = get_data_path() / "evaluator" / "evals.json"
+        job_eval = {}
+        try:
+            with evals_path.open("r", encoding="utf-8") as f:
+                evals_data = json.load(f)
+            job_eval_data = next(
+                (item for item in evals_data if item.get("id") == state.JOB_ID), None
+            )
+            if job_eval_data:
+                job_eval = job_eval_data
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Could not load or parse evals.json: {e}")
+        print("    [THREAD] ...evals.json loaded.")
+
+        state.JOB_DETAILS = {
+            "title": job.get("title"),
+            "company_name": job.get("company"),
+            "location": job.get("location"),
+            "posted_date": job.get("posted_date"),
+            "workplace_type": job.get("workplace_type"),
+            "description": state.JOB_DESCRIPTION,
+            "score": job_eval.get("score"),
+            "evaluation_grid": job_eval.get("evaluation_grid"),
+            "synthesis": job_eval.get("synthesis and decision"),
+        }
+
+        job_dir = get_data_path() / "resume" / f"{state.JOB_ID}"
+        os.makedirs(job_dir, exist_ok=True)
+        resume = load_cv_template()
+        with open(job_dir / "resume.tex", "w", encoding="utf-8") as f:
+            f.write(resume)
+
+        print("    [THREAD] Compiling initial TeX file...")
+        utils.compile_tex()
+        print("    [THREAD] ...TeX file compiled.")
+
+        state.DATA_LOADING_STATUS["status"] = "complete"
+        print("✅ Background initial data load complete.")
+        print("JOB DETAILS COLLECTED")
+
+    except Exception as e:
+        print(f"❌ Background initial data load failed: {e}")
+        state.DATA_LOADING_STATUS["status"] = "failed"
+        state.DATA_LOADING_STATUS["error"] = str(e)

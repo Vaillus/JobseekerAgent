@@ -1,0 +1,284 @@
+import json
+import re
+import threading
+from flask import (
+    Blueprint,
+    render_template,
+    send_from_directory,
+    jsonify,
+    request,
+)
+from . import state, utils, tasks
+from jobseeker_agent.utils.paths import get_data_path, load_prompt
+
+bp = Blueprint(
+    "main", __name__, template_folder="templates", static_folder="static"
+)
+
+
+@bp.route("/")
+def dashboard():
+    """Renders the main dashboard HTML."""
+    return render_template("dashboard.html")
+
+
+@bp.route("/favicon.ico")
+def favicon():
+    return "", 204
+
+
+@bp.route("/save-tex", methods=["POST"])
+def save_tex():
+    """Saves the edited TeX content and recompiles."""
+    data = request.get_json()
+    content = data.get("content")
+    if content is None:
+        return jsonify({"success": False, "error": "No content provided"}), 400
+
+    tex_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+    try:
+        tex_file.write_text(content, encoding="utf-8")
+        success, error_log = utils.compile_tex()
+        if success:
+            return jsonify({"success": True})
+        else:
+            return jsonify(
+                {"success": False, "error": f"Compilation failed:\n{error_log}"}
+            )
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/recompile-tex", methods=["POST"])
+def recompile_tex():
+    """Just recompiles the existing TeX file."""
+    try:
+        success, error_log = utils.compile_tex()
+        if success:
+            return jsonify({"success": True})
+        else:
+            return jsonify(
+                {"success": False, "error": f"Compilation failed:\n{error_log}"}
+            )
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/update-title", methods=["POST"])
+def update_title():
+    """Finds and replaces the title in the resume.tex file."""
+    data = request.get_json()
+    new_title = data.get("title")
+    if not new_title:
+        return jsonify({"success": False, "error": "No title provided"}), 400
+
+    try:
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        content = resume_file.read_text(encoding="utf-8")
+
+        new_content, count = re.subn(
+            r"(\\textbf{\\LARGE )(.*?)(\})",
+            r"\\textbf{\\LARGE " + new_title + r"}",
+            content,
+            count=1,
+        )
+
+        if count == 0:
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "\\textbf{\\LARGE ...} tag not found in resume.tex",
+                    }
+                ),
+                404,
+            )
+        resume_file.write_text(new_content, encoding="utf-8")
+
+        compile_success, compile_log = utils.compile_tex()
+        if not compile_success:
+            resume_file.write_text(content, encoding="utf-8")
+            return (
+                jsonify(
+                    {"success": False, "error": f"PDF recompilation failed: {compile_log}"}
+                ),
+                500,
+            )
+
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/run-executor", methods=["POST"])
+def run_executor():
+    """Runs the keyword executor script."""
+    try:
+        keywords_file = (
+            get_data_path() / "resume" / str(state.JOB_ID) / "keywords_validated.json"
+        )
+        with open(keywords_file, "r", encoding="utf-8") as f:
+            instructions = json.load(f)
+
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        resume_content = resume_file.read_text(encoding="utf-8")
+
+        profil_pro = load_prompt("profil_pro")
+        model = "gpt-5-mini"
+
+        response = tasks.execute_keywords(
+            state.JOB_DESCRIPTION, profil_pro, resume_content, instructions, model=model
+        )
+        new_resume = response["resume"]
+        report = response["report"]
+
+        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+        output_path = job_dir / "insertion_report.json"
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(report, f, indent=4, ensure_ascii=False)
+
+        resume_file.write_text(new_resume, encoding="utf-8")
+
+        compile_success, compile_log = utils.compile_tex()
+        if not compile_success:
+            raise Exception(f"PDF recompilation failed: {compile_log}")
+
+        return jsonify({"success": True, "report": report})
+
+    except FileNotFoundError:
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "error": "keywords_validated.json not found. Please finalize keywords first.",
+                }
+            ),
+            404,
+        )
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/start-extraction", methods=["POST"])
+def start_extraction():
+    """Starts the keyword extraction in a background thread."""
+    job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+    titles_file = job_dir / "titles.json"
+    keywords_file = job_dir / "keywords.json"
+
+    if titles_file.exists() and keywords_file.exists():
+        print("✅ Keyword and title files already exist. Skipping extraction.")
+        state.EXTRACTION_STATUS = {"status": "complete", "error": None}
+        return jsonify({"status": "complete"})
+
+    if state.EXTRACTION_THREAD is None or not state.EXTRACTION_THREAD.is_alive():
+        print("Starting keyword extraction thread...")
+        state.EXTRACTION_THREAD = threading.Thread(target=tasks.run_keyword_extraction_task)
+        state.EXTRACTION_THREAD.daemon = True
+        state.EXTRACTION_THREAD.start()
+        return jsonify({"status": "started"})
+    else:
+        return jsonify({"status": "already_running"})
+
+
+@bp.route("/extraction-status")
+def extraction_status():
+    """Checks the status of the keyword extraction."""
+    return jsonify(state.EXTRACTION_STATUS)
+
+
+@bp.route("/start-initial-load", methods=["POST"])
+def start_initial_load():
+    """Starts the initial data loading in a background thread."""
+    if state.DATA_LOADING_THREAD is None or not state.DATA_LOADING_THREAD.is_alive():
+        if state.DATA_LOADING_STATUS["status"] == "complete":
+            return jsonify({"status": "complete"})
+
+        print("Starting initial data load thread...")
+        state.DATA_LOADING_THREAD = threading.Thread(target=tasks.run_initial_load_task)
+        state.DATA_LOADING_THREAD.daemon = True
+        state.DATA_LOADING_THREAD.start()
+        return jsonify({"status": "started"})
+    else:
+        return jsonify({"status": "already_running"})
+
+
+@bp.route("/initial-load-status")
+def initial_load_status():
+    """Checks the status of the initial data load."""
+    return jsonify(state.DATA_LOADING_STATUS)
+
+
+@bp.route("/job-description")
+def get_job_description():
+    """Serves the job description text."""
+    if state.JOB_DESCRIPTION:
+        return jsonify({"description": state.JOB_DESCRIPTION})
+    else:
+        return jsonify({"error": "Job description not loaded"}), 404
+
+
+@bp.route("/job-details")
+def get_job_details():
+    """Serves the full job details."""
+    print(f"Serving job details")
+    if state.JOB_DETAILS:
+        return jsonify(state.JOB_DETAILS)
+    else:
+        return jsonify({"error": "Job details not loaded"}), 404
+
+
+@bp.route("/save-validated-keywords", methods=["POST"])
+def save_validated_keywords():
+    """Saves the validated keywords to a new JSON file."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "error": "No data provided"}), 400
+
+    output_file = (
+        get_data_path() / "resume" / str(state.JOB_ID) / "keywords_validated.json"
+    )
+    try:
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/keywords")
+def get_keywords():
+    """Serves the keywords JSON file."""
+    keywords_file = get_data_path() / "resume" / str(state.JOB_ID) / "keywords.json"
+    try:
+        return send_from_directory(keywords_file.parent, keywords_file.name)
+    except FileNotFoundError:
+        return jsonify({"error": "Keywords file not found"}), 404
+
+
+@bp.route("/titles")
+def get_titles():
+    """Serves the titles JSON file."""
+    titles_file = get_data_path() / "resume" / str(state.JOB_ID) / "titles.json"
+    try:
+        return send_from_directory(titles_file.parent, titles_file.name)
+    except FileNotFoundError:
+        return jsonify({"error": "Titles file not found"}), 404
+
+
+@bp.route("/tex")
+def serve_tex():
+    """Serves the raw TeX file content."""
+    tex_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+    try:
+        content = tex_file.read_text(encoding="utf-8")
+        return jsonify({"content": content})
+    except FileNotFoundError:
+        return jsonify({"error": "TeX file not found"}), 404
+
+
+@bp.route("/pdf/<path:filename>")
+def serve_pdf(filename: str):
+    """Serves the generated PDF."""
+    pdf_directory = get_data_path() / "resume" / str(state.JOB_ID)
+    return send_from_directory(pdf_directory, filename)
