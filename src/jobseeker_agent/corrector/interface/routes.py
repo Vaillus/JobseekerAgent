@@ -9,7 +9,7 @@ from flask import (
     request,
 )
 from . import state, utils, tasks
-from jobseeker_agent.utils.paths import get_data_path, load_prompt
+from jobseeker_agent.utils.paths import get_data_path, load_prompt, load_cv_template
 
 bp = Blueprint(
     "main", __name__, template_folder="templates", static_folder="static"
@@ -56,6 +56,25 @@ def recompile_tex():
         success, error_log = utils.compile_tex()
         if success:
             return jsonify({"success": True})
+        else:
+            return jsonify(
+                {"success": False, "error": f"Compilation failed:\n{error_log}"}
+            )
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/reinitialize-tex", methods=["POST"])
+def reinitialize_tex():
+    """Resets the TeX file to the original template and recompiles."""
+    try:
+        template_content = load_cv_template()
+        tex_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        tex_file.write_text(template_content, encoding="utf-8")
+
+        success, error_log = utils.compile_tex()
+        if success:
+            return jsonify({"success": True, "content": template_content})
         else:
             return jsonify(
                 {"success": False, "error": f"Compilation failed:\n{error_log}"}

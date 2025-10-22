@@ -1,5 +1,6 @@
 const saveBtn = document.getElementById('save-btn');
 const refreshBtn = document.getElementById('refresh-btn');
+const reinitializeBtn = document.getElementById('reinitialize-btn');
 const pdfViewer = document.getElementById('pdf-viewer');
 const texViewer = document.getElementById('tex-viewer');
 const jobViewer = document.getElementById('job-viewer');
@@ -139,6 +140,24 @@ viewJobBtn.addEventListener('click', function() {
     viewJobBtn.classList.add('active');
     if (jobViewer.children.length === 0) {
         fetchJobDetails();
+    }
+});
+
+reinitializeBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to reset the TeX file to its original template? All changes will be lost.')) {
+        fetch("/reinitialize-tex", { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Reinitialization successful!');
+                    texEditor.value = data.content; // Update TeX view immediately
+                    setTimeout(() => {
+                        refreshPdf();
+                    }, 1500); // Wait for compilation
+                } else {
+                    alert('Reinitialization failed: ' + data.error);
+                }
+            });
     }
 });
 
