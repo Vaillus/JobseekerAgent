@@ -114,29 +114,45 @@ def update_title():
 def run_executor():
     """Runs the keyword executor script."""
     try:
-        keywords_file = (
-            get_data_path() / "resume" / str(state.JOB_ID) / "keywords_validated.json"
-        )
-        with open(keywords_file, "r", encoding="utf-8") as f:
-            instructions = json.load(f)
-
-        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
-        resume_content = resume_file.read_text(encoding="utf-8")
-
-        profil_pro = load_prompt("profil_pro")
-        model = "gpt-5-mini"
-
-        response = tasks.execute_keywords(
-            state.JOB_DESCRIPTION, profil_pro, resume_content, instructions, model=model
-        )
-        new_resume = response["resume"]
-        report = response["report"]
-
         job_dir = get_data_path() / "resume" / str(state.JOB_ID)
-        output_path = job_dir / "insertion_report.json"
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(report, f, indent=4, ensure_ascii=False)
+        report_file = job_dir / "insertion_report.json"
+        tex_output_file = job_dir / "resume_with_insertion.tex"
 
+        # Check if cached files exist
+        if report_file.exists() and tex_output_file.exists():
+            print("✅ Found cached report and TeX file. Loading from cache.")
+            with open(report_file, "r", encoding="utf-8") as f:
+                report = json.load(f)
+            new_resume = tex_output_file.read_text(encoding="utf-8")
+        else:
+            print("ℹ️ No cache found. Calling LLM.")
+            keywords_file = job_dir / "keywords_validated.json"
+            with open(keywords_file, "r", encoding="utf-8") as f:
+                instructions = json.load(f)
+
+            resume_file = job_dir / "resume.tex"
+            resume_content = resume_file.read_text(encoding="utf-8")
+
+            profil_pro = load_prompt("profil_pro")
+            model = "gpt-5-mini"
+
+            response = tasks.execute_keywords(
+                state.JOB_DESCRIPTION,
+                profil_pro,
+                resume_content,
+                instructions,
+                model=model,
+            )
+            new_resume = response["resume"]
+            report = response["report"]
+
+            # Save to cache
+            with open(report_file, "w", encoding="utf-8") as f:
+                json.dump(report, f, indent=4, ensure_ascii=False)
+            tex_output_file.write_text(new_resume, encoding="utf-8")
+
+        # Update the main resume file and recompile
+        resume_file = job_dir / "resume.tex"
         resume_file.write_text(new_resume, encoding="utf-8")
 
         compile_success, compile_log = utils.compile_tex()

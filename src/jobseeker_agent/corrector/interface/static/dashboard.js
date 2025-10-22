@@ -208,7 +208,7 @@ function renderData(keywordsData, titlesData) {
     if (titlesList && Array.isArray(titlesData) && titlesData.length > 0) {
         titlesData.forEach(title => {
             if (typeof title !== 'string') { return; }
-            const cleanTitle = title.replace(/[\\r\\n]+/g, ' ').trim();
+            const cleanTitle = title.replace(/[\r\n]+/g, ' ').trim();
             const btn = document.createElement('button');
             btn.className = 'title-suggestion-btn';
             btn.textContent = cleanTitle;
@@ -314,35 +314,34 @@ function updateTitle(title, clickedButton = null) {
 }
 
 // --- Main script execution ---
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOMContentLoaded event fired.");
+console.log("DOMContentLoaded event will not fire, script running directly.");
 
-    // Element Declarations
-    console.log("Elements declared:", { saveBtn, refreshBtn, viewPdfBtn });
+// Element Declarations
+console.log("Elements declared:", { saveBtn, refreshBtn, viewPdfBtn });
 
-    // Initial Load
-    function pollInitialLoadStatus() {
-        fetch("/initial-load-status")
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'complete') {
-                document.getElementById('initial-loading-container').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-                startAndPollExtraction();
-            } else if (data.status === 'pending') {
-                setTimeout(pollInitialLoadStatus, 2000);
-            } else if (data.status === 'failed') {
-                const loader = document.getElementById('initial-loading-container');
-                loader.innerHTML = '';
-                const h4 = document.createElement('h4');
-                h4.textContent = 'Failed to load job data';
-                const p = document.createElement('p');
-                p.textContent = data.error || 'An unknown error occurred.';
-                loader.appendChild(h4);
-                loader.appendChild(p);
-            }
-        });
-    }
+// Initial Load
+function pollInitialLoadStatus() {
+    fetch("/initial-load-status")
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'complete') {
+            document.getElementById('initial-loading-container').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            startAndPollExtraction();
+        } else if (data.status === 'pending') {
+            setTimeout(pollInitialLoadStatus, 2000);
+        } else if (data.status === 'failed') {
+            const loader = document.getElementById('initial-loading-container');
+            loader.innerHTML = '';
+            const h4 = document.createElement('h4');
+            h4.textContent = 'Failed to load job data';
+            const p = document.createElement('p');
+            p.textContent = data.error || 'An unknown error occurred.';
+            loader.appendChild(h4);
+            loader.appendChild(p);
+        }
+    });
+}
     fetch("/start-initial-load", { method: 'POST' })
     .then(response => response.json())
     .then(data => {
@@ -505,4 +504,3 @@ document.addEventListener('DOMContentLoaded', function() {
             saveBtn.disabled = false;
         });
     });
-});
