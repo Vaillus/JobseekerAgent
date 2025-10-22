@@ -302,6 +302,53 @@ def dashboard():
                 display: block; /* Show the active tab */
             }
 
+            /* Title suggestions styles */
+            #title-suggestions-container {
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 1em;
+                margin-bottom: 1.5em;
+            }
+            #title-suggestions-container h4 {
+                margin: 0 0 0.75em 0;
+                color: #495057;
+            }
+            #title-suggestions-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin: 0;
+                padding: 0;
+            }
+            .title-suggestion-btn {
+                background-color: #e9ecef;
+                border: 1px solid #ced4da;
+                padding: 8px 12px;
+                border-radius: 20px;
+                cursor: pointer;
+                transition: background-color 0.2s, border-color 0.2s;
+            }
+            .title-suggestion-btn:hover {
+                background-color: #dee2e6;
+            }
+            .title-suggestion-btn.selected {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+            #custom-title-area {
+                margin-top: 1em;
+                display: flex;
+                gap: 10px;
+            }
+            #custom-title-input {
+                flex-grow: 1;
+                border: 1px solid #ced4da;
+                border-radius: 5px;
+                padding: 8px;
+            }
+
         </style>
     </head>
     <body>
@@ -318,8 +365,22 @@ def dashboard():
                         <button class="tab-btn" data-tab="executor">Executor</button>
                     </div>
                     <div id="keywords-tab" class="tab-content">
-                        <div id="keywords-container"></div>
-                        <button id="finalize-btn" disabled>Finalize & Save Keywords</button>
+                        <div id="keyword-loading-container">
+                            <h4>Extracting Keywords & Titles...</h4>
+                            <p>This may take a moment. The interface will appear here once the process is complete.</p>
+                        </div>
+                        <div id="data-container" style="display: none;">
+                            <div id="title-suggestions-container" style="display: none;">
+                                <h4>Title Suggestions</h4>
+                                <div id="title-suggestions-list"></div>
+                                <div id="custom-title-area">
+                                    <input type="text" id="custom-title-input" placeholder="Enter a custom title...">
+                                    <button id="apply-custom-title-btn" class="toolbar-btn action-btn">Apply</button>
+                                </div>
+                            </div>
+                            <div id="keywords-container"></div>
+                            <button id="finalize-btn" disabled>Finalize & Save Keywords</button>
+                        </div>
                     </div>
                     <div id="executor-tab" class="tab-content" style="display: none;">
                         <button id="run-executor-btn" class="toolbar-btn action-btn" style="width: 100%; margin-bottom: 1em;">Run Keyword Executor</button>
@@ -481,10 +542,8 @@ def dashboard():
                         if (data.status === 'complete') {
                             document.getElementById('initial-loading-container').style.display = 'none';
                             document.getElementById('main-content').style.display = 'block';
-                            // Now that initial data is loaded, we can fetch keywords
-                             fetch("{{ url_for('get_keywords') }}")
-                                .then(response => response.json())
-                                .then(renderKeywords);
+                            // Now that initial data is loaded, start the keyword extraction
+                            startAndPollExtraction();
                         } else if (data.status === 'pending') {
                             setTimeout(pollInitialLoadStatus, 2000); // Poll again
                         } else if (data.status === 'failed') {
@@ -497,24 +556,89 @@ def dashboard():
                 fetch("{{ url_for('start_initial_load') }}", { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status === 'started' || data.status === 'complete') {
+                    if (data.status === 'started' || data.status === 'complete' || data.status === 'already_running') {
                         pollInitialLoadStatus();
                     } else {
                         const loader = document.getElementById('initial-loading-container');
                         loader.innerHTML = `<h4>Could not start data loading</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
                     }
                 });
+
+                // Custom title button event
+                document.getElementById('apply-custom-title-btn').addEventListener('click', () => {
+                    const input = document.getElementById('custom-title-input');
+                    const customTitle = input.value.trim();
+                    if (customTitle) {
+                        updateTitle(customTitle);
+                    } else {
+                        alert('Please enter a custom title.');
+                    }
+                });
             });
 
-            function renderKeywords(data) {
-                const container = document.getElementById('keywords-container');
-                if (!container || data.error) {
-                    console.error("Error loading keywords:", data.error);
-                    return;
+            function startAndPollExtraction() {
+                function pollExtractionStatus() {
+                    fetch("{{ url_for('extraction_status') }}")
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'complete') {
+                            const keywordsPromise = fetch("{{ url_for('get_keywords') }}").then(res => res.json());
+                            const titlesPromise = fetch("{{ url_for('get_titles') }}").then(res => res.json());
+                            Promise.all([keywordsPromise, titlesPromise])
+                                .then(([keywordsData, titlesData]) => {
+                                    renderData(keywordsData, titlesData);
+                                })
+                                .catch(error => console.error("Failed to fetch final data:", error));
+                        } else if (data.status === 'pending') {
+                            setTimeout(pollExtractionStatus, 2000); // Poll again
+                        } else if (data.status === 'failed') {
+                            const loader = document.getElementById('keyword-loading-container');
+                            loader.innerHTML = `<h4>Extraction Failed</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
+                        }
+                    });
                 }
 
-                for (const groupTitle in data) {
-                    const groupData = data[groupTitle];
+                fetch("{{ url_for('start_extraction') }}", { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'started' || data.status === 'complete') {
+                        pollExtractionStatus();
+                    } else {
+                         const loader = document.getElementById('keyword-loading-container');
+                         loader.innerHTML = `<h4>Could not start extraction</h4><p>${data.error || 'An unknown error occurred.'}</p>`;
+                    }
+                });
+            }
+
+            function renderData(keywordsData, titlesData) {
+                document.getElementById('keyword-loading-container').style.display = 'none';
+                document.getElementById('data-container').style.display = 'block';
+
+                // Render titles
+                const titlesContainer = document.getElementById('title-suggestions-container');
+                const titlesList = document.getElementById('title-suggestions-list');
+                if (titlesList && Array.isArray(titlesData) && titlesData.length > 0) {
+                    titlesData.forEach(title => {
+                        const btn = document.createElement('button');
+                        btn.className = 'title-suggestion-btn';
+                        btn.textContent = title;
+                        btn.onclick = () => updateTitle(title, btn);
+                        titlesList.appendChild(btn);
+                    });
+                    titlesContainer.style.display = 'block';
+                } else {
+                    console.error("No titles found or error loading titles:", titlesData);
+                }
+
+                // Render keywords
+                const container = document.getElementById('keywords-container');
+                if (!container || keywordsData.error) {
+                    console.error("Error loading keywords:", keywordsData.error);
+                    return;
+                }
+                container.innerHTML = ''; // Clear previous content
+                for (const groupTitle in keywordsData) {
+                    const groupData = keywordsData[groupTitle];
                     const groupDiv = document.createElement('div');
                     groupDiv.className = 'keyword-group';
 
@@ -581,6 +705,35 @@ def dashboard():
 
                     container.appendChild(groupDiv);
                 }
+            }
+
+            function updateTitle(title, clickedButton = null) {
+                // Visually deselect all buttons
+                document.querySelectorAll('.title-suggestion-btn').forEach(b => b.classList.remove('selected'));
+                // Select the clicked button if it exists
+                if (clickedButton) {
+                    clickedButton.classList.add('selected');
+                }
+
+                fetch("{{ url_for('update_title') }}", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: title })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Title updated successfully.');
+                        refreshPdf();
+                        viewPdfBtn.click(); // Switch to PDF to show the change
+                    } else {
+                        alert('Error updating title: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to update title:', error);
+                    alert('An error occurred while updating the title.');
+                });
             }
 
             document.getElementById('finalize-btn').addEventListener('click', function() {
@@ -736,6 +889,39 @@ def save_tex():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@app.route("/update-title", methods=["POST"])
+def update_title():
+    """Finds and replaces the title in the resume.tex file."""
+    data = request.get_json()
+    new_title = data.get("title")
+    if not new_title:
+        return jsonify({"success": False, "error": "No title provided"}), 400
+
+    try:
+        resume_file = get_data_path() / "resume" / str(JOB_ID) / "resume.tex"
+        content = resume_file.read_text(encoding="utf-8")
+
+        # Use regex to replace the content of \title{...}
+        import re
+        # This regex is non-greedy and handles nested braces to a degree, common in LaTeX
+        new_content, count = re.subn(r'(\\title\{)(.*?)(\})', r'\\title{' + new_title + r'}', content, count=1)
+
+        if count == 0:
+            return jsonify({"success": False, "error": "\\title{...} tag not found in resume.tex"}), 404
+
+        resume_file.write_text(new_content, encoding="utf-8")
+
+        compile_success, compile_log = compile_tex()
+        if not compile_success:
+            # Revert the file if compilation fails
+            resume_file.write_text(content, encoding="utf-8")
+            return jsonify({"success": False, "error": f"PDF recompilation failed: {compile_log}"}), 500
+
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @app.route("/run-executor", methods=["POST"])
 def run_executor():
     """Runs the keyword executor script."""
@@ -772,6 +958,67 @@ def run_executor():
         return jsonify({"success": False, "error": "keywords_validated.json not found. Please finalize keywords first."}), 404
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+def run_keyword_extraction_task():
+    """The actual keyword extraction logic to be run in a background thread."""
+    global EXTRACTION_STATUS
+    try:
+        EXTRACTION_STATUS['status'] = 'pending'
+        # This data needs to be loaded inside the thread
+        job = load_raw_job(JOB_ID)
+        profil_pro = load_prompt("profil_pro")
+        resume = load_cv_template()
+        job_details = analyze_linkedin_job(job["job_link"]) # Assuming this is thread-safe
+
+        extraction_response = extract_keywords(job_details, profil_pro, resume, model="gpt-5-mini")
+
+        # Save title suggestions
+        titles_file = get_data_path() / "resume" / str(JOB_ID) / "titles.json"
+        with open(titles_file, "w", encoding="utf-8") as f:
+            json.dump(extraction_response['title_suggestions'], f, indent=4)
+
+        # Save classified keywords
+        keywords_file = get_data_path() / "resume" / str(JOB_ID) / "keywords.json"
+        with open(keywords_file, "w", encoding="utf-8") as f:
+            json.dump(extraction_response['classified'], f, indent=4)
+        
+        EXTRACTION_STATUS['status'] = 'complete'
+        print("✅ Background keyword extraction complete.")
+    except Exception as e:
+        print(f"❌ Background keyword extraction failed: {e}")
+        EXTRACTION_STATUS['status'] = 'failed'
+        EXTRACTION_STATUS['error'] = str(e)
+
+
+@app.route("/start-extraction", methods=["POST"])
+def start_extraction():
+    """Starts the keyword extraction in a background thread."""
+    global EXTRACTION_THREAD, EXTRACTION_STATUS
+
+    job_dir = get_data_path() / "resume" / str(JOB_ID)
+    titles_file = job_dir / "titles.json"
+    keywords_file = job_dir / "keywords.json"
+
+    if titles_file.exists() and keywords_file.exists():
+        print("✅ Keyword and title files already exist. Skipping extraction.")
+        EXTRACTION_STATUS = {'status': 'complete', 'error': None}
+        return jsonify({"status": "complete"})
+
+    if EXTRACTION_THREAD is None or not EXTRACTION_THREAD.is_alive():
+        print("Starting keyword extraction thread...")
+        EXTRACTION_THREAD = threading.Thread(target=run_keyword_extraction_task)
+        EXTRACTION_THREAD.daemon = True
+        EXTRACTION_THREAD.start()
+        return jsonify({"status": "started"})
+    else:
+        return jsonify({"status": "already_running"})
+
+
+@app.route("/extraction-status")
+def extraction_status():
+    """Checks the status of the keyword extraction."""
+    return jsonify(EXTRACTION_STATUS)
 
 
 def run_initial_load_task():
@@ -900,6 +1147,16 @@ def get_keywords():
         return jsonify({"error": "Keywords file not found"}), 404
 
 
+@app.route("/titles")
+def get_titles():
+    """Serves the titles JSON file."""
+    titles_file = get_data_path() / "resume" / str(JOB_ID) / "titles.json"
+    try:
+        return send_from_directory(titles_file.parent, titles_file.name)
+    except FileNotFoundError:
+        return jsonify({"error": "Titles file not found"}), 404
+
+
 @app.route("/tex")
 def serve_tex():
     """Serves the raw TeX file content."""
@@ -925,7 +1182,7 @@ def main():
     threading.Timer(1.25, lambda: webbrowser.open(url)).start()
     print(f"Starting the dashboard server at {url}")
     print("Press CTRL+C to stop the server.")
-    app.run(port=5001, debug=False)
+    app.run(port=5001, debug=True)
 
 
 if __name__ == "__main__":
