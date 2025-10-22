@@ -77,6 +77,14 @@ def load_raw_jobs() -> List[Dict[str, Any]]:
     with open(raw_jobs_path, "r") as f:
         return json.load(f)
 
+def load_raw_job(job_id: int) -> Dict[str, Any]:
+    """Charge le job brut depuis le fichier JSON."""
+    raw_jobs = load_raw_jobs()
+    job = next((j for j in raw_jobs if j["id"] == job_id), None)
+    if not job:
+        raise ValueError(f"Job with ID {job_id} not found")
+    return job
+
 def load_labels(generation_id: int) -> List[Dict[str, Any]]:
     """Charge les labels depuis le fichier JSON."""
     labels_path = get_evaluator_labels_path(generation_id)
