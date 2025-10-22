@@ -11,6 +11,7 @@ from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
 from jobseeker_agent.corrector.keyword_extractor_2 import extract_keywords
 from jobseeker_agent.corrector.keyword_executor import execute_keywords
 from jobseeker_agent.corrector.ranker import rank
+from jobseeker_agent.corrector.introducer import suggest_introductions
 
 
 def run_keyword_extraction_task():
@@ -156,3 +157,35 @@ def run_ranker_task():
         print(f"❌ Background ranking failed: {e}")
         state.RANKING_STATUS["status"] = "failed"
         state.RANKING_STATUS["error"] = str(e)
+
+
+def run_introducer_task():
+    """The actual introduction suggestion logic to be run in a background thread."""
+    try:
+        print("➡️ [THREAD] Introducer task started.")
+        state.INTRODUCTION_STATUS["status"] = "pending"
+
+        print("    [THREAD] Loading job, prompt, and resume...")
+        profil_pro = load_prompt("profil_pro")
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        resume_content = resume_file.read_text(encoding="utf-8")
+        print("    [THREAD] ...data loaded.")
+
+        print("    [THREAD] Calling LLM to suggest introductions...")
+        response = suggest_introductions(
+            state.JOB_DESCRIPTION, profil_pro, resume_content
+        )
+        print("    [THREAD] ...LLM response received.")
+
+        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+        opening_lines_file = job_dir / "opening_lines.json"
+
+        with open(opening_lines_file, "w", encoding="utf-8") as f:
+            json.dump(response, f, indent=4)
+
+        state.INTRODUCTION_STATUS["status"] = "complete"
+        print("✅ Background introduction suggestion complete.")
+    except Exception as e:
+        print(f"❌ Background introduction suggestion failed: {e}")
+        state.INTRODUCTION_STATUS["status"] = "failed"
+        state.INTRODUCTION_STATUS["error"] = str(e)

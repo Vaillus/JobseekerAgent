@@ -270,6 +270,98 @@ def ranking_status():
     return jsonify(state.RANKING_STATUS)
 
 
+@bp.route("/start-introduction", methods=["POST"])
+def start_introduction():
+    """Starts the introduction suggestion in a background thread."""
+    if state.INTRODUCTION_THREAD is None or not state.INTRODUCTION_THREAD.is_alive():
+        print("Starting introduction suggestion thread...")
+        state.INTRODUCTION_THREAD = threading.Thread(target=tasks.run_introducer_task)
+        state.INTRODUCTION_THREAD.daemon = True
+        state.INTRODUCTION_THREAD.start()
+        return jsonify({"status": "started"})
+    else:
+        return jsonify({"status": "already_running"})
+
+
+@bp.route("/introduction-status")
+def introduction_status():
+    """Checks the status of the introduction suggestion."""
+    return jsonify(state.INTRODUCTION_STATUS)
+
+
+@bp.route("/introduction-report")
+def get_introduction_report():
+    """Serves the introduction report JSON file."""
+    report_file = (
+        get_data_path() / "resume" / str(state.JOB_ID) / "opening_lines.json"
+    )
+    try:
+        return send_from_directory(report_file.parent, report_file.name)
+    except FileNotFoundError:
+        return jsonify({"error": "Introduction report file not found"}), 404
+
+
+@bp.route("/save-introduction", methods=["POST"])
+def save_introduction():
+    """Saves the selected introduction to the resume.tex file."""
+    data = request.get_json()
+    introduction_text = data.get("introduction")
+    if not introduction_text:
+        return jsonify({"success": False, "error": "No introduction provided"}), 400
+
+    try:
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        content = resume_file.read_text(encoding="utf-8")
+
+        # The new introduction text, wrapped in LaTeX formatting
+        new_introduction_formatted = (
+            f"\n\n\\begin{{center}}\n    \\textit{{{introduction_text}}}\n\\end{{center}}\n\n"
+        )
+
+        # Regex to replace the content between the title and the Experience section
+        # We assume the title is the only \textbf{\LARGE ...} element before \section{Experience}
+        pattern = re.compile(
+            r"(\\textbf{\\LARGE.*?})((?:.|\n)*?)(\\section{Experience})", re.DOTALL
+        )
+
+        def repl(match):
+            # The introduction will replace everything between the title and the Experience section
+            return match.group(1) + new_introduction_formatted + match.group(3)
+
+        new_content, count = pattern.subn(repl, content, count=1)
+
+        if count == 0:
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Could not find the insertion point in resume.tex.",
+                    }
+                ),
+                404,
+            )
+
+        resume_file.write_text(new_content, encoding="utf-8")
+
+        compile_success, compile_log = utils.compile_tex()
+        if not compile_success:
+            # Revert the change if compilation fails
+            resume_file.write_text(content, encoding="utf-8")
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": f"PDF recompilation failed: {compile_log}",
+                    }
+                ),
+                500,
+            )
+
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @bp.route("/ranking-report")
 def get_ranking_report():
     """Serves the ranking report JSON file."""

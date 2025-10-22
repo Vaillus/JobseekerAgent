@@ -382,6 +382,7 @@ function startAndPollRanking() {
                     const btn = document.getElementById('rank-resume-btn');
                     btn.textContent = 'Rank Resume';
                     btn.disabled = false;
+                    document.getElementById('suggest-introductions-btn').style.display = 'block';
                 });
             } else if (data.status === 'pending') {
                 setTimeout(pollRankingStatus, 2000);
@@ -405,6 +406,86 @@ function startAndPollRanking() {
             reportContainer.innerHTML = `<p style="color: red;">Could not start ranking: ${data.status}</p>`;
             const btn = document.getElementById('rank-resume-btn');
             btn.textContent = 'Rank Resume';
+            btn.disabled = false;
+        }
+    });
+}
+
+function startAndPollIntroductions() {
+    function pollIntroductionStatus() {
+        fetch("/introduction-status")
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'complete') {
+                fetch("/introduction-report")
+                .then(res => res.json())
+                .then(reportData => {
+                    const reportContainer = document.getElementById('introduction-report');
+                    const editor = document.getElementById('introduction-editor');
+                    const saveBtn = document.getElementById('save-introduction-btn');
+                    reportContainer.innerHTML = '';
+
+                    if (reportData.opening_lines && reportData.opening_lines.length > 0) {
+                        reportData.opening_lines.forEach((line, index) => {
+                            const container = document.createElement('div');
+                            container.className = 'suggestion-item';
+
+                            const radio = document.createElement('input');
+                            radio.type = 'radio';
+                            radio.name = 'introduction_suggestion';
+                            radio.id = `intro_${index}`;
+                            radio.value = line;
+
+                            const label = document.createElement('label');
+                            label.htmlFor = `intro_${index}`;
+                            label.textContent = line;
+
+                            container.appendChild(radio);
+                            container.appendChild(label);
+                            reportContainer.appendChild(container);
+
+                            radio.addEventListener('change', () => {
+                                if (radio.checked) {
+                                    editor.value = line;
+                                    saveBtn.style.display = 'block';
+                                }
+                            });
+                        });
+                    } else {
+                        reportContainer.textContent = 'No suggestions were generated.';
+                    }
+                    document.getElementById('introduction-container').style.display = 'block';
+                })
+                .catch(error => console.error("Failed to fetch introduction report:", error))
+                .finally(() => {
+                    const btn = document.getElementById('suggest-introductions-btn');
+                    btn.textContent = 'Suggest Opening Lines';
+                    btn.disabled = false;
+                });
+            } else if (data.status === 'pending') {
+                setTimeout(pollIntroductionStatus, 2000);
+            } else if (data.status === 'failed') {
+                const reportContainer = document.getElementById('introduction-container');
+                reportContainer.style.display = 'block';
+                document.getElementById('introduction-report').innerHTML = `<p style="color: red;">Suggestion failed: ${data.error || 'Unknown error'}</p>`;
+                const btn = document.getElementById('suggest-introductions-btn');
+                btn.textContent = 'Suggest Opening Lines';
+                btn.disabled = false;
+            }
+        });
+    }
+
+    fetch("/start-introduction", { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'started') {
+            pollIntroductionStatus();
+        } else {
+            const reportContainer = document.getElementById('introduction-container');
+            reportContainer.style.display = 'block';
+            document.getElementById('introduction-report').innerHTML = `<p style="color: red;">Could not start suggestion: ${data.status}</p>`;
+            const btn = document.getElementById('suggest-introductions-btn');
+            btn.textContent = 'Suggest Opening Lines';
             btn.disabled = false;
         }
     });
@@ -562,6 +643,53 @@ function pollInitialLoadStatus() {
         btn.disabled = true;
         
         startAndPollRanking();
+    });
+
+    document.getElementById('suggest-introductions-btn').addEventListener('click', function() {
+        const btn = this;
+        btn.textContent = 'Suggesting...';
+        btn.disabled = true;
+        document.getElementById('introduction-container').style.display = 'block';
+        document.getElementById('introduction-report').innerHTML = '<p>Generating suggestions...</p>';
+        startAndPollIntroductions();
+    });
+
+    document.getElementById('save-introduction-btn').addEventListener('click', function() {
+        const introductionText = document.getElementById('introduction-editor').value;
+        if (!introductionText.trim()) {
+            alert('Introduction cannot be empty.');
+            return;
+        }
+
+        const btn = this;
+        btn.textContent = 'Saving...';
+        btn.disabled = true;
+
+        fetch("/save-introduction", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ introduction: introductionText })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Introduction saved successfully! PDF is being updated.');
+                setTimeout(() => {
+                    refreshPdf();
+                    viewPdfBtn.click();
+                }, 2500);
+            } else {
+                alert('Error saving introduction: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Save introduction error:', error);
+            alert('A critical error occurred while saving the introduction.');
+        })
+        .finally(() => {
+            btn.textContent = 'Validate';
+            btn.disabled = false;
+        });
     });
 
     document.getElementById('finalize-btn').addEventListener('click', function() {
