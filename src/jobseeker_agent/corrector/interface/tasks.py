@@ -143,18 +143,13 @@ def run_ranker_task():
         print("    [THREAD] ...data loaded.")
 
         print("    [THREAD] Calling LLM to rank experiences and skills...")
-        response = rank(state.JOB_DESCRIPTION, profil_pro, resume_content)
+        response = rank(
+            job_id=state.JOB_ID,
+            job_description=state.JOB_DESCRIPTION,
+            profil_pro=profil_pro,
+            resume=resume_content,
+        )
         print("    [THREAD] ...LLM response received.")
-
-        # Save the ranking report
-        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
-        ranking_report_file = job_dir / "ranking_report.json"
-        ranking_report = {
-            "experience_ranking": response["experience_ranking"],
-            "skill_ranking": response["skill_ranking"],
-        }
-        with open(ranking_report_file, "w", encoding="utf-8") as f:
-            json.dump(ranking_report, f, indent=4)
 
         # Reorder the resume content using the new manipulator
         print("    [THREAD] Reordering experiences and skills in .tex file...")
@@ -189,15 +184,12 @@ def run_introducer_task():
 
         print("    [THREAD] Calling LLM to suggest introductions...")
         response = suggest_introductions(
-            state.JOB_DESCRIPTION, profil_pro, resume_content
+            job_id=state.JOB_ID,
+            job_description=state.JOB_DESCRIPTION,
+            profil_pro=profil_pro,
+            resume=resume_content,
         )
         print("    [THREAD] ...LLM response received.")
-
-        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
-        opening_lines_file = job_dir / "opening_lines.json"
-
-        with open(opening_lines_file, "w", encoding="utf-8") as f:
-            json.dump(response, f, indent=4)
 
         state.INTRODUCTION_STATUS["status"] = "complete"
         print("✅ Background introduction suggestion complete.")

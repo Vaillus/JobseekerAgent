@@ -62,6 +62,20 @@ def get_evaluator_evals_json_path(generation_id: int) -> Path:
     evals_dir.mkdir(parents=True, exist_ok=True)
     return evals_dir / "evals.json"
 
+def get_ranking_report_path(job_id: int) -> Path:
+    """Retourne le chemin vers le rapport de ranking."""
+    ranking_dir = get_data_path() / "resume" / str(job_id)
+    ranking_dir.mkdir(parents=True, exist_ok=True)
+    return ranking_dir / "ranking_report.json"
+
+
+def get_opening_lines_path(job_id: int) -> Path:
+    """Retourne le chemin vers le fichier des phrases d'accroche."""
+    opening_lines_dir = get_data_path() / "resume" / str(job_id)
+    opening_lines_dir.mkdir(parents=True, exist_ok=True)
+    return opening_lines_dir / "opening_lines.json"
+
+
 def load_prompt(prompt_name: str) -> str:
     """Charge le prompt depuis le fichier."""
     prompt_path = get_data_path() / "prompts" / f"{prompt_name}.md"

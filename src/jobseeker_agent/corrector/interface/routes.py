@@ -294,6 +294,7 @@ def start_ranking():
     """Starts the ranking in a background thread."""
     if state.RANKING_THREAD is None or not state.RANKING_THREAD.is_alive():
         print("Starting ranking thread...")
+        state.RANKING_STATUS = {"status": "idle", "error": None}
         state.RANKING_THREAD = threading.Thread(target=tasks.run_ranker_task)
         state.RANKING_THREAD.daemon = True
         state.RANKING_THREAD.start()

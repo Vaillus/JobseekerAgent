@@ -11,6 +11,7 @@ function refreshPdf() {
         url.searchParams.set('t', new Date().getTime());
         pdfViewer.src = url.href;
     }
+    refreshTex();
 }
 
 function refreshTex() {
@@ -576,6 +577,7 @@ document.body.addEventListener('click', function(event) {
     // --- Main Controls ---
     if (id === 'refresh-btn') {
         if (document.getElementById('tex-viewer').style.display === 'block') {
+            refreshTex();
             fetch("/corrector/recompile-tex", { method: 'POST' })
                 .then(res => res.json())
                 .then(data => {

@@ -19,5 +19,7 @@ Also take into account the significance of that experience in my profile. For ex
 But if one experience is strongly more relevant than my thesis, put it first.
 
 ## Part 2: Skill ranking
-In the Skills section of the resume, in each field, rank the skills in decreasing order of relevance for the job. Keep skills in the .tex format with "\&" for the "&" character and so on.
+In the Skills section of the resume, in each field, rank the skills in decreasing order of relevance for the job.
+The skills names should be strictly the same as in the resume. (e.g. ["Optimization", "Operations Research"] should not become ["Optimization (Operations Research)"] ;  and "evaluation methods" should not become "Evaluation methods (evaluation \& continuous improvement of agents)").
+Keep skills in the .tex format with "\&" for the "&" character and so on.
 
