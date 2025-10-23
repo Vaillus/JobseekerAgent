@@ -1,4 +1,5 @@
 import json
+import markdown
 import re
 import threading
 from flask import (
@@ -288,6 +289,16 @@ def initial_load_status():
             with open(job_details_file, "r", encoding="utf-8") as f:
                 job_details = json.load(f)
             job_details["id"] = state.JOB_ID  # Add the job_id here
+
+            # Convert description from Markdown to HTML
+            if "description" in job_details and job_details["description"]:
+                processed_markdown = job_details["description"].replace('**', '## ')
+                job_details["description"] = markdown.markdown(processed_markdown)
+            
+            # Convert synthesis from Markdown to HTML
+            if "synthesis" in job_details and job_details["synthesis"]:
+                job_details["synthesis"] = markdown.markdown(job_details["synthesis"])
+
             return jsonify({"status": "complete", "job_details": job_details})
         except (FileNotFoundError, json.JSONDecodeError) as e:
             return jsonify(

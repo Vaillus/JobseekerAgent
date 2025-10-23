@@ -6,6 +6,7 @@ from datetime import date
 from flask import Flask, jsonify, render_template, request
 from jinja2 import ChoiceLoader, FileSystemLoader
 import json
+import markdown
 import os
 
 print("--- Script starting ---")
@@ -98,6 +99,11 @@ def dashboard():
     for job in base_jobs:
         job_with_status = job.copy()
         job_with_status["status"] = job_statuses_map.get(job_with_status.get("id"))
+        
+        # Convert synthesis from Markdown to HTML
+        if "synthesis_and_decision" in job_with_status and job_with_status["synthesis_and_decision"]:
+            job_with_status["synthesis_and_decision"] = markdown.markdown(job_with_status["synthesis_and_decision"])
+
         all_jobs.append(job_with_status)
 
     unprocessed_jobs = [j for j in all_jobs if not j["status"]]
@@ -124,6 +130,11 @@ def get_job_details(job_id: int):
     if not live_details:
         print("Could not fetch live details.")
         return jsonify({"description": None})
+
+    # Convert description from Markdown to HTML
+    if "description" in live_details and live_details["description"]:
+        processed_markdown = live_details["description"].replace('**', '## ')
+        live_details["description"] = markdown.markdown(processed_markdown)
 
     print("Successfully fetched live details.")
     return jsonify(live_details)

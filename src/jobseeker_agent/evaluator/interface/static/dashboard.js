@@ -33,7 +33,7 @@ function displayJobDetails(jobId) {
         <h2>Evaluation Grid</h2>
         ${formatEvaluationGrid(jobData.evaluation_grid)}
         <h2>Synthesis and Decision</h2>
-        <pre>${ jobData['synthesis_and_decision'] || 'Not available.' }</pre>
+        <div class="job-description-content">${ jobData['synthesis_and_decision'] || 'Not available.' }</div>
         <h3>Full Job Description</h3>
         <div id="live-description-container"><div id="loader">Fetching live details...</div></div>
         <div class="btn-container">
@@ -52,7 +52,7 @@ function displayJobDetails(jobId) {
         .then(data => {
             const container = document.getElementById('live-description-container');
             if (data.description) {
-                container.innerHTML = `<pre>${data.description}</pre>`;
+                container.innerHTML = `<div class="job-description-content">${data.description}</div>`;
             } else {
                 container.innerHTML = `<pre>Could not retrieve live job description. Stored link: <a href="${jobData.job_link}" target="_blank">${jobData.job_link}</a></pre>`;
             }

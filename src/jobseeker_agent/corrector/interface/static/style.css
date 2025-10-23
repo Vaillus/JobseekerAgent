@@ -341,3 +341,42 @@ h1 { color: #2c3e50; flex-shrink: 0; }
 .evaluation-item-negative-1 { background-color: #fbeeee; border-left: 5px solid #c0392b; }
 .evaluation-item-negative-2 { background-color: #f7d2d2; border-left: 5px solid #c0392b; }
 .evaluation-item-negative-3 { background-color: #f4b6b6; border-left: 5px solid #c0392b; }
+
+/* Styles for job description content */
+.job-description-content {
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.job-description-content h2 {
+    color: #333;
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+    font-size: 1.5em; /* Adjust size */
+}
+
+.job-description-content h3 {
+    color: #555;
+    margin-top: 1.2em;
+    margin-bottom: 0.5em;
+    font-size: 1.2em;
+}
+
+.job-description-content p,
+.job-description-content ul,
+.job-description-content li {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 1em;
+}
+
+.job-description-content ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.job-description-content ul li {
+    margin-bottom: 0.5em;
+}

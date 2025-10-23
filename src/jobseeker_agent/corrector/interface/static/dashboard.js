@@ -54,19 +54,27 @@ function fetchJobDetails(data) {
     container.appendChild(document.createElement('hr'));
 
     // Helper to create sections
-    function createSection(title, content) {
+    function createSection(title, content, isHtml = false) {
         const h3 = document.createElement('h3');
         h3.textContent = title;
-        const pre = document.createElement('pre');
-        pre.textContent = content || 'Not available.';
         container.appendChild(h3);
-        container.appendChild(pre);
+
+        if (isHtml) {
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'job-description-content'; // for CSS styling
+            contentDiv.innerHTML = content || 'Not available.';
+            container.appendChild(contentDiv);
+        } else {
+            const pre = document.createElement('pre');
+            pre.textContent = content || 'Not available.';
+            container.appendChild(pre);
+        }
     }
 
-    createSection('Full Job Description', data.description);
+    createSection('Full Job Description', data.description, true);
 
     // Use the data directly from the initial load
-    createSection('Synthesis and Decision', data.synthesis);
+    createSection('Synthesis and Decision', data.synthesis, true);
 
     const gridTitle = document.createElement('h3');
     gridTitle.textContent = 'Evaluation Grid';
