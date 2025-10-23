@@ -21,16 +21,16 @@ class KeywordExtractionResponse(TypedDict):
     grouped: Annotated[Dict[str, List[str]], ..., "Keywords grouped by domain. The key is the domain name. The value is a list of keywords related to that domain. The list is in decreasing order of relevance for the job."]
     classified: Annotated[Dict[str, KeywordGroup], ..., "Exact same list as 'grouped'  but within each group, the keywords are subdivided in three groups: match_present, match_absent and mismatch_absent."]
     title_suggestions: Annotated[List[str], ..., "3 suggestions for the title of the resume that are good fits for the job description and the candidate profile."]
-def extract_keywords(job_details: dict, profil_pro: str, cv_template: str, model: str="gpt-5-main") -> KeywordExtractionResponse:
+def extract_keywords(job: dict, job_details: dict, profil_pro: str, cv_template: str, model: str="gpt-5-main") -> KeywordExtractionResponse:
     """Extracts keywords from a job description."""
     keyword_extractor_prompt = load_prompt("keyword_extractor")
     
     llm = get_llm(model)
     llm = llm.with_structured_output(KeywordExtractionResponse)
-    
+    # print(*job_details.keys(), sep="\n")
     message = HumanMessage(
         content=keyword_extractor_prompt.format(
-            job_title=job_details["title"],
+            job_title=job["title"],
             job_description=job_details["description"],
             profil_pro=profil_pro,
             cv_template=cv_template,

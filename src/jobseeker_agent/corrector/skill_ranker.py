@@ -12,7 +12,7 @@ class SkillRankerResponse(TypedDict):
     """Response structure for skill ranking."""
     resume: Annotated[str, ..., "The same resume as the template, but with the skills ranked in the order of the ranking."]
 
-def rank_skills(job_description: str, profil_pro: str, cv_template: str, model: str="gpt-5-main") -> SkillRankerResponse:
+def rank_skills(job_description: str, profil_pro: str, cv_template: str, model: str="gpt-5-mini") -> SkillRankerResponse:
     """Ranks skills in decreasing order of relevance for the job."""
     skill_ranker_prompt = load_prompt("skill_ranker")
     llm = get_llm(model)

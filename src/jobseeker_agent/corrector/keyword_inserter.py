@@ -14,7 +14,7 @@ load_dotenv()
 class KeywordInsertionResponse(TypedDict):
     """Response structure for keyword extraction from job descriptions."""
     report: Annotated[List[str], ..., "Report of the keyword insertion process. Says which keywords were inserted and where. Also says which keywords wer not inserted and why."]
-    resume: Annotated[str, ..., "Modified resume with the keywords inserted."]
+    resume: Annotated[str, ..., "Modified resume with the keywords inserted. It must be correct .tex code. For example, & character in the text should be escaped as \& when displayed in LaTeX."]
     keywords_present: Annotated[Dict[str, List[str]], ..., "Keywords present in the resume, updated with the new keywords that were inserted in this process. do not return empty lists. If the value of some key is empty, remove the key from the dictionary. Try to add the new keywords to existing groups when relevant."]
 
 def insert_keywords(job_description: str, profil_pro: str, cv_template: str, keywords_present: List[str], keywords_absent: List[str], model: str="gpt-5-main") -> KeywordInsertionResponse:
