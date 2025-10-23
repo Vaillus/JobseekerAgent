@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import date
 from flask import Flask, jsonify, render_template, request
 from jinja2 import ChoiceLoader, FileSystemLoader
+import json
 
 print("--- Script starting ---")
 
@@ -79,8 +80,7 @@ corrector_interface_path = (
 )
 app.register_blueprint(
     corrector_bp,
-    url_prefix="/corrector",
-    static_folder=str(corrector_interface_path / "static"),
+    url_prefix="/corrector"
 )
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 print("Flask App initialized.")
@@ -128,16 +128,6 @@ def get_job_details(job_id: int):
     return jsonify(live_details)
 
 
-@app.route("/apply/<int:job_id>", methods=["POST"])
-def apply_for_job(job_id: int):
-    """Sets the job_id for the corrector interface and returns its HTML."""
-    print(f"--- Request received for /apply/{job_id} ---")
-    corrector_state.JOB_ID = job_id
-    # This will now find 'corrector_dashboard.html' because of the ChoiceLoader
-    print("Rendering corrector_dashboard.html")
-    return render_template("corrector_dashboard.html")
-
-
 @app.route("/status/<int:job_id>", methods=["POST"])
 def update_status(job_id: int):
     """Marks a job's status as applied or not interested."""
@@ -171,7 +161,7 @@ def main():
     threading.Timer(1.25, lambda: webbrowser.open("http://127.0.0.1:5000/")).start()
     print("Starting the dashboard server at http://127.0.0.1:5000/")
     print("Press CTRL+C to stop the server.")
-    app.run(port=5000, debug=False)
+    app.run(port=5000, debug=True)
 
 
 if __name__ == "__main__":

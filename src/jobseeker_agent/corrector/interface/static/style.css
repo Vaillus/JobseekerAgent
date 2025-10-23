@@ -45,6 +45,10 @@ h1 { color: #2c3e50; }
 .view-switcher {
     margin-left: auto;
 }
+.manual-highlight {
+    background-color: #f2dc4b; /* A pleasant yellow */
+    cursor: pointer;
+}
 #save-btn {
     background-color: #27ae60;
     border-color: #27ae60;

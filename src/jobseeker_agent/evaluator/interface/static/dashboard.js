@@ -118,33 +118,6 @@ function applyForJob(jobId) {
     applyBtn.textContent = 'Loading...';
     applyBtn.disabled = true;
 
-    fetch(`/apply/${jobId}`, { method: 'POST' })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(html => {
-            document.getElementById('sidebar').style.display = 'none';
-            const contentDiv = document.getElementById('content');
-            contentDiv.innerHTML = html;
-            contentDiv.style.width = '100%'; // Make content take full width
-
-            const oldScript = document.querySelector('script[data-script-id="corrector-script"]');
-            if (oldScript) {
-                oldScript.remove();
-            }
-
-            const script = document.createElement('script');
-            script.src = '/corrector/static/dashboard.js';
-            script.dataset.scriptId = 'corrector-script';
-            document.body.appendChild(script);
-        })
-        .catch(error => {
-            console.error('Error loading corrector interface:', error);
-            applyBtn.textContent = 'Error';
-            applyBtn.disabled = false;
-            alert('Could not load the corrector interface. Please check the console for details.');
-        });
+    // Simply redirect to the corrector interface URL
+    window.location.href = `/corrector/apply/${jobId}`;
 }

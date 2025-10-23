@@ -100,9 +100,18 @@ def run_initial_load_task():
             "evaluation_grid": job_eval.get("evaluation_grid"),
             "synthesis": job_eval.get("synthesis and decision"),
         }
+        print("--- [SERVER-SIDE] Job Details Prepared ---")
+        print(json.dumps(state.JOB_DETAILS, indent=2))
+        print("-----------------------------------------")
 
         job_dir = get_data_path() / "resume" / f"{state.JOB_ID}"
         os.makedirs(job_dir, exist_ok=True)
+
+        # Save job details to a file
+        job_details_file = job_dir / "job_details.json"
+        with open(job_details_file, "w", encoding="utf-8") as f:
+            json.dump(state.JOB_DETAILS, f, indent=4, ensure_ascii=False)
+
         resume = load_cv_template()
         with open(job_dir / "resume.tex", "w", encoding="utf-8") as f:
             f.write(resume)

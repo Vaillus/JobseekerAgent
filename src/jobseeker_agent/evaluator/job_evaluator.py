@@ -21,7 +21,7 @@ class JobEvaluator:
             job for job in self.raw_jobs if job["id"] not in self.processed_job_ids
         ]
 
-    def evaluate_random_job(self):
+    def evaluate_random_job(self, model):
         unprocessed_jobs = self._get_unprocessed_jobs()
         if not unprocessed_jobs:
             print("All jobs have been evaluated.")
@@ -36,7 +36,7 @@ class JobEvaluator:
             print(f"Failed to retrieve details for job {job_id}. Skipping.")
             return
 
-        evaluation = evaluate_job(job_to_evaluate, job_details)
+        evaluation = evaluate_job(job_to_evaluate, job_details, model)
 
         self.evaluations.append(evaluation)
         self.processed_job_ids.add(job_id)
@@ -47,14 +47,14 @@ class JobEvaluator:
         print(f"Evaluation for job {job_id} saved.")
         return evaluation
 
-    def evaluate_n_jobs(self, n: int):
+    def evaluate_n_jobs(self, n: int, model: str):
         for i in range(n):
             print(f"--- Evaluating job {i+1}/{n} ---")
-            evaluation = self.evaluate_random_job()
+            evaluation = self.evaluate_random_job(model)
             if evaluation is None:
                 break
 
 
 if __name__ == "__main__":
     evaluator = JobEvaluator()
-    evaluator.evaluate_n_jobs(50)
+    evaluator.evaluate_n_jobs(300, "gpt-5-mini")

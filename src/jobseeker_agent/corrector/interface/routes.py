@@ -12,8 +12,17 @@ from . import state, utils, tasks
 from jobseeker_agent.utils.paths import get_data_path, load_prompt, load_cv_template
 
 bp = Blueprint(
-    "main", __name__, template_folder="templates", static_folder="static"
+    "corrector", __name__, template_folder="templates", static_folder="static"
 )
+
+
+@bp.route("/apply/<int:job_id>")
+def apply_for_job(job_id: int):
+    """Sets the job_id for the corrector interface and renders the dashboard."""
+    print(f"--- Corrector: Received request to apply for job_id: {job_id} ---")
+    state.JOB_ID = job_id
+    print(f"Corrector state JOB_ID set to: {state.JOB_ID}")
+    return render_template("corrector_dashboard.html")
 
 
 @bp.route("/")
@@ -248,6 +257,16 @@ def start_initial_load():
 @bp.route("/initial-load-status")
 def initial_load_status():
     """Checks the status of the initial data load."""
+    if state.DATA_LOADING_STATUS["status"] == "complete":
+        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+        job_details_file = job_dir / "job_details.json"
+        try:
+            with open(job_details_file, "r", encoding="utf-8") as f:
+                job_details = json.load(f)
+            return jsonify({"status": "complete", "job_details": job_details})
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            return jsonify({"status": "failed", "error": f"Could not load job details: {e}"})
+
     return jsonify(state.DATA_LOADING_STATUS)
 
 

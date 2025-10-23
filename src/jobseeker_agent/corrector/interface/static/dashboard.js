@@ -1,15 +1,9 @@
-const saveBtn = document.getElementById('save-btn');
-const refreshBtn = document.getElementById('refresh-btn');
-const reinitializeBtn = document.getElementById('reinitialize-btn');
-const pdfViewer = document.getElementById('pdf-viewer');
-const texViewer = document.getElementById('tex-viewer');
-const jobViewer = document.getElementById('job-viewer');
-const texEditor = document.getElementById('tex-editor');
-const viewPdfBtn = document.getElementById('view-pdf-btn');
-const viewTexBtn = document.getElementById('view-tex-btn');
-const viewJobBtn = document.getElementById('view-job-btn');
+// No more DOMContentLoaded wrapper
+
+// --- Utility Functions ---
 
 function refreshPdf() {
+    const pdfViewer = document.getElementById('pdf-viewer');
     if (pdfViewer) {
         const url = new URL(pdfViewer.src);
         url.searchParams.set('t', new Date().getTime());
@@ -18,6 +12,7 @@ function refreshPdf() {
 }
 
 function refreshTex() {
+    const texEditor = document.getElementById('tex-editor');
     fetch("/corrector/tex")
         .then(response => response.json())
         .then(data => {
@@ -29,140 +24,98 @@ function refreshTex() {
         });
 }
 
-function fetchJobDescription() {
-     fetch("/corrector/job-description")
-        .then(response => response.json())
-        .then(data => {
-            if (data.description) {
-                jobContent.textContent = data.description;
-            } else {
-                jobContent.textContent = "Error loading job description: " + (data.error || "Unknown error");
-            }
-        });
+function fetchJobDetails(data) {
+    console.log("--- Populating Job Details view with received data ---", data);
+    const container = document.getElementById('job-viewer');
+    if (!container) return;
+    if (!data || data.error) {
+        container.innerHTML = `<p>Error loading job details: ${data ? data.error : 'No data received.'}</p>`;
+        return;
+    }
+
+    // Clear previous content
+    container.innerHTML = '';
+
+    // --- Build the job details view safely ---
+    const score = data.score !== null && data.score !== undefined ? `(${data.score})` : '';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'job-header';
+    header.innerHTML = `
+        <h1>${data.title || 'N/A'}</h1>
+        <h2>${data.company_name || 'N/A'} - ${data.location || 'N/A'}</h2>
+        <p>Posted: ${data.posted_date || 'N/A'} | Workplace: ${data.workplace_type || 'N/A'}</p>
+    `;
+    container.appendChild(header);
+    container.appendChild(document.createElement('hr'));
+
+    // Helper to create sections
+    function createSection(title, content) {
+        const h3 = document.createElement('h3');
+        h3.textContent = title;
+        const pre = document.createElement('pre');
+        pre.textContent = content || 'Not available.';
+        container.appendChild(h3);
+        container.appendChild(pre);
+    }
+
+    createSection('Full Job Description', data.description);
+    createSection('Synthesis and Decision', data.synthesis);
+    createSection(`Evaluation Grid ${score}`, data.evaluation_grid);
+    initializeHighlighter();
 }
 
-function fetchJobDetails() {
-    fetch("/corrector/job-details")
-    .then(response => response.json())
-    .then(data => {
-        const container = document.getElementById('job-viewer');
-        if (data.error) {
-            container.innerHTML = `<p>Error loading job details: ${data.error}</p>`;
-            return;
+function initializeHighlighter() {
+    if (typeof rangy === 'undefined' || !rangy.init) {
+        console.error("Rangy library is not loaded. Highlighting will be disabled. Please check for 404 errors in the browser's Network tab.");
+        return;
+    }
+    rangy.init();
+
+    const highlighter = rangy.createHighlighter();
+    
+    highlighter.addClassApplier(rangy.createClassApplier("manual-highlight", {
+        ignoreWhiteSpace: true,
+        tagNames: ["span"]
+    }));
+
+    const jobViewerEl = document.getElementById('job-viewer');
+    if (!jobViewerEl) return;
+
+    // Use a flag to prevent re-attaching listeners
+    if (jobViewerEl.dataset.highlighterInitialized) return;
+    jobViewerEl.dataset.highlighterInitialized = 'true';
+
+    jobViewerEl.addEventListener('mouseup', () => {
+        const selection = rangy.getSelection();
+        const selectedText = selection.toString();
+        
+        console.log("Mouse button released.");
+
+        if (selectedText) {
+            console.log("Text selected:", selectedText);
+            highlighter.highlightSelection("manual-highlight");
+        } else {
+            console.log("No text was selected.");
         }
+    });
 
-        // Clear previous content
-        container.innerHTML = '';
-
-        // --- Build the job details view safely ---
-        const score = data.score !== null && data.score !== undefined ? `(${data.score})` : '';
-
-        // Header
-        const header = document.createElement('div');
-        header.className = 'job-header';
-        header.innerHTML = `
-            <h1>${data.title || 'N/A'}</h1>
-            <h2>${data.company_name || 'N/A'} - ${data.location || 'N/A'}</h2>
-            <p>Posted: ${data.posted_date || 'N/A'} | Workplace: ${data.workplace_type || 'N/A'}</p>
-        `;
-        container.appendChild(header);
-        container.appendChild(document.createElement('hr'));
-
-        // Helper to create sections
-        function createSection(title, content) {
-            const h3 = document.createElement('h3');
-            h3.textContent = title;
-            const pre = document.createElement('pre');
-            pre.textContent = content || 'Not available.';
-            container.appendChild(h3);
-            container.appendChild(pre);
+    jobViewerEl.addEventListener('mousedown', (e) => {
+        if (e.button === 2 && e.target.classList.contains('manual-highlight')) {
+            e.preventDefault();
+            const h = highlighter.getHighlightForElement(e.target);
+            if (h) {
+                highlighter.removeHighlights( [h] );
+            }
         }
-
-        createSection('Full Job Description', data.description);
-        createSection('Synthesis and Decision', data.synthesis);
-        createSection(`Evaluation Grid ${score}`, data.evaluation_grid);
     });
 }
 
-refreshBtn.addEventListener('click', () => {
-    // If in TeX view, recompile. If in PDF view, just refresh.
-    if (texViewer.style.display === 'block') {
-        fetch("/corrector/recompile-tex", { method: 'POST' })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    alert('Recompilation successful!');
-                    setTimeout(() => {
-                        refreshPdf();
-                    }, 1500); // Wait 1.5 seconds for compilation
-                } else {
-                    alert('Recompilation failed: ' + data.error);
-                }
-            });
-    } else {
-        refreshPdf();
-    }
-});
-
-viewPdfBtn.addEventListener('click', function() {
-    pdfViewer.style.display = 'block';
-    texViewer.style.display = 'none';
-    jobViewer.style.display = 'none';
-    refreshBtn.style.display = 'inline-block';
-    saveBtn.style.display = 'none';
-    viewPdfBtn.classList.add('active');
-    viewTexBtn.classList.remove('active');
-    viewJobBtn.classList.remove('active');
-});
-
-viewTexBtn.addEventListener('click', function() {
-    pdfViewer.style.display = 'none';
-    texViewer.style.display = 'block';
-    jobViewer.style.display = 'none';
-    refreshBtn.style.display = 'inline-block';
-    saveBtn.style.display = 'inline-block';
-    viewPdfBtn.classList.remove('active');
-    viewTexBtn.classList.add('active');
-    viewJobBtn.classList.remove('active');
-    if (!texEditor.value) {
-        refreshTex();
-    }
-});
-
-viewJobBtn.addEventListener('click', function() {
-    pdfViewer.style.display = 'none';
-    texViewer.style.display = 'none';
-    jobViewer.style.display = 'block';
-    refreshBtn.style.display = 'none';
-    saveBtn.style.display = 'none';
-    viewPdfBtn.classList.remove('active');
-    viewTexBtn.classList.remove('active');
-    viewJobBtn.classList.add('active');
-    if (jobViewer.children.length === 0) {
-        fetchJobDetails();
-    }
-});
-
-reinitializeBtn.addEventListener('click', () => {
-    if (confirm('Are you sure you want to reset the TeX file to its original template? All changes will be lost.')) {
-        fetch("/corrector/reinitialize-tex", { method: 'POST' })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Reinitialization successful!');
-                    texEditor.value = data.content; // Update TeX view immediately
-                    setTimeout(() => {
-                        refreshPdf();
-                    }, 1500); // Wait for compilation
-                } else {
-                    alert('Reinitialization failed: ' + data.error);
-                }
-            });
-    }
-});
 
 function checkValidationState() {
     const finalizeBtn = document.getElementById('finalize-btn');
+    if (!finalizeBtn) return;
     const groups = document.querySelectorAll('.keyword-group');
     if (groups.length === 0) {
         finalizeBtn.disabled = true;
@@ -171,6 +124,8 @@ function checkValidationState() {
     const allValidated = Array.from(groups).every(group => group.classList.contains('validated'));
     finalizeBtn.disabled = !allValidated;
 }
+
+// --- Polling and Data Loading Functions ---
 
 function startAndPollExtraction() {
     function pollExtractionStatus() {
@@ -374,7 +329,7 @@ function startAndPollRanking() {
                     alert('Ranking successful! PDF is being updated.');
                     setTimeout(() => {
                         refreshPdf();
-                        viewPdfBtn.click();
+                        document.getElementById('view-pdf-btn').click();
                     }, 2500);
                 })
                 .catch(error => console.error("Failed to fetch ranking report:", error))
@@ -491,20 +446,30 @@ function startAndPollIntroductions() {
     });
 }
 
-// --- Main script execution ---
-console.log("DOMContentLoaded event will not fire, script running directly.");
-
-// Element Declarations
-console.log("Elements declared:", { saveBtn, refreshBtn, viewPdfBtn });
-
-// Initial Load
 function pollInitialLoadStatus() {
+    console.log("Polling for initial load status...");
     fetch("/corrector/initial-load-status")
     .then(response => response.json())
     .then(data => {
+        console.log("Received status:", data.status);
         if (data.status === 'complete') {
+            console.log("Status is 'complete'. Hiding loader and starting keyword extraction.");
+            console.log("--- Received Job Details upon completion ---", data.job_details); // Log the data here
+            
             document.getElementById('initial-loading-container').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
+            
+            // Store job details globally to be used by fetchJobDetails
+            window.jobDetailsData = data.job_details;
+
+            // --- Enable the Job view button ---
+            const jobViewBtn = document.getElementById('view-job-btn');
+            if (jobViewBtn) {
+                jobViewBtn.disabled = false;
+                console.log("Job view button has been enabled.");
+            }
+            // ---
+
             startAndPollExtraction();
         } else if (data.status === 'pending') {
             setTimeout(pollInitialLoadStatus, 2000);
@@ -520,25 +485,143 @@ function pollInitialLoadStatus() {
         }
     });
 }
-    fetch("/corrector/start-initial-load", { method: 'POST' })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'started' || data.status === 'complete' || data.status === 'already_running') {
-            pollInitialLoadStatus();
-        } else {
-            const loader = document.getElementById('initial-loading-container');
-            loader.innerHTML = '';
-            const h4 = document.createElement('h4');
-            h4.textContent = 'Could not start data loading';
-            const p = document.createElement('p');
-            p.textContent = data.error || 'An unknown error occurred.';
-            loader.appendChild(h4);
-            loader.appendChild(p);
-        }
-    });
 
-    // Custom title button event
-    document.getElementById('apply-custom-title-btn').addEventListener('click', () => {
+
+// --- Event Delegation for All Actions ---
+
+document.body.addEventListener('click', function(event) {
+    const target = event.target;
+    // Use .closest() to handle clicks on icons inside buttons
+    const button = target.closest('button');
+    if (!button) return; // Exit if the click was not on or inside a button
+
+    const id = button.id;
+
+    // --- View Switching Logic ---
+    if (id === 'view-pdf-btn') {
+        document.getElementById('pdf-viewer').style.display = 'block';
+        document.getElementById('tex-viewer').style.display = 'none';
+        document.getElementById('job-viewer').style.display = 'none';
+        document.getElementById('refresh-btn').style.display = 'inline-block';
+        document.getElementById('save-btn').style.display = 'none';
+        button.classList.add('active');
+        document.getElementById('view-tex-btn').classList.remove('active');
+        document.getElementById('view-job-btn').classList.remove('active');
+        return;
+    }
+
+    if (id === 'view-tex-btn') {
+        document.getElementById('pdf-viewer').style.display = 'none';
+        document.getElementById('tex-viewer').style.display = 'block';
+        document.getElementById('job-viewer').style.display = 'none';
+        document.getElementById('refresh-btn').style.display = 'inline-block';
+        document.getElementById('save-btn').style.display = 'inline-block';
+        button.classList.add('active');
+        document.getElementById('view-pdf-btn').classList.remove('active');
+        document.getElementById('view-job-btn').classList.remove('active');
+        if (!document.getElementById('tex-editor').value) {
+            refreshTex();
+        }
+        return;
+    }
+
+    if (id === 'view-job-btn') {
+        document.getElementById('pdf-viewer').style.display = 'none';
+        document.getElementById('tex-viewer').style.display = 'none';
+        const jobViewer = document.getElementById('job-viewer');
+        jobViewer.style.display = 'block';
+        document.getElementById('refresh-btn').style.display = 'none';
+        document.getElementById('save-btn').style.display = 'none';
+        button.classList.add('active');
+        document.getElementById('view-pdf-btn').classList.remove('active');
+        document.getElementById('view-tex-btn').classList.remove('active');
+        if (jobViewer.children.length === 0) {
+            console.log("Job viewer is empty, calling fetchJobDetails() with stored data.");
+            fetchJobDetails(window.jobDetailsData);
+        }
+        return;
+    }
+
+    // --- Main Controls ---
+    if (id === 'refresh-btn') {
+        if (document.getElementById('tex-viewer').style.display === 'block') {
+            fetch("/corrector/recompile-tex", { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        alert('Recompilation successful!');
+                        setTimeout(refreshPdf, 1500);
+                    } else {
+                        alert('Recompilation failed: ' + data.error);
+                    }
+                });
+        } else {
+            refreshPdf();
+        }
+        return;
+    }
+
+    if (id === 'save-btn') {
+        const content = document.getElementById('tex-editor').value;
+        button.textContent = 'Saving...';
+        button.disabled = true;
+        fetch("/corrector/save-tex", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: content })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('File saved and recompiled successfully!');
+                document.getElementById('tex-editor').value = "";
+                setTimeout(() => {
+                    document.getElementById('view-pdf-btn').click();
+                    refreshPdf();
+                }, 1500);
+            } else {
+                alert('Error saving file: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .finally(() => {
+            button.textContent = 'Save';
+            button.disabled = false;
+        });
+        return;
+    }
+    
+    if (id === 'reinitialize-btn') {
+        if (confirm('Are you sure you want to reset the TeX file to its original template? All changes will be lost.')) {
+            fetch("/corrector/reinitialize-tex", { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Reinitialization successful!');
+                        document.getElementById('tex-editor').value = data.content; // Update TeX view immediately
+                        setTimeout(refreshPdf, 1500); // Wait for compilation
+                    } else {
+                        alert('Reinitialization failed: ' + data.error);
+                    }
+                });
+        }
+        return;
+    }
+
+    // --- Tab Switching ---
+    if (button.classList.contains('tab-btn')) {
+        const tabId = button.dataset.tab;
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.style.display = tab.id === `${tabId}-tab` ? 'block' : 'none';
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        button.classList.add('active');
+        return;
+    }
+    
+    // --- Actions within Tabs ---
+    if (id === 'apply-custom-title-btn') {
         const input = document.getElementById('custom-title-input');
         const customTitle = input.value.trim();
         if (customTitle) {
@@ -546,153 +629,10 @@ function pollInitialLoadStatus() {
         } else {
             alert('Please enter a custom title.');
         }
-    });
-
-    // Tab switching logic
-    document.querySelectorAll('.tab-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const tabId = button.dataset.tab;
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.style.display = tab.id === `${tabId}-tab` ? 'block' : 'none';
-            });
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            button.classList.add('active');
-        });
-    });
-
-    // Executor logic
-    document.getElementById('run-executor-btn').addEventListener('click', function(event) {
-        event.preventDefault(); // Add this line to prevent any default browser action
-        const btn = this;
-        const reportContainer = document.getElementById('executor-report');
-        btn.textContent = 'Executing...';
-        btn.disabled = true;
-        reportContainer.innerHTML = '<div class="log-line">Running... please wait.</div>';
-
-        fetch("/corrector/run-executor", { method: 'POST' })
-        .then(response => {
-            console.log("Received response from server:", response);
-            if (!response.ok) {
-                // If response is not OK (e.g., 404, 500), throw an error to be caught below
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json(); // Attempt to parse JSON
-        })
-        .then(data => {
-            console.log("Successfully parsed JSON:", data);
-            reportContainer.innerHTML = ''; // Clear the container
-            if (data.success) {
-                if (Array.isArray(data.report)) {
-                    data.report.forEach(line => {
-                        const logLine = document.createElement('div');
-                        logLine.className = 'log-line';
-                        logLine.textContent = line;
-                        reportContainer.appendChild(logLine);
-                    });
-                } else if (data.report) {
-                    const logLine = document.createElement('div');
-                    logLine.className = 'log-line';
-                    logLine.textContent = data.report;
-                    reportContainer.appendChild(logLine);
-                } else {
-                    const logLine = document.createElement('div');
-                    logLine.className = 'log-line';
-                    logLine.textContent = "Execution successful, but no report was generated.";
-                    reportContainer.appendChild(logLine);
-                }
-                document.getElementById('rank-resume-btn').style.display = 'block';
-
-
-                alert('Execution successful! PDF is being updated.');
-                setTimeout(() => {
-                    refreshPdf();
-                    viewPdfBtn.click();
-                }, 2500); // Increased delay to 2.5 seconds
-            } else {
-                const safeError = String(data.error || 'Unknown error');
-                const errorLine = document.createElement('div');
-                errorLine.className = 'log-line';
-                errorLine.style.color = 'red';
-                errorLine.textContent = "Error during execution: " + safeError;
-                reportContainer.appendChild(errorLine);
-                alert('Execution failed: ' + safeError.substring(0, 500));
-            }
-        })
-        .catch(error => {
-            // This will catch network errors and errors from the .then() blocks
-            console.error('Fetch error:', error);
-            reportContainer.innerHTML = ''; // Clear the container
-            const errorLine = document.createElement('div');
-            errorLine.className = 'log-line';
-            errorLine.style.color = 'red';
-            errorLine.textContent = "A critical error occurred: " + error.message;
-            reportContainer.appendChild(errorLine);
-            alert("A critical error occurred. Please check the browser's console for details.");
-        })
-        .finally(() => {
-            btn.textContent = 'Run Keyword Executor';
-            btn.disabled = false;
-        });
-    });
-
-    document.getElementById('rank-resume-btn').addEventListener('click', function() {
-        const btn = this;
-        btn.textContent = 'Ranking...';
-        btn.disabled = true;
-        
-        startAndPollRanking();
-    });
-
-    document.getElementById('suggest-introductions-btn').addEventListener('click', function() {
-        const btn = this;
-        btn.textContent = 'Suggesting...';
-        btn.disabled = true;
-        document.getElementById('introduction-container').style.display = 'block';
-        document.getElementById('introduction-report').innerHTML = '<p>Generating suggestions...</p>';
-        startAndPollIntroductions();
-    });
-
-    document.getElementById('save-introduction-btn').addEventListener('click', function() {
-        const introductionText = document.getElementById('introduction-editor').value;
-        if (!introductionText.trim()) {
-            alert('Introduction cannot be empty.');
-            return;
-        }
-
-        const btn = this;
-        btn.textContent = 'Saving...';
-        btn.disabled = true;
-
-        fetch("/corrector/save-introduction", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ introduction: introductionText })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Introduction saved successfully! PDF is being updated.');
-                setTimeout(() => {
-                    refreshPdf();
-                    viewPdfBtn.click();
-                }, 2500);
-            } else {
-                alert('Error saving introduction: ' + (data.error || 'Unknown error'));
-            }
-        })
-        .catch(error => {
-            console.error('Save introduction error:', error);
-            alert('A critical error occurred while saving the introduction.');
-        })
-        .finally(() => {
-            btn.textContent = 'Validate';
-            btn.disabled = false;
-        });
-    });
-
-    document.getElementById('finalize-btn').addEventListener('click', function() {
+        return;
+    }
+    
+    if (id === 'finalize-btn') {
         const finalData = {};
         document.querySelectorAll('.keyword-group').forEach(groupDiv => {
             const title = groupDiv.querySelector('h3').textContent;
@@ -709,9 +649,8 @@ function pollInitialLoadStatus() {
             };
         });
 
-        const btn = this;
-        btn.textContent = 'Saving...';
-        btn.disabled = true;
+        button.textContent = 'Saving...';
+        button.disabled = true;
 
         fetch("/corrector/save-validated-keywords", {
             method: 'POST',
@@ -727,35 +666,139 @@ function pollInitialLoadStatus() {
             }
         })
         .finally(() => {
-            btn.textContent = 'Finalize & Save Keywords';
+            button.textContent = 'Finalize & Save Keywords';
             checkValidationState();
         });
-    });
+        return;
+    }
+
+    if (id === 'run-executor-btn') {
+        event.preventDefault();
+        const reportContainer = document.getElementById('executor-report');
+        button.textContent = 'Executing...';
+        button.disabled = true;
+        reportContainer.innerHTML = '<div class="log-line">Running... please wait.</div>';
+
+        fetch("/corrector/run-executor", { method: 'POST' })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            reportContainer.innerHTML = '';
+            if (data.success) {
+                if (Array.isArray(data.report)) {
+                    data.report.forEach(line => {
+                        const logLine = document.createElement('div');
+                        logLine.className = 'log-line';
+                        logLine.textContent = line;
+                        reportContainer.appendChild(logLine);
+                    });
+                } else if (data.report) {
+                    const logLine = document.createElement('div');
+                    logLine.className = 'log-line';
+                    logLine.textContent = data.report;
+                    reportContainer.appendChild(logLine);
+                } else {
+                    reportContainer.innerHTML = '<div class="log-line">Execution successful, but no report was generated.</div>';
+                }
+                document.getElementById('rank-resume-btn').style.display = 'block';
+
+                alert('Execution successful! PDF is being updated.');
+                setTimeout(() => {
+                    refreshPdf();
+                    document.getElementById('view-pdf-btn').click();
+                }, 2500);
+            } else {
+                const safeError = String(data.error || 'Unknown error');
+                reportContainer.innerHTML = `<div class="log-line" style="color: red;">Error during execution: ${safeError}</div>`;
+                alert('Execution failed: ' + safeError.substring(0, 500));
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            reportContainer.innerHTML = `<div class="log-line" style="color: red;">A critical error occurred: ${error.message}</div>`;
+            alert("A critical error occurred. Please check the browser's console for details.");
+        })
+        .finally(() => {
+            button.textContent = 'Run Keyword Executor';
+            button.disabled = false;
+        });
+        return;
+    }
+
+    if (id === 'rank-resume-btn') {
+        button.textContent = 'Ranking...';
+        button.disabled = true;
+        startAndPollRanking();
+        return;
+    }
     
-    saveBtn.addEventListener('click', function() {
-        const content = texEditor.value;
-        saveBtn.textContent = 'Saving...';
-        saveBtn.disabled = true;
-        fetch("/corrector/save-tex", {
+    if (id === 'suggest-introductions-btn') {
+        button.textContent = 'Suggesting...';
+        button.disabled = true;
+        document.getElementById('introduction-container').style.display = 'block';
+        document.getElementById('introduction-report').innerHTML = '<p>Generating suggestions...</p>';
+        startAndPollIntroductions();
+        return;
+    }
+    
+    if (id === 'save-introduction-btn') {
+        const introductionText = document.getElementById('introduction-editor').value;
+        if (!introductionText.trim()) {
+            alert('Introduction cannot be empty.');
+            return;
+        }
+
+        button.textContent = 'Saving...';
+        button.disabled = true;
+
+        fetch("/corrector/save-introduction", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: content })
+            body: JSON.stringify({ introduction: introductionText })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('File saved and recompiled successfully!');
-                texEditor.value = "";
+                alert('Introduction saved successfully! PDF is being updated.');
                 setTimeout(() => {
-                    viewPdfBtn.click();
                     refreshPdf();
-                }, 1500);
+                    document.getElementById('view-pdf-btn').click();
+                }, 2500);
             } else {
-                alert('Error saving file: ' + (data.error || 'Unknown error'));
+                alert('Error saving introduction: ' + (data.error || 'Unknown error'));
             }
         })
+        .catch(error => {
+            console.error('Save introduction error:', error);
+            alert('A critical error occurred while saving the introduction.');
+        })
         .finally(() => {
-            saveBtn.textContent = 'Save';
-            saveBtn.disabled = false;
+            button.textContent = 'Validate';
+            button.disabled = false;
         });
-    });
+        return;
+    }
+});
+
+
+// --- Initial Script Execution ---
+console.log("Triggering start-initial-load...");
+fetch("/corrector/start-initial-load", { method: 'POST' })
+.then(response => response.json())
+.then(data => {
+    console.log("Response from start-initial-load:", data.status);
+    if (data.status === 'started' || data.status === 'complete' || data.status === 'already_running') {
+        pollInitialLoadStatus();
+    } else {
+        const loader = document.getElementById('initial-loading-container');
+        loader.innerHTML = '';
+        const h4 = document.createElement('h4');
+        h4.textContent = 'Could not start data loading';
+        const p = document.createElement('p');
+        p.textContent = data.error || 'An unknown error occurred.';
+        loader.appendChild(h4);
+        loader.appendChild(p);
+    }
+});
