@@ -64,8 +64,18 @@ function fetchJobDetails(data) {
     }
 
     createSection('Full Job Description', data.description);
+
+    // Use the data directly from the initial load
     createSection('Synthesis and Decision', data.synthesis);
-    createSection(`Evaluation Grid ${score}`, data.evaluation_grid);
+
+    const gridTitle = document.createElement('h3');
+    gridTitle.textContent = 'Evaluation Grid';
+    container.appendChild(gridTitle);
+
+    const gridContainer = document.createElement('div');
+    gridContainer.innerHTML = formatEvaluationGrid(data.evaluation_grid);
+    container.appendChild(gridContainer);
+
     initializeHighlighter();
 }
 
@@ -113,6 +123,44 @@ function initializeHighlighter() {
             }
         }
     });
+}
+
+
+function formatEvaluationGrid(gridData) {
+    if (!gridData) {
+        return '<pre>Not available.</pre>';
+    }
+    if (typeof gridData === 'string') {
+        return `<pre>${gridData}</pre>`;
+    }
+    if (Array.isArray(gridData)) {
+        let html = '<div class="evaluation-grid-container">';
+        gridData.forEach(item => {
+            let scoreClass = '';
+            let score = Math.round(parseFloat(item.score));
+            score = Math.max(-3, Math.min(3, score)); // Clamp score
+
+            if (!isNaN(score) && score !== 0) {
+                if (score > 0) {
+                    scoreClass = `evaluation-item-positive-${score}`;
+                } else { // score < 0
+                    scoreClass = `evaluation-item-negative-${Math.abs(score)}`;
+                }
+            }
+
+            html += `<div class="evaluation-item ${scoreClass}">`;
+
+            for (const [key, value] of Object.entries(item)) {
+                if (key === 'criteria' || key === 'score') {
+                    html += `<div class="evaluation-field"><strong>${key}:</strong> ${value}</div>`;
+                }
+            }
+            html += '</div>';
+        });
+        html += '</div>';
+        return html;
+    }
+    return `<pre>${JSON.stringify(gridData, null, 2)}</pre>`;
 }
 
 

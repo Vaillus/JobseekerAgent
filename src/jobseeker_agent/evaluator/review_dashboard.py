@@ -6,6 +6,7 @@ from datetime import date
 from flask import Flask, jsonify, render_template, request
 from jinja2 import ChoiceLoader, FileSystemLoader
 import json
+import os
 
 print("--- Script starting ---")
 
@@ -158,7 +159,9 @@ def main():
     """Main function to run the Flask app."""
     print("--- main() function called ---")
     # We use a thread to open the browser after the server starts.
-    threading.Timer(1.25, lambda: webbrowser.open("http://127.0.0.1:5000/")).start()
+    # This should only happen in the main process, not in the reloader's child process.
+    if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+        threading.Timer(1.25, lambda: webbrowser.open("http://127.0.0.1:5000/")).start()
     print("Starting the dashboard server at http://127.0.0.1:5000/")
     print("Press CTRL+C to stop the server.")
     app.run(port=5000, debug=True)

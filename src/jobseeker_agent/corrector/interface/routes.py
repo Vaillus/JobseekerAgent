@@ -9,7 +9,12 @@ from flask import (
     request,
 )
 from . import state, utils, tasks
-from jobseeker_agent.utils.paths import get_data_path, load_prompt, load_cv_template
+from jobseeker_agent.utils.paths import (
+    get_data_path,
+    load_prompt,
+    load_cv_template,
+    load_main_evals,
+)
 
 bp = Blueprint(
     "corrector", __name__, template_folder="templates", static_folder="static"
@@ -282,9 +287,12 @@ def initial_load_status():
         try:
             with open(job_details_file, "r", encoding="utf-8") as f:
                 job_details = json.load(f)
+            job_details["id"] = state.JOB_ID  # Add the job_id here
             return jsonify({"status": "complete", "job_details": job_details})
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            return jsonify({"status": "failed", "error": f"Could not load job details: {e}"})
+            return jsonify(
+                {"status": "failed", "error": f"Could not load job details: {e}"}
+            )
 
     return jsonify(state.DATA_LOADING_STATUS)
 

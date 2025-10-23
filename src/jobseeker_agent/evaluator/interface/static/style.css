@@ -16,3 +16,30 @@ pre { white-space: pre-wrap; word-wrap: break-word; color: #34495e; font-family:
 .interested-btn { background-color: #27ae60; }
 .not-interested-btn { background-color: #c0392b; }
 .status-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+
+.evaluation-grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.evaluation-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 1em;
+    background-color: #f8f8f8;
+}
+
+.evaluation-field {
+    margin-bottom: 0.5em;
+}
+
+/* Positive scores */
+.evaluation-item-positive-1 { background-color: #eafaf1; border-left: 5px solid #27ae60; }
+.evaluation-item-positive-2 { background-color: #bdedd5; border-left: 5px solid #27ae60; }
+.evaluation-item-positive-3 { background-color: #8dd0b8; border-left: 5px solid #27ae60; }
+
+/* Negative scores */
+.evaluation-item-negative-1 { background-color: #fbeeee; border-left: 5px solid #c0392b; }
+.evaluation-item-negative-2 { background-color: #f7d2d2; border-left: 5px solid #c0392b; }
+.evaluation-item-negative-3 { background-color: #f4b6b6; border-left: 5px solid #c0392b; }

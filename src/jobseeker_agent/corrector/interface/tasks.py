@@ -98,7 +98,7 @@ def run_initial_load_task():
             "description": state.JOB_DESCRIPTION,
             "score": job_eval.get("score"),
             "evaluation_grid": job_eval.get("evaluation_grid"),
-            "synthesis": job_eval.get("synthesis and decision"),
+            "synthesis": job_eval.get("synthesis_and_decision"),
         }
         print("--- [SERVER-SIDE] Job Details Prepared ---")
         print(json.dumps(state.JOB_DETAILS, indent=2))

@@ -31,7 +31,7 @@ function displayJobDetails(jobId) {
             <p><b>Preferred Pitch:</b> ${ jobData.preferred_pitch || 'N/A' }</p>
         </div>
         <h2>Evaluation Grid</h2>
-        <pre>${ jobData.evaluation_grid ? JSON.stringify(jobData.evaluation_grid, null, 2) : 'Not available.' }</pre>
+        ${formatEvaluationGrid(jobData.evaluation_grid)}
         <h2>Synthesis and Decision</h2>
         <pre>${ jobData['synthesis_and_decision'] || 'Not available.' }</pre>
         <h3>Full Job Description</h3>
@@ -62,6 +62,43 @@ function displayJobDetails(jobId) {
             const container = document.getElementById('live-description-container');
             container.innerHTML = '<pre>Error fetching live details.</pre>';
         });
+}
+
+function formatEvaluationGrid(gridData) {
+    if (!gridData) {
+        return '<pre>Not available.</pre>';
+    }
+    if (typeof gridData === 'string') {
+        return `<pre>${gridData}</pre>`;
+    }
+    if (Array.isArray(gridData)) {
+        let html = '<div class="evaluation-grid-container">';
+        gridData.forEach(item => {
+            let scoreClass = '';
+            let score = Math.round(parseFloat(item.score));
+            score = Math.max(-3, Math.min(3, score)); // Clamp score
+
+            if (!isNaN(score) && score !== 0) {
+                if (score > 0) {
+                    scoreClass = `evaluation-item-positive-${score}`;
+                } else { // score < 0
+                    scoreClass = `evaluation-item-negative-${Math.abs(score)}`;
+                }
+            }
+
+            html += `<div class="evaluation-item ${scoreClass}">`;
+
+            for (const [key, value] of Object.entries(item)) {
+                if (key === 'criteria' || key === 'score') {
+                    html += `<div class="evaluation-field"><strong>${key}:</strong> ${value}</div>`;
+                }
+            }
+            html += '</div>';
+        });
+        html += '</div>';
+        return html;
+    }
+    return `<pre>${JSON.stringify(gridData, null, 2)}</pre>`;
 }
 
 function updateStatusButtons(jobId) {
