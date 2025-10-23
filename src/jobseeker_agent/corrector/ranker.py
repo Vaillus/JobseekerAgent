@@ -21,7 +21,7 @@ class RankerResponse(TypedDict):
     """Response structure for ranking."""
     experience_ranking: Annotated[List[str], ..., "Ranking of the experiences in decreasing order of relevance for the job. eg. ['Thales', 'CameraCalibration', 'JobseekerAgent', 'IBM']"]
     skill_ranking: Annotated[SkillRanking, ..., "Ranking of the skills in decreasing order of relevance for the job."]
-    resume: Annotated[str, ..., "The same resume as the template, but with the experiences ranked in the order of the ranking."]
+
 
 def rank(
     job_description: str, 

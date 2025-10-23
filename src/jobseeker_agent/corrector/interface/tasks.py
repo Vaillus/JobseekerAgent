@@ -12,6 +12,7 @@ from jobseeker_agent.corrector.keyword_extractor_2 import extract_keywords
 from jobseeker_agent.corrector.keyword_executor import execute_keywords
 from jobseeker_agent.corrector.ranker import rank
 from jobseeker_agent.corrector.introducer import suggest_introductions
+from jobseeker_agent.corrector.resume_manipulator import reorder_experiences, reorder_skills
 
 
 def run_keyword_extraction_task():
@@ -136,6 +137,7 @@ def run_ranker_task():
         response = rank(state.JOB_DESCRIPTION, profil_pro, resume_content)
         print("    [THREAD] ...LLM response received.")
 
+        # Save the ranking report
         job_dir = get_data_path() / "resume" / str(state.JOB_ID)
         ranking_report_file = job_dir / "ranking_report.json"
         ranking_report = {
@@ -145,7 +147,12 @@ def run_ranker_task():
         with open(ranking_report_file, "w", encoding="utf-8") as f:
             json.dump(ranking_report, f, indent=4)
 
-        resume_file.write_text(response["resume"], encoding="utf-8")
+        # Reorder the resume content using the new manipulator
+        print("    [THREAD] Reordering experiences and skills in .tex file...")
+        updated_content = reorder_experiences(resume_content, response["experience_ranking"])
+        final_content = reorder_skills(updated_content, response["skill_ranking"])
+        resume_file.write_text(final_content, encoding="utf-8")
+        print("    [THREAD] ...Reordering complete.")
 
         print("    [THREAD] Compiling ranked TeX file...")
         utils.compile_tex()

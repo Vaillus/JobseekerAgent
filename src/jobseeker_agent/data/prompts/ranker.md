@@ -19,8 +19,5 @@ Also take into account the significance of that experience in my profile. For ex
 But if one experience is strongly more relevant than my thesis, put it first.
 
 ## Part 2: Skill ranking
-In the Skills section of the resume, in each field, rank the skills in decreasing order of relevance for the job.
+In the Skills section of the resume, in each field, rank the skills in decreasing order of relevance for the job. Keep skills in the .tex format with "\&" for the "&" character and so on.
 
-## Part 3: outputting the modified resume
-Output the modified resume with the experiences and skills ranked as instructed in the previous parts.
-It must be an executable .tex file. That means, for example, that "&" characters must be "\&".
