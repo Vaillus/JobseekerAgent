@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Review Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div id="sidebar">
+        <h2>Jobs To Process</h2>
+        <div id="job-list">
+            {% for job in sidebar_jobs %}
+            <div class="job-item" data-job-id="{{ job.id }}">
+                <h4>{{ job.title or 'N/A' }} (Score: {{ job.score if job.score is not none else 'N/A' }})</h4>
+                <p>{{ job.company or 'N/A' }} - {{ job.location or 'N/A' }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="content">
+        <div id="placeholder">
+            <h1>Welcome to the Job Review Dashboard</h1>
+            <p>Select a job from the list on the left to see its details.</p>
+        </div>
+        <div id="job-details" style="display: none;"></div>
+    </div>
+
+    <script>
+        const jobsData = {{ all_jobs | tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>
