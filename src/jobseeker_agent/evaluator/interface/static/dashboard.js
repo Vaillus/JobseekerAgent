@@ -39,10 +39,11 @@ function displayJobDetails(jobId) {
         <div class="btn-container">
             <button id="interested-btn" class="status-btn interested-btn" data-job-id="${jobId}"></button>
             <button id="not-interested-btn" class="status-btn not-interested-btn" data-job-id="${jobId}"></button>
-            <button class="status-btn" onclick="window.open('http://127.0.0.1:5001/?job_id=${jobId}', '_blank')">Apply</button>
+            <button id="apply-btn" class="status-btn" data-job-id="${jobId}">Apply</button>
         </div>
     `;
 
+    document.getElementById('apply-btn').addEventListener('click', () => applyForJob(jobId));
     updateStatusButtons(jobId);
 
     // Fetch and render live description
@@ -110,4 +111,40 @@ function updateJobStatus(jobId, isInterested) {
             document.getElementById('placeholder').style.display = 'block';
         }
     });
+}
+
+function applyForJob(jobId) {
+    const applyBtn = document.getElementById('apply-btn');
+    applyBtn.textContent = 'Loading...';
+    applyBtn.disabled = true;
+
+    fetch(`/apply/${jobId}`, { method: 'POST' })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            document.getElementById('sidebar').style.display = 'none';
+            const contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = html;
+            contentDiv.style.width = '100%'; // Make content take full width
+
+            const oldScript = document.querySelector('script[data-script-id="corrector-script"]');
+            if (oldScript) {
+                oldScript.remove();
+            }
+
+            const script = document.createElement('script');
+            script.src = '/corrector/static/dashboard.js';
+            script.dataset.scriptId = 'corrector-script';
+            document.body.appendChild(script);
+        })
+        .catch(error => {
+            console.error('Error loading corrector interface:', error);
+            applyBtn.textContent = 'Error';
+            applyBtn.disabled = false;
+            alert('Could not load the corrector interface. Please check the console for details.');
+        });
 }

@@ -4,10 +4,14 @@ import threading
 from pathlib import Path
 from datetime import date
 from flask import Flask, jsonify, render_template, request
+from jinja2 import ChoiceLoader, FileSystemLoader
+
+print("--- Script starting ---")
 
 # Add project root to Python path
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(project_root))
+project_root = Path(__file__).resolve().parent.parent.parent.parent
+sys.path.insert(0, str(project_root / "src"))
+print(f"Project root added to sys.path: {project_root}")
 
 from jobseeker_agent.utils.paths import (
     load_main_evals,
@@ -16,16 +20,20 @@ from jobseeker_agent.utils.paths import (
     save_job_statuses,
 )
 from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.corrector.interface.routes import bp as corrector_bp
+from jobseeker_agent.corrector.interface import state as corrector_state
 
-# --- Data Loading (once at startup) ---
+print("--- Data Loading (once at startup) ---")
 evals = load_main_evals()
 raw_jobs = load_raw_jobs()
+print(f"Loaded {len(evals)} evaluations and {len(raw_jobs)} raw jobs.")
 
 evals_map = {int(e["id"]): e for e in evals}
 raw_jobs_map = {int(j["id"]): j for j in raw_jobs}
 
 base_jobs = []
 job_ids = sorted(list(set(raw_jobs_map.keys()) & set(evals_map.keys())))
+print(f"Found {len(job_ids)} common job IDs.")
 
 for job_id in job_ids:
     job_data = {
@@ -37,19 +45,51 @@ for job_id in job_ids:
 
 # Sort by score descending
 base_jobs.sort(key=lambda x: x.get("score", -float("inf")), reverse=True)
+print("Jobs sorted by score.")
 
 
 # --- Flask App ---
+print("--- Initializing Flask App ---")
+# We build absolute paths to the template and static folders
+# to ensure the app can be run from anywhere.
 app = Flask(
     __name__,
-    template_folder="interface/templates",
-    static_folder="interface/static",
+    static_folder=(Path(__file__).resolve().parent / "interface" / "static"),
 )
+
+# Define paths to the two template folders
+evaluator_templates_path = (
+    Path(__file__).resolve().parent / "interface" / "templates"
+)
+corrector_templates_path = (
+    project_root / "src" / "jobseeker_agent" / "corrector" / "interface" / "templates"
+)
+
+# Set up a loader that looks for templates in both directories
+app.jinja_loader = ChoiceLoader(
+    [
+        FileSystemLoader(str(evaluator_templates_path)),
+        FileSystemLoader(str(corrector_templates_path)),
+    ]
+)
+
+# For the blueprint, we only need to specify its static folder, as templates are now handled globally
+corrector_interface_path = (
+    project_root / "src" / "jobseeker_agent" / "corrector" / "interface"
+)
+app.register_blueprint(
+    corrector_bp,
+    url_prefix="/corrector",
+    static_folder=str(corrector_interface_path / "static"),
+)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+print("Flask App initialized.")
 
 
 @app.route("/")
 def dashboard():
     """Renders the main dashboard HTML."""
+    print("--- Request received for / route ---")
     job_statuses = load_job_statuses()
     job_statuses_map = {int(p["id"]): p for p in job_statuses}
 
@@ -60,6 +100,7 @@ def dashboard():
         all_jobs.append(job_with_status)
 
     unprocessed_jobs = [j for j in all_jobs if not j["status"]]
+    print(f"Rendering dashboard with {len(unprocessed_jobs)} unprocessed jobs.")
 
     return render_template(
         "dashboard.html",
@@ -71,22 +112,39 @@ def dashboard():
 @app.route("/job/<int:job_id>")
 def get_job_details(job_id: int):
     """Fetches live job details and returns as JSON."""
+    print(f"--- Request received for /job/{job_id} ---")
     job_link = raw_jobs_map.get(job_id, {}).get("job_link")
     if not job_link:
+        print(f"Job ID {job_id} not found in raw_jobs_map.")
         return jsonify({"error": "Job not found"}), 404
     
+    print(f"Fetching live details for job link: {job_link}")
     live_details = analyze_linkedin_job(job_link)
     if not live_details:
+        print("Could not fetch live details.")
         return jsonify({"description": None})
 
+    print("Successfully fetched live details.")
     return jsonify(live_details)
+
+
+@app.route("/apply/<int:job_id>", methods=["POST"])
+def apply_for_job(job_id: int):
+    """Sets the job_id for the corrector interface and returns its HTML."""
+    print(f"--- Request received for /apply/{job_id} ---")
+    corrector_state.JOB_ID = job_id
+    # This will now find 'corrector_dashboard.html' because of the ChoiceLoader
+    print("Rendering corrector_dashboard.html")
+    return render_template("corrector_dashboard.html")
 
 
 @app.route("/status/<int:job_id>", methods=["POST"])
 def update_status(job_id: int):
     """Marks a job's status as applied or not interested."""
+    print(f"--- Request received for /status/{job_id} ---")
     data = request.get_json()
     has_applied = data.get("applied")
+    print(f"Updating status for job {job_id} to applied={has_applied}")
 
     if has_applied is None:
         return jsonify({"success": False, "message": "Missing 'applied' field"}), 400
@@ -101,12 +159,14 @@ def update_status(job_id: int):
     current_statuses.append(status)
     
     save_job_statuses(current_statuses)
+    print(f"Status for job {job_id} saved successfully.")
 
     return jsonify({"success": True, "status": status})
 
 
 def main():
     """Main function to run the Flask app."""
+    print("--- main() function called ---")
     # We use a thread to open the browser after the server starts.
     threading.Timer(1.25, lambda: webbrowser.open("http://127.0.0.1:5000/")).start()
     print("Starting the dashboard server at http://127.0.0.1:5000/")
@@ -115,4 +175,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print("--- Script executed directly ---")
     main()

@@ -19,7 +19,7 @@ bp = Blueprint(
 @bp.route("/")
 def dashboard():
     """Renders the main dashboard HTML."""
-    return render_template("dashboard.html")
+    return render_template("corrector_dashboard.html")
 
 
 @bp.route("/favicon.ico")

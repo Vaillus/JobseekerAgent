@@ -18,7 +18,7 @@ function refreshPdf() {
 }
 
 function refreshTex() {
-    fetch("/tex")
+    fetch("/corrector/tex")
         .then(response => response.json())
         .then(data => {
             if (data.content) {
@@ -30,7 +30,7 @@ function refreshTex() {
 }
 
 function fetchJobDescription() {
-     fetch("/job-description")
+     fetch("/corrector/job-description")
         .then(response => response.json())
         .then(data => {
             if (data.description) {
@@ -42,7 +42,7 @@ function fetchJobDescription() {
 }
 
 function fetchJobDetails() {
-    fetch("/job-details")
+    fetch("/corrector/job-details")
     .then(response => response.json())
     .then(data => {
         const container = document.getElementById('job-viewer');
@@ -87,7 +87,7 @@ function fetchJobDetails() {
 refreshBtn.addEventListener('click', () => {
     // If in TeX view, recompile. If in PDF view, just refresh.
     if (texViewer.style.display === 'block') {
-        fetch("/recompile-tex", { method: 'POST' })
+        fetch("/corrector/recompile-tex", { method: 'POST' })
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
@@ -145,7 +145,7 @@ viewJobBtn.addEventListener('click', function() {
 
 reinitializeBtn.addEventListener('click', () => {
     if (confirm('Are you sure you want to reset the TeX file to its original template? All changes will be lost.')) {
-        fetch("/reinitialize-tex", { method: 'POST' })
+        fetch("/corrector/reinitialize-tex", { method: 'POST' })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
@@ -174,12 +174,12 @@ function checkValidationState() {
 
 function startAndPollExtraction() {
     function pollExtractionStatus() {
-        fetch("/extraction-status")
+        fetch("/corrector/extraction-status")
         .then(response => response.json())
         .then(data => {
             if (data.status === 'complete') {
-                const keywordsPromise = fetch("/keywords").then(res => res.json());
-                const titlesPromise = fetch("/titles").then(res => res.json());
+                const keywordsPromise = fetch("/corrector/keywords").then(res => res.json());
+                const titlesPromise = fetch("/corrector/titles").then(res => res.json());
                 Promise.all([keywordsPromise, titlesPromise])
                     .then(([keywordsData, titlesData]) => {
                         renderData(keywordsData, titlesData);
@@ -200,7 +200,7 @@ function startAndPollExtraction() {
         });
     }
 
-    fetch("/start-extraction", { method: 'POST' })
+    fetch("/corrector/start-extraction", { method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'started' || data.status === 'complete') {
@@ -307,7 +307,7 @@ function updateTitle(title, clickedButton = null) {
     if (clickedButton) {
         clickedButton.classList.add('selected');
     }
-    fetch("/update-title", {
+    fetch("/corrector/update-title", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: title })
@@ -334,11 +334,11 @@ function updateTitle(title, clickedButton = null) {
 
 function startAndPollRanking() {
     function pollRankingStatus() {
-        fetch("/ranking-status")
+        fetch("/corrector/ranking-status")
         .then(response => response.json())
         .then(data => {
             if (data.status === 'complete') {
-                fetch("/ranking-report")
+                fetch("/corrector/ranking-report")
                 .then(res => res.json())
                 .then(reportData => {
                     const reportContainer = document.getElementById('ranking-report');
@@ -396,7 +396,7 @@ function startAndPollRanking() {
         });
     }
 
-    fetch("/start-ranking", { method: 'POST' })
+    fetch("/corrector/start-ranking", { method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'started') {
@@ -413,11 +413,11 @@ function startAndPollRanking() {
 
 function startAndPollIntroductions() {
     function pollIntroductionStatus() {
-        fetch("/introduction-status")
+        fetch("/corrector/introduction-status")
         .then(response => response.json())
         .then(data => {
             if (data.status === 'complete') {
-                fetch("/introduction-report")
+                fetch("/corrector/introduction-report")
                 .then(res => res.json())
                 .then(reportData => {
                     const reportContainer = document.getElementById('introduction-report');
@@ -475,7 +475,7 @@ function startAndPollIntroductions() {
         });
     }
 
-    fetch("/start-introduction", { method: 'POST' })
+    fetch("/corrector/start-introduction", { method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'started') {
@@ -499,7 +499,7 @@ console.log("Elements declared:", { saveBtn, refreshBtn, viewPdfBtn });
 
 // Initial Load
 function pollInitialLoadStatus() {
-    fetch("/initial-load-status")
+    fetch("/corrector/initial-load-status")
     .then(response => response.json())
     .then(data => {
         if (data.status === 'complete') {
@@ -520,7 +520,7 @@ function pollInitialLoadStatus() {
         }
     });
 }
-    fetch("/start-initial-load", { method: 'POST' })
+    fetch("/corrector/start-initial-load", { method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'started' || data.status === 'complete' || data.status === 'already_running') {
@@ -571,7 +571,7 @@ function pollInitialLoadStatus() {
         btn.disabled = true;
         reportContainer.innerHTML = '<div class="log-line">Running... please wait.</div>';
 
-        fetch("/run-executor", { method: 'POST' })
+        fetch("/corrector/run-executor", { method: 'POST' })
         .then(response => {
             console.log("Received response from server:", response);
             if (!response.ok) {
@@ -665,7 +665,7 @@ function pollInitialLoadStatus() {
         btn.textContent = 'Saving...';
         btn.disabled = true;
 
-        fetch("/save-introduction", {
+        fetch("/corrector/save-introduction", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ introduction: introductionText })
@@ -713,7 +713,7 @@ function pollInitialLoadStatus() {
         btn.textContent = 'Saving...';
         btn.disabled = true;
 
-        fetch("/save-validated-keywords", {
+        fetch("/corrector/save-validated-keywords", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(finalData)
@@ -736,7 +736,7 @@ function pollInitialLoadStatus() {
         const content = texEditor.value;
         saveBtn.textContent = 'Saving...';
         saveBtn.disabled = true;
-        fetch("/save-tex", {
+        fetch("/corrector/save-tex", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: content })
