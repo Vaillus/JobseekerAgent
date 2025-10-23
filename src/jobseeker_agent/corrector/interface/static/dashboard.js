@@ -460,17 +460,17 @@ function pollInitialLoadStatus() {
             
             document.getElementById('initial-loading-container').style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
+            document.querySelector('.tabs').style.display = 'flex'; // Show the tabs
             
             // Store job details globally to be used by fetchJobDetails
             window.jobDetailsData = data.job_details;
 
-            // --- Enable the Job view button ---
-            const jobViewBtn = document.getElementById('view-job-btn');
-            if (jobViewBtn) {
-                jobViewBtn.disabled = false;
-                console.log("Job view button has been enabled.");
+            // If job view is active, populate it now that data is available.
+            const jobViewer = document.getElementById('job-viewer');
+            if (jobViewer.style.display === 'block') {
+                console.log("Job viewer is active, populating with fetched data.");
+                fetchJobDetails(window.jobDetailsData);
             }
-            // ---
 
             startAndPollExtraction();
         } else if (data.status === 'pending') {
@@ -537,8 +537,11 @@ document.body.addEventListener('click', function(event) {
         button.classList.add('active');
         document.getElementById('view-pdf-btn').classList.remove('active');
         document.getElementById('view-tex-btn').classList.remove('active');
-        if (jobViewer.children.length === 0) {
-            console.log("Job viewer is empty, calling fetchJobDetails() with stored data.");
+        
+        // Only populate if data is available and viewer is still showing the loader.
+        // The check for children ensures we don't re-render over existing content.
+        if (window.jobDetailsData && jobViewer.children.length <= 2) { 
+            console.log("Job data is ready, populating viewer.");
             fetchJobDetails(window.jobDetailsData);
         }
         return;
