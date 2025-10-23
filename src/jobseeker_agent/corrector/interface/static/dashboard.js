@@ -1,5 +1,7 @@
 // No more DOMContentLoaded wrapper
 
+let highlighter; // Declare highlighter in a broader scope
+
 // --- Utility Functions ---
 
 function refreshPdf() {
@@ -73,7 +75,7 @@ function initializeHighlighter() {
     }
     rangy.init();
 
-    const highlighter = rangy.createHighlighter();
+    highlighter = rangy.createHighlighter();
     
     highlighter.addClassApplier(rangy.createClassApplier("manual-highlight", {
         ignoreWhiteSpace: true,
@@ -539,6 +541,32 @@ document.body.addEventListener('click', function(event) {
             console.log("Job viewer is empty, calling fetchJobDetails() with stored data.");
             fetchJobDetails(window.jobDetailsData);
         }
+        return;
+    }
+
+    if (id === 'save-highlights-btn') {
+        if (!highlighter) {
+            alert("Highlighter is not initialized. Please click on the 'Job' tab first.");
+            return;
+        }
+        const highlightedTexts = highlighter.highlights.map(h => h.getText());
+        fetch("/corrector/save-highlights", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ highlights: highlightedTexts })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Highlights saved successfully!');
+            } else {
+                alert('Error saving highlights: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Failed to save highlights:', error);
+            alert('An error occurred while saving highlights.');
+        });
         return;
     }
 

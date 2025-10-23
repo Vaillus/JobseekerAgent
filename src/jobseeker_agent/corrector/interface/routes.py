@@ -25,6 +25,25 @@ def apply_for_job(job_id: int):
     return render_template("corrector_dashboard.html")
 
 
+@bp.route("/save-highlights", methods=["POST"])
+def save_highlights():
+    """Saves the highlighted texts to a JSON file."""
+    data = request.get_json()
+    highlight_list = data.get("highlights")
+    if highlight_list is None:
+        return jsonify({"success": False, "error": "No data provided"}), 400
+
+    try:
+        output_file = get_data_path() / "resume" / str(state.JOB_ID) / "highlights.json"
+        
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(highlight_list, f, indent=4, ensure_ascii=False)
+            
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @bp.route("/")
 def dashboard():
     """Renders the main dashboard HTML."""
