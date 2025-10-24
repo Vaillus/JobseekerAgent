@@ -23,3 +23,4 @@ src/jobseeker_agent/data/evaluator/job_statuses.json
 src/jobseeker_agent/data/resume/
 .DS_Store
 src/jobseeker_agent/data/evaluator/evals.json
+src/jobseeker_agent/data/evaluator/evals.json
