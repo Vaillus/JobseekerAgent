@@ -155,6 +155,6 @@ function applyForJob(jobId) {
     applyBtn.textContent = 'Loading...';
     applyBtn.disabled = true;
 
-    // Simply redirect to the corrector interface URL
-    window.location.href = `/corrector/apply/${jobId}`;
+    // Simply redirect to the customizer interface URL
+    window.location.href = `/customizer/apply/${jobId}`;
 }

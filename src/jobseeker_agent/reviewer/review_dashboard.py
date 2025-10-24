@@ -23,8 +23,8 @@ from jobseeker_agent.utils.paths import (
     save_job_statuses,
 )
 from jobseeker_agent.scraper.extract_job_details import extract_job_details
-from jobseeker_agent.corrector.interface.routes import bp as corrector_bp
-from jobseeker_agent.corrector.interface import state as corrector_state
+from jobseeker_agent.customizer.interface.routes import bp as customizer_bp
+from jobseeker_agent.customizer.interface import state as customizer_state
 
 print("--- Data Loading (once at startup) ---")
 reviews = load_main_reviews()
@@ -64,25 +64,25 @@ app = Flask(
 reviewer_templates_path = (
     Path(__file__).resolve().parent / "interface" / "templates"
 )
-corrector_templates_path = (
-    project_root / "src" / "jobseeker_agent" / "corrector" / "interface" / "templates"
+customizer_templates_path = (
+    project_root / "src" / "jobseeker_agent" / "customizer" / "interface" / "templates"
 )
 
 # Set up a loader that looks for templates in both directories
 app.jinja_loader = ChoiceLoader(
     [
         FileSystemLoader(str(reviewer_templates_path)),
-        FileSystemLoader(str(corrector_templates_path)),
+        FileSystemLoader(str(customizer_templates_path)),
     ]
 )
 
 # For the blueprint, we only need to specify its static folder, as templates are now handled globally
-corrector_interface_path = (
-    project_root / "src" / "jobseeker_agent" / "corrector" / "interface"
+customizer_interface_path = (
+    project_root / "src" / "jobseeker_agent" / "customizer" / "interface"
 )
 app.register_blueprint(
-    corrector_bp,
-    url_prefix="/corrector"
+    customizer_bp,
+    url_prefix="/customizer"
 )
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 print("Flask App initialized.")
