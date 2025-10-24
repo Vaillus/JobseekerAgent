@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import inspect
 
 from typing import List, Dict, Any
 
@@ -77,10 +78,27 @@ def get_opening_lines_path(job_id: int) -> Path:
 
 
 def load_prompt(prompt_name: str) -> str:
-    """Charge le prompt depuis le fichier."""
+    """
+    Charge un prompt. Priorise un .md local au script appelant, sinon cherche dans data/prompts.
+    """
+    # First check if a local prompt exists in the folder of the script 
+    # calling this function. The prompt must be named like the script but 
+    # with a .md extension.
+    caller_frame = inspect.stack()[1]
+    caller_path = Path(caller_frame.filename).resolve()
+    local_prompt_path = caller_path.with_suffix(".md")
+    if local_prompt_path.exists():
+        with open(local_prompt_path, "r", encoding="utf-8") as f:
+            return f.read()
+    # If no local prompt exists, search in data/prompts.
     prompt_path = get_data_path() / "prompts" / f"{prompt_name}.md"
-    with open(prompt_path, "r") as f:
+    # If the prompt is not found, raise an error.
+    if not prompt_path.exists():
+        raise FileNotFoundError(f"Prompt {prompt_name} not found in {local_prompt_path} or data/prompts.")
+    # If the prompt is found, return it.
+    with open(prompt_path, "r", encoding="utf-8") as f:
         return f.read()
+
 
 def load_raw_jobs() -> List[Dict[str, Any]]:
     """Charge les jobs bruts depuis le fichier JSON."""

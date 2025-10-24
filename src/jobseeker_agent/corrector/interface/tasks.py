@@ -8,11 +8,10 @@ from jobseeker_agent.utils.paths import (
     load_raw_job,
 )
 from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
-from jobseeker_agent.corrector.keyword_extractor_2 import extract_keywords
-from jobseeker_agent.corrector.keyword_executor import execute_keywords
-from jobseeker_agent.corrector.ranker import rank
-from jobseeker_agent.corrector.introducer import suggest_introductions
-from jobseeker_agent.corrector.resume_manipulator import reorder_experiences, reorder_skills
+from jobseeker_agent.corrector.agents.keyword_extractor import extract_keywords
+from jobseeker_agent.corrector.agents.keyword_executor import execute_keywords
+from jobseeker_agent.corrector.agents.ranker import rank, reorder_experiences, reorder_skills
+from jobseeker_agent.corrector.agents.introducer import suggest_introductions
 
 
 def run_keyword_extraction_task():
