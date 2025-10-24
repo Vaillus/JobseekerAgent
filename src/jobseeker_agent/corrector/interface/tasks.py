@@ -95,6 +95,7 @@ def run_initial_load_task():
             "location": job.get("location"),
             "posted_date": job.get("posted_date"),
             "workplace_type": job.get("workplace_type"),
+            "job_link": job.get("job_link"),
             "description": state.JOB_DESCRIPTION,
             "score": job_eval.get("score"),
             "evaluation_grid": job_eval.get("evaluation_grid"),

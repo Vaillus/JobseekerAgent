@@ -48,6 +48,7 @@ function fetchJobDetails(data) {
     header.innerHTML = `
         <h1>${data.title || 'N/A'}</h1>
         <h2>${data.company_name || 'N/A'} - ${data.location || 'N/A'}</h2>
+        <p><a href="${ data.job_link || '#' }" target="_blank">View Original Job Post</a></p>
         <p>Posted: ${data.posted_date || 'N/A'} | Workplace: ${data.workplace_type || 'N/A'}</p>
     `;
     container.appendChild(header);

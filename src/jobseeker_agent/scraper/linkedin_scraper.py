@@ -232,7 +232,7 @@ def main():
         builder.build_secondary_query()
     ]
     max_jobs = 100
-    max_time = "week"
+    max_time = "day"
     scraper = LinkedInJobsScraper()
     for request in requests:
         for query in queries:
