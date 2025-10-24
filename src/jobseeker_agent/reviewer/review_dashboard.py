@@ -17,7 +17,7 @@ sys.path.insert(0, str(project_root / "src"))
 print(f"Project root added to sys.path: {project_root}")
 
 from jobseeker_agent.utils.paths import (
-    load_main_evals,
+    load_main_reviews,
     load_raw_jobs,
     load_job_statuses,
     save_job_statuses,
@@ -27,22 +27,22 @@ from jobseeker_agent.corrector.interface.routes import bp as corrector_bp
 from jobseeker_agent.corrector.interface import state as corrector_state
 
 print("--- Data Loading (once at startup) ---")
-evals = load_main_evals()
+reviews = load_main_reviews()
 raw_jobs = load_raw_jobs()
-print(f"Loaded {len(evals)} evaluations and {len(raw_jobs)} raw jobs.")
+print(f"Loaded {len(reviews)} reviews and {len(raw_jobs)} raw jobs.")
 
-evals_map = {int(e["id"]): e for e in evals}
+reviews_map = {int(e["id"]): e for e in reviews}
 raw_jobs_map = {int(j["id"]): j for j in raw_jobs}
 
 base_jobs = []
-job_ids = sorted(list(set(raw_jobs_map.keys()) & set(evals_map.keys())))
+job_ids = sorted(list(set(raw_jobs_map.keys()) & set(reviews_map.keys())))
 print(f"Found {len(job_ids)} common job IDs.")
 
 for job_id in job_ids:
     job_data = {
         "id": job_id,
         **raw_jobs_map.get(job_id, {}),
-        **evals_map.get(job_id, {}),
+        **reviews_map.get(job_id, {}),
     }
     base_jobs.append(job_data)
 
@@ -61,7 +61,7 @@ app = Flask(
 )
 
 # Define paths to the two template folders
-evaluator_templates_path = (
+reviewer_templates_path = (
     Path(__file__).resolve().parent / "interface" / "templates"
 )
 corrector_templates_path = (
@@ -71,7 +71,7 @@ corrector_templates_path = (
 # Set up a loader that looks for templates in both directories
 app.jinja_loader = ChoiceLoader(
     [
-        FileSystemLoader(str(evaluator_templates_path)),
+        FileSystemLoader(str(reviewer_templates_path)),
         FileSystemLoader(str(corrector_templates_path)),
     ]
 )

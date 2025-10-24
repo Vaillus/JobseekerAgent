@@ -4,7 +4,7 @@ and my profil: {profil_pro},
 
 return a summary of the job description as follows:
 
-# Job Offer Evaluation Grid - [Company Name] - [Job Title] - [Location]
+# Job Offer Review Grid - [Company Name] - [Job Title] - [Location]
 
 ## The Job
 ### Required expertise

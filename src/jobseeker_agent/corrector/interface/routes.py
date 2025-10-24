@@ -14,7 +14,7 @@ from jobseeker_agent.utils.paths import (
     get_data_path,
     load_prompt,
     load_cv_template,
-    load_main_evals,
+    load_reviews,
 )
 
 bp = Blueprint(

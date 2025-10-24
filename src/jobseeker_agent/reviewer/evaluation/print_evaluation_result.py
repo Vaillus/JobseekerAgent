@@ -11,29 +11,29 @@ from rich.table import Table
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(project_root))
 
-from jobseeker_agent.utils.paths import load_evals, load_labels, load_raw_jobs
+from jobseeker_agent.utils.paths import load_test_reviews, load_labels, load_raw_jobs
 from jobseeker_agent.scraper.extract_job_details import extract_job_details
 
 
 def load_and_merge_data(generation_id: int):
-    """Loads evaluations, labels, and raw job data and merges them."""
-    evals = load_evals(generation_id)
+    """Loads reviews, labels, and raw job data and merges them."""
+    reviews = load_test_reviews(generation_id)
     labels = load_labels(generation_id)
     raw_jobs = load_raw_jobs()
-
+    print(f"Loaded {len(reviews)} reviews, {len(labels)} labels, and {len(raw_jobs)} raw jobs.")
     if not labels:
         print(f"Warning: No labels found for generation {generation_id}.")
         return []
 
-    evals_map = {e["id"]: e for e in evals}
+    reviews_map = {e["id"]: e for e in reviews}
     raw_jobs_map = {j["id"]: j for j in raw_jobs}
 
     merged_data = []
     for label in labels:
         job_id = label["id"]
-        if job_id in evals_map and job_id in raw_jobs_map:
+        if job_id in reviews_map and job_id in raw_jobs_map:
             # Ensure score is a number, default to 0 if not present or invalid
-            score = evals_map[job_id].get("score", 0)
+            score = reviews_map[job_id].get("score", 0)
             try:
                 score = float(score)
             except (ValueError, TypeError):
@@ -41,7 +41,7 @@ def load_and_merge_data(generation_id: int):
 
             merged_item = {
                 **label,
-                **evals_map[job_id],
+                **reviews_map[job_id],
                 **raw_jobs_map[job_id],
                 "score": score,
             }
@@ -189,7 +189,7 @@ def find_confident_correct_jobs(data, threshold):
 
 
 def main(generation_id: int):
-    """Main function to analyze job evaluations."""
+    """Main function to analyze job reviews."""
     console = Console()
 
     console.print(f"[bold cyan]Analysis for Generation ID: {generation_id}[/bold cyan]")
@@ -197,9 +197,9 @@ def main(generation_id: int):
     console.print("[bold cyan]1. Loading and merging data...[/bold cyan]")
     data = load_and_merge_data(generation_id)
     if not data:
-        console.print("[bold red]No labeled evaluations found for this generation. Exiting.[/bold red]")
+        console.print("[bold red]No labeled reviews found for this generation. Exiting.[/bold red]")
         return
-    console.print(f"-> Loaded {len(data)} labeled evaluations.")
+    console.print(f"-> Loaded {len(data)} labeled reviews.")
 
     # Display label distribution
     interested_count = sum(1 for d in data if d["interested"])
@@ -257,19 +257,7 @@ def main(generation_id: int):
     console.print("\n[bold green]Analysis complete.[/bold green]")
 
 
-def check_scores(generation_id: int):
-    # for each sample, check that the value in the "score" field is equal to the sum of the scores in the "evaluation_grid" field.
-    data = load_and_merge_data(generation_id)
-    for item in data:
-        score = item["score"]
-        evaluation_grid = item["evaluation_grid"]
-        evaluation_grid_score = sum(criterion["score"] for criterion in evaluation_grid)
-        print(f"Score: {score}, Evaluation Grid Score: {evaluation_grid_score}")
-        if score != evaluation_grid_score:
-            print(f"Score mismatch for job ID {item['id']}: {score} != {evaluation_grid_score}")
-
-
 if __name__ == "__main__":
-    generation_id = 5
-    # main(generation_id)
-    check_scores(generation_id)
+    generation_id = 4
+    main(generation_id)
+    # check_scores(generation_id)

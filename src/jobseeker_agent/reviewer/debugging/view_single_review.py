@@ -9,7 +9,7 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(project_root))
 
-from jobseeker_agent.utils.paths import load_main_evals, load_raw_jobs
+from jobseeker_agent.utils.paths import load_reviews, load_raw_jobs
 from jobseeker_agent.scraper.extract_job_details import extract_job_details
 
 
@@ -52,7 +52,7 @@ def display_job_details(job_data: dict):
         </div>
         <div class="column evaluation">
             <div class="info">
-                <h3>Evaluation</h3>
+                <h3>Review</h3>
                 <p><b>ID:</b> {job_data['id']}</p>
                 <p><b>Score:</b> {job_data.get('score', 'N/A')}</p>
                 <p><b>Preferred Pitch:</b> {job_data.get('preferred_pitch', 'N/A')}</p>
@@ -76,14 +76,14 @@ def display_job_details(job_data: dict):
 def main(job_id: int):
     """Main function to review a job evaluation."""
     print(f"Loading data for job ID: {job_id}")
-    evals = load_main_evals()
+    reviews = load_reviews()
     raw_jobs = load_raw_jobs()
 
-    evals_map = {int(e["id"]): e for e in evals}
+    reviews_map = {int(e["id"]): e for e in reviews}
     raw_jobs_map = {int(j["id"]): j for j in raw_jobs}
 
-    if job_id not in evals_map:
-        print(f"Error: Evaluation for Job ID {job_id} not found.")
+    if job_id not in reviews_map:
+        print(f"Error: Review for Job ID {job_id} not found.")
         return
     if job_id not in raw_jobs_map:
         print(f"Error: Raw job data for Job ID {job_id} not found.")
@@ -91,7 +91,7 @@ def main(job_id: int):
 
     job_data = {
         **raw_jobs_map[job_id],
-        **evals_map[job_id],
+        **reviews_map[job_id],
     }
 
     display_job_details(job_data)

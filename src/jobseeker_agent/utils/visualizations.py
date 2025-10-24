@@ -6,19 +6,19 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.ticker as ticker
 
-from jobseeker_agent.utils.paths import load_main_evals
+from jobseeker_agent.utils.paths import load_reviews
 
 
 def plot_scores_distribution():
     """
-    Loads the main evaluations and plots the distribution of scores as a bar plot.
+    Loads the reviews and plots the distribution of scores as a bar plot.
     """
-    evals = load_main_evals()
-    if not evals:
-        print("No evaluations found.")
+    reviews = load_reviews()
+    if not reviews:
+        print("No reviews found.")
         return
 
-    scores = [e["score"] for e in evals]
+    scores = [r["score"] for r in reviews]
 
     sns.set_theme(style="whitegrid")
     plt.figure(figsize=(10, 6))

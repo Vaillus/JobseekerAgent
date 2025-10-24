@@ -25,7 +25,7 @@ function displayJobDetails(jobId) {
         <p><a href="${ jobData.job_link || '#' }" target="_blank">View Original Job Post</a></p>
         <hr>
         <div class="info">
-            <h3>Evaluation</h3>
+            <h3>Review</h3>
             <p><b>ID:</b> ${ jobData.id }</p>
             <p><b>Score:</b> ${ jobData.score !== null ? jobData.score : 'N/A' }</p>
             <p><b>Preferred Pitch:</b> ${ jobData.preferred_pitch || 'N/A' }</p>

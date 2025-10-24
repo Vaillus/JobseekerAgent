@@ -73,20 +73,20 @@ def run_initial_load_task():
             "description", "Could not fetch job description."
         )
 
-        print("    [THREAD] Loading evals.json...")
-        evals_path = get_data_path() / "evaluator" / "evals.json"
-        job_eval = {}
+        print("    [THREAD] Loading reviews.json...")
+        reviews_path = get_data_path() / "reviewer" / "reviews.json"
+        job_review = {}
         try:
-            with evals_path.open("r", encoding="utf-8") as f:
-                evals_data = json.load(f)
-            job_eval_data = next(
-                (item for item in evals_data if item.get("id") == state.JOB_ID), None
+            with reviews_path.open("r", encoding="utf-8") as f:
+                reviews_data = json.load(f)
+            job_review_data = next(
+                (item for item in reviews_data if item.get("id") == state.JOB_ID), None
             )
-            if job_eval_data:
-                job_eval = job_eval_data
+            if job_review_data:
+                job_review = job_review_data
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Could not load or parse evals.json: {e}")
-        print("    [THREAD] ...evals.json loaded.")
+            print(f"Could not load or parse reviews.json: {e}")
+        print("    [THREAD] ...reviews.json loaded.")
 
         state.JOB_DETAILS = {
             "title": job.get("title"),
@@ -96,9 +96,9 @@ def run_initial_load_task():
             "workplace_type": job.get("workplace_type"),
             "job_link": job.get("job_link"),
             "description": state.JOB_DESCRIPTION,
-            "score": job_eval.get("score"),
-            "evaluation_grid": job_eval.get("evaluation_grid"),
-            "synthesis": job_eval.get("synthesis_and_decision"),
+            "score": job_review.get("score"),
+            "evaluation_grid": job_review.get("evaluation_grid"),
+            "synthesis": job_review.get("synthesis_and_decision"),
         }
         print("--- [SERVER-SIDE] Job Details Prepared ---")
         print(json.dumps(state.JOB_DETAILS, indent=2))
