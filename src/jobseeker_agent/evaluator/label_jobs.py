@@ -16,7 +16,7 @@ from langchain.schema import HumanMessage
 project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(project_root))
 
-from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
 from jobseeker_agent.utils.paths import (
     load_raw_jobs,
     load_labels,
@@ -87,7 +87,7 @@ def main():
             continue
 
         print(f"\n--- Processing Job Offer: {job['id']}: {job['title']} ---")
-        job_details = analyze_linkedin_job(job["job_link"])
+        job_details = extract_job_details(job["job_link"])
 
         if job_details:
             display_job_in_browser(job, job_details)

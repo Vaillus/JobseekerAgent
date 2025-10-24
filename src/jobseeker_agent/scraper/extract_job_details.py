@@ -26,8 +26,61 @@ def fetch_job_page(url, retries=5, backoff_factor=0.5):
     print(f"Failed to fetch URL {url} after {retries} retries.")
     return None
 
-def analyze_linkedin_job(url):
-    """Analyzes a LinkedIn job posting and returns its details:
+def _get_description(soup: BeautifulSoup) -> str:
+    """Extracts the job description from the soup object."""
+    description_tag = soup.find('div', class_='description__text description__text--rich')
+    if description_tag:
+        html_description = str(description_tag)
+        h = html2text.HTML2Text()
+        h.ignore_links = True
+        return h.handle(html_description)
+    return 'Description not found.'
+
+def _get_job_status(soup: BeautifulSoup) -> str:
+    """Determines the job status (Open/Closed) from the soup object."""
+    # 1. Primary check: Use a hidden flag in the HTML
+    closed_flag_tag = soup.find('code', id='is-job-closed-flag')
+    if closed_flag_tag and closed_flag_tag.string:
+        if 'true' in closed_flag_tag.string:
+            return "Closed"
+        elif 'false' in closed_flag_tag.string:
+            return "Open"
+
+    # 2. Secondary check: if flag not present, look for explicit text
+    closed_indicators = [
+        "not currently accepting applications",
+        "no longer accepting applications",
+        "job is no longer active"
+    ]
+    page_text_lower = soup.get_text().lower()
+    if any(indicator in page_text_lower for indicator in closed_indicators):
+        return "Closed"
+
+    # 3. Tertiary check: If still unknown, assume open but verify with apply button
+    apply_button = soup.select_one('button.jobs-apply-button, .top-card-layout__cta')
+    if not apply_button:
+        return "Potentially Closed (No Apply Button Found)"
+    
+    return "Open"
+
+def _get_workplace_type(soup: BeautifulSoup) -> str:
+    """Extracts the workplace type (Remote/Hybrid/On-site) from the soup object."""
+    description_body = soup.find('div', class_='description__text')
+    if description_body:
+        list_items = description_body.find_all('li')
+        for item in list_items:
+            item_text = item.get_text().lower()
+            if "remote" in item_text or "à distance" in item_text:
+                return "Remote"
+            if "hybrid" in item_text:
+                return "Hybrid"
+            if "on-site" in item_text:
+                return "On-site"
+    return "Not found"
+
+def extract_job_details(url: str) -> dict | None:
+    """
+    Analyzes a LinkedIn job posting and returns its details:
     - description
     - status (Open/Closed/Potentially Closed (No Apply Button Found))
     - workplace_type (Remote/Hybrid/On-site)
@@ -39,81 +92,17 @@ def analyze_linkedin_job(url):
 
     soup = BeautifulSoup(page_content, 'html.parser')
 
-    # --- Job Description ---
-    description_tag = soup.find('div', class_='description__text description__text--rich')
-    if description_tag:
-        html_description = str(description_tag)
-        h = html2text.HTML2Text()
-        h.ignore_links = True
-        job_description = h.handle(html_description)
-    else:
-        job_description = 'Description not found.'
-
-    # --- Job Status ---
-    job_status = "Unknown"
-
-    # 1. Primary check: Use a hidden flag in the HTML
-    closed_flag_tag = soup.find('code', id='is-job-closed-flag')
-    if closed_flag_tag and closed_flag_tag.string:
-        if 'true' in closed_flag_tag.string:
-            job_status = "Closed"
-        elif 'false' in closed_flag_tag.string:
-            job_status = "Open"
-    
-    # 2. Secondary check: if flag not present, look for explicit text
-    if job_status == "Unknown":
-        closed_indicators = [
-            "not currently accepting applications",
-            "no longer accepting applications",
-            "job is no longer active"
-        ]
-        page_text_lower = soup.get_text().lower()
-        for indicator in closed_indicators:
-            if indicator in page_text_lower:
-                job_status = "Closed"
-                break
-    
-    # 3. Tertiary check: If still unknown, assume open but verify with apply button
-    if job_status == "Unknown":
-        job_status = "Open"  # Assume open if no closed signals
-        # Look for a prominent apply button
-        apply_button = soup.select_one('button.jobs-apply-button, .top-card-layout__cta')
-        if not apply_button:
-            job_status = "Potentially Closed (No Apply Button Found)"
-
-    # --- Workplace Type (Remote/Hybrid/On-site) ---
-    workplace_type = "Not found"
-    
-    description_body = soup.find('div', class_='description__text')
-    if description_body:
-        search_terms = ['remote', 'hybrid', 'on-site', 'à distance']
-        list_items = description_body.find_all('li')
-        for item in list_items:
-            item_text = item.get_text().lower()
-            for term in search_terms:
-                if term in item_text:
-                    if "remote" in item_text or "à distance" in item_text:
-                        workplace_type = "Remote"
-                    elif "hybrid" in item_text:
-                        workplace_type = "Hybrid"
-                    elif "on-site" in item_text:
-                        workplace_type = "On-site"
-                    break
-                if workplace_type != "Not found":
-                    break
-
-
     return {
-        "description": job_description,
-        "status": job_status,
-        "workplace_type": workplace_type
+        "description": _get_description(soup),
+        "status": _get_job_status(soup),
+        "workplace_type": _get_workplace_type(soup),
     }
 
 if __name__ == "__main__":
     job_url = "https://www.linkedin.com/jobs/view/ai-research-scientist-phd-at-mercor-4308167189/?originalSubdomain=au" # position open
     # job_url = "https://www.linkedin.com/jobs/view/machine-learning-engineer-data-ai-training-at-canva-4313971909/?originalSubdomain=au" # position closed
     
-    job_details = analyze_linkedin_job(job_url)
+    job_details = extract_job_details(job_url)
     if job_details:
         print("\n--- Job Details ---")
         print(f"Status: {job_details['status']}")

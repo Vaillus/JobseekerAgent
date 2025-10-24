@@ -7,7 +7,7 @@ from jobseeker_agent.utils.paths import (
     save_processed_jobs,
 )
 from jobseeker_agent.evaluator.evaluator import evaluate_job
-from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
 
 
 class JobEvaluator:
@@ -31,7 +31,7 @@ class JobEvaluator:
         job_id = job_to_evaluate["id"]
 
         print(f"Evaluating job {job_id}...")
-        job_details = analyze_linkedin_job(job_to_evaluate["job_link"])
+        job_details = extract_job_details(job_to_evaluate["job_link"])
         if not job_details:
             print(f"Failed to retrieve details for job {job_id}. Skipping.")
             return

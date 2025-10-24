@@ -22,7 +22,7 @@ from jobseeker_agent.utils.paths import (
     load_job_statuses,
     save_job_statuses,
 )
-from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
 from jobseeker_agent.corrector.interface.routes import bp as corrector_bp
 from jobseeker_agent.corrector.interface import state as corrector_state
 
@@ -126,7 +126,7 @@ def get_job_details(job_id: int):
         return jsonify({"error": "Job not found"}), 404
     
     print(f"Fetching live details for job link: {job_link}")
-    live_details = analyze_linkedin_job(job_link)
+    live_details = extract_job_details(job_link)
     if not live_details:
         print("Could not fetch live details.")
         return jsonify({"description": None})

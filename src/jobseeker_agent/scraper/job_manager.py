@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from jobseeker_agent.utils.paths import get_raw_jobs_json_path
-from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
 from jobseeker_agent.scraper.date_parser import parse_relative_date
 
 
@@ -53,7 +53,7 @@ def add_new_job(job_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         return None
     
     # Enrichir les données de l'offre
-    analysis_results = analyze_linkedin_job(job_data.get("job_link", ""))
+    analysis_results = extract_job_details(job_data.get("job_link", ""))
     if analysis_results:
         job_data["status"] = analysis_results.get("status", "Unknown")
         job_data["workplace_type"] = analysis_results.get("workplace_type", "Not found")

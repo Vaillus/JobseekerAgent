@@ -10,13 +10,13 @@ project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(project_root))
 
 from jobseeker_agent.utils.paths import load_main_evals, load_raw_jobs
-from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
 
 
 def display_job_details(job_data: dict):
     """Creates a temporary HTML file with job details and opens it in the browser."""
     print(f"Fetching details for job ID {job_data['id']}...")
-    job_description = analyze_linkedin_job(job_data["job_link"])
+    job_description = extract_job_details(job_data["job_link"])
     if not job_description:
         print(
             f"Could not retrieve details for job ID {job_data['id']}. Displaying stored data."

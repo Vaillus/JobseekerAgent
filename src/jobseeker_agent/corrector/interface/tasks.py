@@ -7,7 +7,7 @@ from jobseeker_agent.utils.paths import (
     get_data_path,
     load_raw_job,
 )
-from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
 from jobseeker_agent.corrector.agents.keyword_extractor import extract_keywords
 from jobseeker_agent.corrector.agents.keyword_executor import execute_keywords
 from jobseeker_agent.corrector.agents.ranker import rank, reorder_experiences, reorder_skills
@@ -27,7 +27,7 @@ def run_keyword_extraction_task():
         print("    [THREAD] ...data loaded.")
 
         print("    [THREAD] Analyzing LinkedIn job page...")
-        job_details = analyze_linkedin_job(job["job_link"])
+        job_details = extract_job_details(job["job_link"])
         if not job_details:
             raise Exception("Failed to analyze LinkedIn job page.")
         print("    [THREAD] ...LinkedIn page analyzed.")
@@ -63,7 +63,7 @@ def run_initial_load_task():
 
         job = load_raw_job(state.JOB_ID)
         print("    [THREAD] Analyzing LinkedIn job page...")
-        job_details_live = analyze_linkedin_job(job["job_link"])
+        job_details_live = extract_job_details(job["job_link"])
         print("    [THREAD] ...LinkedIn page analyzed.")
 
         if not job_details_live:

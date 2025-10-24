@@ -12,7 +12,7 @@ project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(project_root))
 
 from jobseeker_agent.utils.paths import load_evals, load_labels, load_raw_jobs
-from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
 
 
 def load_and_merge_data(generation_id: int):
@@ -88,7 +88,7 @@ def find_optimal_threshold(data):
 def display_misclassified_job(job, prediction):
     """Creates a temporary HTML file with job details and opens it in the browser."""
     print(f"Fetching details for job ID {job['id']}...")
-    job_details = analyze_linkedin_job(job["job_link"])
+    job_details = extract_job_details(job["job_link"])
     if not job_details:
         print(f"Could not retrieve details for job ID {job['id']}.")
         return

@@ -1,6 +1,6 @@
 import json
-from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
-from jobseeker_agent.scraper.raw_jobs_manager import load_raw_jobs, save_raw_jobs
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
+from jobseeker_agent.scraper.job_manager import load_raw_jobs, save_raw_jobs
 from tqdm import tqdm
 
 def update_job_statuses():
@@ -22,7 +22,7 @@ def update_job_statuses():
             updated_jobs.append(job)
             continue
 
-        analysis_result = analyze_linkedin_job(job_link)
+        analysis_result = extract_job_details(job_link)
 
         is_closed = not analysis_result or analysis_result.get('status') == 'Closed'
 

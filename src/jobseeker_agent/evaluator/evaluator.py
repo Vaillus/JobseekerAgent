@@ -7,7 +7,7 @@ from typing import List, Dict, Union
 
 from jobseeker_agent.utils.paths import load_prompt
 from jobseeker_agent.utils.paths import load_raw_jobs, save_evals, load_evals, load_labels
-from jobseeker_agent.scraper.linkedin_analyzer import analyze_linkedin_job
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
 from jobseeker_agent.utils.llm import get_llm
 
 
@@ -60,7 +60,7 @@ def evaluate_from_id(job_id, generation_id: int):
         print(f"No job found for ID {job_id}")
         return
     
-    job_details = analyze_linkedin_job(job["job_link"])
+    job_details = extract_job_details(job["job_link"])
     result = evaluate_job(job, job_details)
 
     evaluations = load_evals(generation_id)
@@ -90,7 +90,7 @@ def main(generation_id: int, model=str):
             print(f"Job {job['id']} already evaluated. Skipping.")
             continue
 
-        job_details = analyze_linkedin_job(job["job_link"])
+        job_details = extract_job_details(job["job_link"])
         result = evaluate_job(job, job_details, model=model)
 
         evaluations.append(result)
