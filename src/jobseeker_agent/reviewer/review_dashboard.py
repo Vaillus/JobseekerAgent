@@ -17,7 +17,7 @@ sys.path.insert(0, str(project_root / "src"))
 print(f"Project root added to sys.path: {project_root}")
 
 from jobseeker_agent.utils.paths import (
-    load_main_reviews,
+    load_reviews,
     load_raw_jobs,
     load_job_statuses,
     save_job_statuses,
@@ -27,7 +27,7 @@ from jobseeker_agent.customizer.interface.routes import bp as customizer_bp
 from jobseeker_agent.customizer.interface import state as customizer_state
 
 print("--- Data Loading (once at startup) ---")
-reviews = load_main_reviews()
+reviews = load_reviews()
 raw_jobs = load_raw_jobs()
 print(f"Loaded {len(reviews)} reviews and {len(raw_jobs)} raw jobs.")
 
