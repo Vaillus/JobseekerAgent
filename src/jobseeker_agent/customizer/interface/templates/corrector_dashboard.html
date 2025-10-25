@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Resume Corrector</title>
-    <link rel="stylesheet" href="{{ url_for('corrector.static', filename='style.css') }}">
+    <title>Resume Customizer</title>
+    <link rel="stylesheet" href="{{ url_for('customizer.static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
@@ -72,7 +72,7 @@
                 </div>
             </div>
             <div class="content-view" style="color-scheme: light;">
-                <embed id="pdf-viewer" src="{{ url_for('corrector.serve_pdf', filename='resume.pdf') }}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf" />
+                <embed id="pdf-viewer" src="{{ url_for('customizer.serve_pdf', filename='resume.pdf') }}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf" />
                 <div id="tex-viewer" style="display: none;">
                     <textarea id="tex-editor"></textarea>
                 </div>
@@ -83,9 +83,9 @@
             </div>
         </div>
     </div>
-    <script src="{{ url_for('corrector.static', filename='rangy-core.js') }}" defer></script>
-    <script src="{{ url_for('corrector.static', filename='rangy-classapplier.js') }}" defer></script>
-    <script src="{{ url_for('corrector.static', filename='rangy-highlighter.js') }}" defer></script>
-    <script src="{{ url_for('corrector.static', filename='dashboard.js') }}" defer></script>
+    <script src="{{ url_for('customizer.static', filename='rangy-core.js') }}" defer></script>
+    <script src="{{ url_for('customizer.static', filename='rangy-classapplier.js') }}" defer></script>
+    <script src="{{ url_for('customizer.static', filename='rangy-highlighter.js') }}" defer></script>
+    <script src="{{ url_for('customizer.static', filename='dashboard.js') }}" defer></script>
 </body>
 </html>

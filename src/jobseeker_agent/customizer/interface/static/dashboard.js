@@ -16,7 +16,7 @@ function refreshPdf() {
 
 function refreshTex() {
     const texEditor = document.getElementById('tex-editor');
-    fetch("/corrector/tex")
+    fetch("/customizer/tex")
         .then(response => response.json())
         .then(data => {
             if (data.content) {
@@ -189,12 +189,12 @@ function checkValidationState() {
 
 function startAndPollExtraction() {
     function pollExtractionStatus() {
-        fetch("/corrector/extraction-status")
+        fetch("/customizer/extraction-status")
         .then(response => response.json())
         .then(data => {
             if (data.status === 'complete') {
-                const keywordsPromise = fetch("/corrector/keywords").then(res => res.json());
-                const titlesPromise = fetch("/corrector/titles").then(res => res.json());
+                const keywordsPromise = fetch("/customizer/keywords").then(res => res.json());
+                const titlesPromise = fetch("/customizer/titles").then(res => res.json());
                 Promise.all([keywordsPromise, titlesPromise])
                     .then(([keywordsData, titlesData]) => {
                         renderData(keywordsData, titlesData);
@@ -215,7 +215,7 @@ function startAndPollExtraction() {
         });
     }
 
-    fetch("/corrector/start-extraction", { method: 'POST' })
+    fetch("/customizer/start-extraction", { method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'started' || data.status === 'complete') {
@@ -322,7 +322,7 @@ function updateTitle(title, clickedButton = null) {
     if (clickedButton) {
         clickedButton.classList.add('selected');
     }
-    fetch("/corrector/update-title", {
+    fetch("/customizer/update-title", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: title })
@@ -349,11 +349,11 @@ function updateTitle(title, clickedButton = null) {
 
 function startAndPollRanking() {
     function pollRankingStatus() {
-        fetch("/corrector/ranking-status")
+        fetch("/customizer/ranking-status")
         .then(response => response.json())
         .then(data => {
             if (data.status === 'complete') {
-                fetch("/corrector/ranking-report")
+                fetch("/customizer/ranking-report")
                 .then(res => res.json())
                 .then(reportData => {
                     const reportContainer = document.getElementById('ranking-report');
@@ -411,7 +411,7 @@ function startAndPollRanking() {
         });
     }
 
-    fetch("/corrector/start-ranking", { method: 'POST' })
+    fetch("/customizer/start-ranking", { method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'started') {
@@ -428,11 +428,11 @@ function startAndPollRanking() {
 
 function startAndPollIntroductions() {
     function pollIntroductionStatus() {
-        fetch("/corrector/introduction-status")
+        fetch("/customizer/introduction-status")
         .then(response => response.json())
         .then(data => {
             if (data.status === 'complete') {
-                fetch("/corrector/introduction-report")
+                fetch("/customizer/introduction-report")
                 .then(res => res.json())
                 .then(reportData => {
                     const reportContainer = document.getElementById('introduction-report');
@@ -490,7 +490,7 @@ function startAndPollIntroductions() {
         });
     }
 
-    fetch("/corrector/start-introduction", { method: 'POST' })
+    fetch("/customizer/start-introduction", { method: 'POST' })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'started') {
@@ -508,7 +508,7 @@ function startAndPollIntroductions() {
 
 function pollInitialLoadStatus() {
     console.log("Polling for initial load status...");
-    fetch("/corrector/initial-load-status")
+    fetch("/customizer/initial-load-status")
     .then(response => response.json())
     .then(data => {
         console.log("Received status:", data.status);
@@ -611,7 +611,7 @@ document.body.addEventListener('click', function(event) {
             return;
         }
         const highlightedTexts = highlighter.highlights.map(h => h.getText());
-        fetch("/corrector/save-highlights", {
+        fetch("/customizer/save-highlights", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ highlights: highlightedTexts })
@@ -635,7 +635,7 @@ document.body.addEventListener('click', function(event) {
     if (id === 'refresh-btn') {
         if (document.getElementById('tex-viewer').style.display === 'block') {
             refreshTex();
-            fetch("/corrector/recompile-tex", { method: 'POST' })
+            fetch("/customizer/recompile-tex", { method: 'POST' })
                 .then(res => res.json())
                 .then(data => {
                     if(data.success) {
@@ -655,7 +655,7 @@ document.body.addEventListener('click', function(event) {
         const content = document.getElementById('tex-editor').value;
         button.textContent = 'Saving...';
         button.disabled = true;
-        fetch("/corrector/save-tex", {
+        fetch("/customizer/save-tex", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: content })
@@ -682,7 +682,7 @@ document.body.addEventListener('click', function(event) {
     
     if (id === 'reinitialize-btn') {
         if (confirm('Are you sure you want to reset the TeX file to its original template? All changes will be lost.')) {
-            fetch("/corrector/reinitialize-tex", { method: 'POST' })
+            fetch("/customizer/reinitialize-tex", { method: 'POST' })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
@@ -742,7 +742,7 @@ document.body.addEventListener('click', function(event) {
         button.textContent = 'Saving...';
         button.disabled = true;
 
-        fetch("/corrector/save-validated-keywords", {
+        fetch("/customizer/save-validated-keywords", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(finalData)
@@ -769,7 +769,7 @@ document.body.addEventListener('click', function(event) {
         button.disabled = true;
         reportContainer.innerHTML = '<div class="log-line">Running... please wait.</div>';
 
-        fetch("/corrector/run-executor", { method: 'POST' })
+        fetch("/customizer/run-executor", { method: 'POST' })
         .then(response => {
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
@@ -843,7 +843,7 @@ document.body.addEventListener('click', function(event) {
         button.textContent = 'Saving...';
         button.disabled = true;
 
-        fetch("/corrector/save-introduction", {
+        fetch("/customizer/save-introduction", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ introduction: introductionText })
@@ -875,7 +875,7 @@ document.body.addEventListener('click', function(event) {
 
 // --- Initial Script Execution ---
 console.log("Triggering start-initial-load...");
-fetch("/corrector/start-initial-load", { method: 'POST' })
+fetch("/customizer/start-initial-load", { method: 'POST' })
 .then(response => response.json())
 .then(data => {
     console.log("Response from start-initial-load:", data.status);

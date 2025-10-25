@@ -18,17 +18,17 @@ from jobseeker_agent.utils.paths import (
 )
 
 bp = Blueprint(
-    "corrector", __name__, template_folder="templates", static_folder="static"
+    "customizer", __name__, template_folder="templates", static_folder="static"
 )
 
 
 @bp.route("/apply/<int:job_id>")
 def apply_for_job(job_id: int):
-    """Sets the job_id for the corrector interface and renders the dashboard."""
-    print(f"--- Corrector: Received request to apply for job_id: {job_id} ---")
+    """Sets the job_id for the customizer interface and renders the dashboard."""
+    print(f"--- Customizer: Received request to apply for job_id: {job_id} ---")
     state.JOB_ID = job_id
-    print(f"Corrector state JOB_ID set to: {state.JOB_ID}")
-    return render_template("corrector_dashboard.html")
+    print(f"Customizer state JOB_ID set to: {state.JOB_ID}")
+    return render_template("customizer_dashboard.html")
 
 
 @bp.route("/save-highlights", methods=["POST"])
@@ -53,7 +53,7 @@ def save_highlights():
 @bp.route("/")
 def dashboard():
     """Renders the main dashboard HTML."""
-    return render_template("corrector_dashboard.html")
+    return render_template("customizer_dashboard.html")
 
 
 @bp.route("/favicon.ico")

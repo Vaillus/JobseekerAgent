@@ -1,4 +1,4 @@
-# Corrector - Resume Optimization and Personalization Module
+# Customizer - Resume Optimization and Personalization Module
 
 This directory contains all the modules related to optimizing and personalizing resume content for specific job opportunities using AI agents.
 
