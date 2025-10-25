@@ -113,13 +113,18 @@ def run_initial_load_task():
         with open(job_details_file, "w", encoding="utf-8") as f:
             json.dump(state.JOB_DETAILS, f, indent=4, ensure_ascii=False)
 
-        resume = load_cv_template()
-        with open(job_dir / "resume.tex", "w", encoding="utf-8") as f:
-            f.write(resume)
-
-        print("    [THREAD] Compiling initial TeX file...")
-        compile_utils.compile_tex()
-        print("    [THREAD] ...TeX file compiled.")
+        # Only initialize resume.tex if it doesn't exist yet
+        resume_file = job_dir / "resume.tex"
+        if not resume_file.exists():
+            print("    [THREAD] Initializing resume.tex from template...")
+            resume = load_cv_template()
+            with open(resume_file, "w", encoding="utf-8") as f:
+                f.write(resume)
+            print("    [THREAD] Compiling initial TeX file...")
+            compile_utils.compile_tex()
+            print("    [THREAD] ...TeX file compiled.")
+        else:
+            print("    [THREAD] resume.tex already exists, preserving existing file.")
 
         state.DATA_LOADING_STATUS["status"] = "complete"
         print("✅ Background initial data load complete.")
