@@ -386,7 +386,6 @@ function startAndPollRanking() {
                         reportContainer.appendChild(skillList);
                     }
                     
-                    alert('Ranking successful! PDF is being updated.');
                     setTimeout(() => {
                         refreshPdf();
                         document.getElementById('view-pdf-btn').click();
@@ -639,7 +638,6 @@ document.body.addEventListener('click', function(event) {
                 .then(res => res.json())
                 .then(data => {
                     if(data.success) {
-                        alert('Recompilation successful!');
                         setTimeout(refreshPdf, 1500);
                     } else {
                         alert('Recompilation failed: ' + data.error);
@@ -663,7 +661,6 @@ document.body.addEventListener('click', function(event) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('File saved and recompiled successfully!');
                 document.getElementById('tex-editor').value = "";
                 setTimeout(() => {
                     document.getElementById('view-pdf-btn').click();
@@ -686,7 +683,6 @@ document.body.addEventListener('click', function(event) {
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Reinitialization successful!');
                         document.getElementById('tex-editor').value = data.content; // Update TeX view immediately
                         setTimeout(refreshPdf, 1500); // Wait for compilation
                     } else {
@@ -749,9 +745,7 @@ document.body.addEventListener('click', function(event) {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success) {
-                alert('Validated keywords saved successfully!');
-            } else {
+            if (!data.success) {
                 alert('Error saving keywords: ' + (data.error || 'Unknown error'));
             }
         })
@@ -794,7 +788,6 @@ document.body.addEventListener('click', function(event) {
                 }
                 document.getElementById('rank-resume-btn').style.display = 'block';
 
-                alert('Execution successful! PDF is being updated.');
                 setTimeout(() => {
                     refreshPdf();
                     document.getElementById('view-pdf-btn').click();
@@ -851,7 +844,6 @@ document.body.addEventListener('click', function(event) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Introduction saved successfully! PDF is being updated.');
                 setTimeout(() => {
                     refreshPdf();
                     document.getElementById('view-pdf-btn').click();
