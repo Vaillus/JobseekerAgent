@@ -1,6 +1,7 @@
 import os
 import json
-from . import state, utils
+from jobseeker_agent.interface import state
+from jobseeker_agent.interface.utils import compile as compile_utils
 from jobseeker_agent.utils.paths import (
     load_prompt,
     load_cv_template,
@@ -117,7 +118,7 @@ def run_initial_load_task():
             f.write(resume)
 
         print("    [THREAD] Compiling initial TeX file...")
-        utils.compile_tex()
+        compile_utils.compile_tex()
         print("    [THREAD] ...TeX file compiled.")
 
         state.DATA_LOADING_STATUS["status"] = "complete"
@@ -159,7 +160,7 @@ def run_ranker_task():
         print("    [THREAD] ...Reordering complete.")
 
         print("    [THREAD] Compiling ranked TeX file...")
-        utils.compile_tex()
+        compile_utils.compile_tex()
         print("    [THREAD] ...TeX file compiled.")
 
         state.RANKING_STATUS["status"] = "complete"
@@ -197,3 +198,4 @@ def run_introducer_task():
         print(f"❌ Background introduction suggestion failed: {e}")
         state.INTRODUCTION_STATUS["status"] = "failed"
         state.INTRODUCTION_STATUS["error"] = str(e)
+

@@ -1,6 +1,6 @@
 import subprocess
 from jobseeker_agent.utils.paths import get_data_path
-from . import state
+from jobseeker_agent.interface import state
 
 
 def compile_tex():
@@ -19,3 +19,4 @@ def compile_tex():
         print(result.stderr)
         return False, result.stdout
     return True, ""
+

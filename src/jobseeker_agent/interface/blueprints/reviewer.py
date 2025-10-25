@@ -1,20 +1,6 @@
-import sys
-import webbrowser
-import threading
-from pathlib import Path
 from datetime import date
-from flask import Flask, jsonify, render_template, request
-from jinja2 import ChoiceLoader, FileSystemLoader
-import json
+from flask import Blueprint, jsonify, render_template, request
 import markdown
-import os
-
-print("--- Script starting ---")
-
-# Add project root to Python path
-project_root = Path(__file__).resolve().parent.parent.parent.parent
-sys.path.insert(0, str(project_root / "src"))
-print(f"Project root added to sys.path: {project_root}")
 
 from jobseeker_agent.utils.paths import (
     load_reviews,
@@ -23,10 +9,11 @@ from jobseeker_agent.utils.paths import (
     save_job_statuses,
 )
 from jobseeker_agent.scraper.extract_job_details import extract_job_details
-from jobseeker_agent.customizer.interface.routes import bp as customizer_bp
-from jobseeker_agent.customizer.interface import state as customizer_state
 
-print("--- Data Loading (once at startup) ---")
+bp = Blueprint("reviewer", __name__)
+
+# Data loaded at module level (will be loaded when blueprint is imported)
+print("--- Loading reviewer data ---")
 reviews = load_reviews()
 raw_jobs = load_raw_jobs()
 print(f"Loaded {len(reviews)} reviews and {len(raw_jobs)} raw jobs.")
@@ -51,44 +38,7 @@ base_jobs.sort(key=lambda x: x.get("score", -float("inf")), reverse=True)
 print("Jobs sorted by score.")
 
 
-# --- Flask App ---
-print("--- Initializing Flask App ---")
-# We build absolute paths to the template and static folders
-# to ensure the app can be run from anywhere.
-app = Flask(
-    __name__,
-    static_folder=(Path(__file__).resolve().parent / "interface" / "static"),
-)
-
-# Define paths to the two template folders
-reviewer_templates_path = (
-    Path(__file__).resolve().parent / "interface" / "templates"
-)
-customizer_templates_path = (
-    project_root / "src" / "jobseeker_agent" / "customizer" / "interface" / "templates"
-)
-
-# Set up a loader that looks for templates in both directories
-app.jinja_loader = ChoiceLoader(
-    [
-        FileSystemLoader(str(reviewer_templates_path)),
-        FileSystemLoader(str(customizer_templates_path)),
-    ]
-)
-
-# For the blueprint, we only need to specify its static folder, as templates are now handled globally
-customizer_interface_path = (
-    project_root / "src" / "jobseeker_agent" / "customizer" / "interface"
-)
-app.register_blueprint(
-    customizer_bp,
-    url_prefix="/customizer"
-)
-app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-print("Flask App initialized.")
-
-
-@app.route("/")
+@bp.route("/")
 def dashboard():
     """Renders the main dashboard HTML."""
     print("--- Request received for / route ---")
@@ -110,13 +60,13 @@ def dashboard():
     print(f"Rendering dashboard with {len(unprocessed_jobs)} unprocessed jobs.")
 
     return render_template(
-        "dashboard.html",
+        "reviewer/dashboard.html",
         sidebar_jobs=unprocessed_jobs,
         all_jobs=all_jobs,
     )
 
 
-@app.route("/job/<int:job_id>")
+@bp.route("/job/<int:job_id>")
 def get_job_details(job_id: int):
     """Fetches live job details and returns as JSON."""
     print(f"--- Request received for /job/{job_id} ---")
@@ -140,7 +90,7 @@ def get_job_details(job_id: int):
     return jsonify(live_details)
 
 
-@app.route("/status/<int:job_id>", methods=["POST"])
+@bp.route("/status/<int:job_id>", methods=["POST"])
 def update_status(job_id: int):
     """Marks a job's status as applied or not interested."""
     print(f"--- Request received for /status/{job_id} ---")
@@ -165,19 +115,3 @@ def update_status(job_id: int):
 
     return jsonify({"success": True, "status": status})
 
-
-def main():
-    """Main function to run the Flask app."""
-    print("--- main() function called ---")
-    # We use a thread to open the browser after the server starts.
-    # This should only happen in the main process, not in the reloader's child process.
-    if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
-        threading.Timer(1.25, lambda: webbrowser.open("http://127.0.0.1:5000/")).start()
-    print("Starting the dashboard server at http://127.0.0.1:5000/")
-    print("Press CTRL+C to stop the server.")
-    app.run(port=5000, debug=True)
-
-
-if __name__ == "__main__":
-    print("--- Script executed directly ---")
-    main()

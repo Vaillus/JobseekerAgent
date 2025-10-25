@@ -17,3 +17,4 @@ EXTRACTION_STATUS: dict = {"status": "idle", "error": None}
 DATA_LOADING_STATUS: dict = {"status": "idle", "error": None}
 RANKING_STATUS: dict = {"status": "idle", "error": None}
 INTRODUCTION_STATUS: dict = {"status": "idle", "error": None}
+

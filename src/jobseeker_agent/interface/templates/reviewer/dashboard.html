@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Job Review Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reviewer.css') }}">
 </head>
 <body>
     <div id="sidebar">
@@ -28,6 +28,6 @@
     <script>
         const jobsData = {{ all_jobs | tojson }};
     </script>
-    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/reviewer.js') }}"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Resume Customizer</title>
-    <link rel="stylesheet" href="{{ url_for('customizer.static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/customizer.css') }}">
 </head>
 <body>
     <div class="container">
@@ -83,9 +83,9 @@
             </div>
         </div>
     </div>
-    <script src="{{ url_for('customizer.static', filename='rangy-core.js') }}" defer></script>
-    <script src="{{ url_for('customizer.static', filename='rangy-classapplier.js') }}" defer></script>
-    <script src="{{ url_for('customizer.static', filename='rangy-highlighter.js') }}" defer></script>
-    <script src="{{ url_for('customizer.static', filename='dashboard.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/rangy-core.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/rangy-classapplier.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/rangy-highlighter.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/customizer.js') }}" defer></script>
 </body>
 </html>

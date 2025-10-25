@@ -9,7 +9,9 @@ from flask import (
     jsonify,
     request,
 )
-from . import state, utils, tasks
+from jobseeker_agent.interface import state
+from jobseeker_agent.interface.utils import compile as compile_utils
+from jobseeker_agent.interface.tasks import customizer_tasks
 from jobseeker_agent.utils.paths import (
     get_data_path,
     load_prompt,
@@ -17,9 +19,7 @@ from jobseeker_agent.utils.paths import (
     load_reviews,
 )
 
-bp = Blueprint(
-    "customizer", __name__, template_folder="templates", static_folder="static"
-)
+bp = Blueprint("customizer", __name__)
 
 
 @bp.route("/apply/<int:job_id>")
@@ -28,7 +28,7 @@ def apply_for_job(job_id: int):
     print(f"--- Customizer: Received request to apply for job_id: {job_id} ---")
     state.JOB_ID = job_id
     print(f"Customizer state JOB_ID set to: {state.JOB_ID}")
-    return render_template("customizer_dashboard.html")
+    return render_template("customizer/dashboard.html")
 
 
 @bp.route("/save-highlights", methods=["POST"])
@@ -53,7 +53,7 @@ def save_highlights():
 @bp.route("/")
 def dashboard():
     """Renders the main dashboard HTML."""
-    return render_template("customizer_dashboard.html")
+    return render_template("customizer/dashboard.html")
 
 
 @bp.route("/favicon.ico")
@@ -72,7 +72,7 @@ def save_tex():
     tex_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
     try:
         tex_file.write_text(content, encoding="utf-8")
-        success, error_log = utils.compile_tex()
+        success, error_log = compile_utils.compile_tex()
         if success:
             return jsonify({"success": True})
         else:
@@ -87,7 +87,7 @@ def save_tex():
 def recompile_tex():
     """Just recompiles the existing TeX file."""
     try:
-        success, error_log = utils.compile_tex()
+        success, error_log = compile_utils.compile_tex()
         if success:
             return jsonify({"success": True})
         else:
@@ -106,7 +106,7 @@ def reinitialize_tex():
         tex_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
         tex_file.write_text(template_content, encoding="utf-8")
 
-        success, error_log = utils.compile_tex()
+        success, error_log = compile_utils.compile_tex()
         if success:
             return jsonify({"success": True, "content": template_content})
         else:
@@ -148,7 +148,7 @@ def update_title():
             )
         resume_file.write_text(new_content, encoding="utf-8")
 
-        compile_success, compile_log = utils.compile_tex()
+        compile_success, compile_log = compile_utils.compile_tex()
         if not compile_success:
             resume_file.write_text(content, encoding="utf-8")
             return (
@@ -190,7 +190,7 @@ def run_executor():
             profil_pro = load_prompt("profil_pro")
             model = "gpt-5-mini"
 
-            response = tasks.execute_keywords(
+            response = customizer_tasks.execute_keywords(
                 state.JOB_DESCRIPTION,
                 profil_pro,
                 resume_content,
@@ -209,7 +209,7 @@ def run_executor():
         resume_file = job_dir / "resume.tex"
         resume_file.write_text(new_resume, encoding="utf-8")
 
-        compile_success, compile_log = utils.compile_tex()
+        compile_success, compile_log = compile_utils.compile_tex()
         if not compile_success:
             # If compilation fails, add the error to the report instead of raising
             report.append("--- PDF COMPILATION FAILED ---")
@@ -249,7 +249,7 @@ def start_extraction():
 
     if state.EXTRACTION_THREAD is None or not state.EXTRACTION_THREAD.is_alive():
         print("Starting keyword extraction thread...")
-        state.EXTRACTION_THREAD = threading.Thread(target=tasks.run_keyword_extraction_task)
+        state.EXTRACTION_THREAD = threading.Thread(target=customizer_tasks.run_keyword_extraction_task)
         state.EXTRACTION_THREAD.daemon = True
         state.EXTRACTION_THREAD.start()
         return jsonify({"status": "started"})
@@ -271,7 +271,7 @@ def start_initial_load():
             return jsonify({"status": "complete"})
 
         print("Starting initial data load thread...")
-        state.DATA_LOADING_THREAD = threading.Thread(target=tasks.run_initial_load_task)
+        state.DATA_LOADING_THREAD = threading.Thread(target=customizer_tasks.run_initial_load_task)
         state.DATA_LOADING_THREAD.daemon = True
         state.DATA_LOADING_THREAD.start()
         return jsonify({"status": "started"})
@@ -314,7 +314,7 @@ def start_ranking():
     if state.RANKING_THREAD is None or not state.RANKING_THREAD.is_alive():
         print("Starting ranking thread...")
         state.RANKING_STATUS = {"status": "idle", "error": None}
-        state.RANKING_THREAD = threading.Thread(target=tasks.run_ranker_task)
+        state.RANKING_THREAD = threading.Thread(target=customizer_tasks.run_ranker_task)
         state.RANKING_THREAD.daemon = True
         state.RANKING_THREAD.start()
         return jsonify({"status": "started"})
@@ -333,7 +333,7 @@ def start_introduction():
     """Starts the introduction suggestion in a background thread."""
     if state.INTRODUCTION_THREAD is None or not state.INTRODUCTION_THREAD.is_alive():
         print("Starting introduction suggestion thread...")
-        state.INTRODUCTION_THREAD = threading.Thread(target=tasks.run_introducer_task)
+        state.INTRODUCTION_THREAD = threading.Thread(target=customizer_tasks.run_introducer_task)
         state.INTRODUCTION_THREAD.daemon = True
         state.INTRODUCTION_THREAD.start()
         return jsonify({"status": "started"})
@@ -401,7 +401,7 @@ def save_introduction():
 
         resume_file.write_text(new_content, encoding="utf-8")
 
-        compile_success, compile_log = utils.compile_tex()
+        compile_success, compile_log = compile_utils.compile_tex()
         if not compile_success:
             # Revert the change if compilation fails
             resume_file.write_text(content, encoding="utf-8")
@@ -503,3 +503,4 @@ def serve_pdf(filename: str):
     """Serves the generated PDF."""
     pdf_directory = get_data_path() / "resume" / str(state.JOB_ID)
     return send_from_directory(pdf_directory, filename)
+
