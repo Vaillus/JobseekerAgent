@@ -72,7 +72,7 @@
                 </div>
             </div>
             <div class="content-view" style="color-scheme: light;">
-                <embed id="pdf-viewer" src="{{ url_for('customizer.serve_pdf', filename='resume.pdf') }}#toolbar=0&navpanes=0&scrollbar=0&view=FitH" type="application/pdf" />
+                <iframe id="pdf-viewer" src="{{ url_for('customizer.serve_pdf', filename='resume.pdf') }}#pagemode=none&view=FitH"></iframe>
                 <div id="tex-viewer" style="display: none;">
                     <textarea id="tex-editor"></textarea>
                 </div>

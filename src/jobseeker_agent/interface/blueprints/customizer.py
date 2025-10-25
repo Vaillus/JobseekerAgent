@@ -502,5 +502,8 @@ def serve_tex():
 def serve_pdf(filename: str):
     """Serves the generated PDF."""
     pdf_directory = get_data_path() / "resume" / str(state.JOB_ID)
-    return send_from_directory(pdf_directory, filename)
+    response = send_from_directory(pdf_directory, filename)
+    response.headers['Content-Disposition'] = 'inline'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    return response
 

@@ -4,8 +4,16 @@ body, html { height: 100%; margin: 0; font-family: sans-serif; }
 .right-pane { flex: 1; display: flex; flex-direction: column; }
 .toolbar { padding: 10px; border-bottom: 1px solid #ddd; background-color: #f8f8f8; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
 .toolbar-center { flex-grow: 1; text-align: center; }
-.content-view { flex-grow: 1; position: relative; }
-embed { width: 100%; height: 100%; border: none; }
+.content-view { flex-grow: 1; position: relative; overflow: hidden; }
+embed, iframe { width: 100%; height: 100%; border: none; }
+#pdf-viewer { 
+    display: block; 
+    position: absolute;
+    top: -40px;
+    left: 0;
+    width: 100%;
+    height: calc(100% + 40px);
+}
 #tex-viewer { height: 100%; }
 #tex-editor { width: 100%; height: 100%; border: none; resize: none; font-family: monospace; padding: 1em; box-sizing: border-box; }
 #job-viewer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow-y: auto; padding: 1em; box-sizing: border-box; }
