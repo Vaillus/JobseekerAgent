@@ -2,10 +2,17 @@ from jobseeker_agent.scraper.linkedin_scraper import LinkedInJobsScraper
 from jobseeker_agent.scraper.linkedin_query import QueryBuilder
 
 
-def main():
+def run_scraping(max_time="day"):
+    """
+    Run the scraping process with all configured locations and queries.
+    
+    Args:
+        max_time: Time horizon for job postings ("day" or "week")
+        
+    Returns:
+        Total number of new jobs added
+    """
     builder = QueryBuilder()
-    # query = builder.build_secondary_query()
-    query = builder.build_primary_query()
 
     requests = [
         {"location": "Sidney, Australia", "remote_type": "any"},
@@ -15,15 +22,13 @@ def main():
         {"location": "Germany", "remote_type": "remote"},
         {"location": "Amsterdam, Netherlands", "remote_type": "any"},
         {"location": "Netherlands", "remote_type": "remote"},
-        # {
-        #     "location": "California, USA",
-        #     "remote_type": "remote"
-        # }
     ]
     queries = [builder.build_primary_query(), builder.build_secondary_query()]
     max_jobs = 100
-    max_time = "day"
     scraper = LinkedInJobsScraper()
+    
+    total_new_jobs = 0
+    
     for request in requests:
         for query in queries:
             params = {
@@ -34,7 +39,17 @@ def main():
                 "max_time": max_time,
             }
             new_jobs_added = scraper.scrape_jobs(**params)
-            print(f"Finished scraping. Added {new_jobs_added} new jobs.")
+            total_new_jobs += new_jobs_added
+            print(f"Finished scraping {request['location']}. Added {new_jobs_added} new jobs.")
+    
+    print(f"Total: {total_new_jobs} new jobs added.")
+    return total_new_jobs
+
+
+def main():
+    """Main entry point for command-line usage."""
+    max_time = "day"
+    run_scraping(max_time)
 
 
 if __name__ == "__main__":

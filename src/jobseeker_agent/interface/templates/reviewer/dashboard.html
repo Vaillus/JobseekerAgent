@@ -7,14 +7,50 @@
 </head>
 <body>
     <div id="sidebar">
-        <h2>Jobs To Process</h2>
-        <div id="job-list">
+        <div class="sidebar-tabs">
+            <button class="sidebar-tab-btn active" data-tab="jobs">Jobs</button>
+            <button class="sidebar-tab-btn" data-tab="scraper">Scraper</button>
+            <button class="sidebar-tab-btn" data-tab="review">Review</button>
+        </div>
+        <div class="sidebar-content">
+            <div id="jobs-tab" class="sidebar-tab-content active">
+                <h2>Jobs To Process</h2>
+                <div id="job-list">
             {% for job in sidebar_jobs %}
             <div class="job-item" data-job-id="{{ job.id }}">
                 <h4>{{ job.title or 'N/A' }} (Score: {{ job.score if job.score is not none else 'N/A' }})</h4>
                 <p>{{ job.company or 'N/A' }} - {{ job.location or 'N/A' }}</p>
             </div>
             {% endfor %}
+                </div>
+            </div>
+            <div id="scraper-tab" class="sidebar-tab-content">
+                <h2>Scrape Jobs</h2>
+                <div class="control-group">
+                    <label for="time-horizon">Time Horizon:</label>
+                    <select id="time-horizon" class="control-select">
+                        <option value="day">1 Day</option>
+                        <option value="week">1 Week</option>
+                    </select>
+                </div>
+                <button id="scrape-btn" class="control-btn scrape-btn">Launch Scraping</button>
+                <div id="scrape-status" class="status-display"></div>
+            </div>
+            <div id="review-tab" class="sidebar-tab-content">
+                <h2>Review Jobs</h2>
+                <div class="control-group">
+                    <label for="review-count">Number of reviews:</label>
+                    <input type="number" id="review-count" class="control-input" value="10" min="1" max="100">
+                </div>
+                <button id="review-btn" class="control-btn review-btn">Launch Review</button>
+                <div id="review-progress" class="progress-container" style="display: none;">
+                    <div class="progress-bar">
+                        <div id="review-progress-bar" class="progress-bar-fill"></div>
+                    </div>
+                    <div id="review-progress-text" class="progress-text">0 / 0</div>
+                </div>
+                <div id="review-status" class="status-display"></div>
+            </div>
         </div>
     </div>
     <div id="content">

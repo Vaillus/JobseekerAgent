@@ -1,12 +1,12 @@
 import random
 from jobseeker_agent.utils.paths import (
     load_raw_jobs,
-    load_main_reviews,
-    save_main_reviews,
+    load_reviews,
+    save_reviews,
     load_processed_jobs,
     save_processed_jobs,
 )
-from jobseeker_agent.reviewer.agents.reviewer import review
+from jobseeker_agent.reviewer.agents.reviewer import review as review_agent
 from jobseeker_agent.scraper.extract_job_details import extract_job_details
 
 
@@ -14,7 +14,7 @@ class JobReviewer:
     def __init__(self):
         self.raw_jobs = load_raw_jobs()
         self.processed_job_ids = set(load_processed_jobs())
-        self.reviews = load_main_reviews()
+        self.reviews = load_reviews()
 
     def _get_unprocessed_jobs(self):
         return [
@@ -36,12 +36,12 @@ class JobReviewer:
             print(f"Failed to retrieve details for job {job_id}. Skipping.")
             return
 
-        review = review(job_to_review, job_details, model)
+        review = review_agent(job_to_review, job_details, model)
 
         self.reviews.append(review)
         self.processed_job_ids.add(job_id)
 
-        save_main_reviews(self.reviews)
+        save_reviews(self.reviews)
         save_processed_jobs(list(self.processed_job_ids))
 
         print(f"Review for job {job_id} saved.")

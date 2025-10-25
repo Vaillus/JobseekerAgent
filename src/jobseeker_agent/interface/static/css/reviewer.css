@@ -1,5 +1,167 @@
 body { font-family: sans-serif; display: flex; height: 100vh; margin: 0; }
-#sidebar { width: 350px; background-color: #f8f8f8; border-right: 1px solid #ddd; overflow-y: auto; padding: 1em; }
+#sidebar { width: 350px; background-color: #f8f8f8; border-right: 1px solid #ddd; display: flex; flex-direction: column; }
+
+/* Sidebar tabs */
+.sidebar-tabs {
+    display: flex;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+    flex-shrink: 0;
+}
+
+.sidebar-tab-btn {
+    flex: 1;
+    background-color: #ecf0f1;
+    color: #34495e;
+    border: none;
+    border-right: 1px solid #ddd;
+    padding: 12px 10px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-tab-btn:last-child {
+    border-right: none;
+}
+
+.sidebar-tab-btn:hover {
+    background-color: #dce4e7;
+}
+
+.sidebar-tab-btn.active {
+    background-color: #3498db;
+    color: white;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1em;
+}
+
+.sidebar-tab-content {
+    display: none;
+}
+
+.sidebar-tab-content.active {
+    display: block;
+}
+
+/* Control styles for scraper and review tabs */
+.control-group {
+    margin-bottom: 1em;
+}
+
+.control-group label {
+    display: block;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.control-select,
+.control-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9em;
+    box-sizing: border-box;
+}
+
+.control-btn {
+    width: 100%;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s;
+    margin-bottom: 1em;
+}
+
+.control-btn:hover {
+    background-color: #2980b9;
+}
+
+.control-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+.control-btn.review-btn {
+    background-color: #27ae60;
+}
+
+.control-btn.review-btn:hover {
+    background-color: #229954;
+}
+
+/* Progress bar styles */
+.progress-container {
+    margin-bottom: 1em;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #ecf0f1;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5em;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: #27ae60;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+/* Status display */
+.status-display {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    display: none;
+}
+
+.status-display.idle {
+    background-color: #ecf0f1;
+    color: #7f8c8d;
+    display: block;
+}
+
+.status-display.running {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+    display: block;
+}
+
+.status-display.completed {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    display: block;
+}
+
+.status-display.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: block;
+}
 #content { flex: 1; display: flex; flex-direction: column; position: relative; }
 
 /* Header fixe */
