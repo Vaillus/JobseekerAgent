@@ -10,7 +10,9 @@ document.querySelectorAll('.job-item').forEach(item => {
 function displayJobDetails(jobId) {
     document.getElementById('placeholder').style.display = 'none';
     const contentDiv = document.getElementById('job-details');
-    contentDiv.style.display = 'block';
+    contentDiv.style.display = 'flex';
+    contentDiv.style.flexDirection = 'column';
+    contentDiv.style.height = '100%';
     
     const jobData = jobsData.find(j => j.id == jobId);
     if (!jobData) {
@@ -18,28 +20,33 @@ function displayJobDetails(jobId) {
         return;
     }
 
-    // Initial render with stored data
+    // Render with header and scrollable content separated
     contentDiv.innerHTML = `
-        <h1>${ jobData.title || 'N/A' }</h1>
-        <h2>${ jobData.company || 'N/A' } - ${ jobData.location || 'N/A' }</h2>
-        <p><a href="${ jobData.job_link || '#' }" target="_blank">View Original Job Post</a></p>
-        <hr>
-        <div class="info">
-            <h3>Review</h3>
-            <p><b>ID:</b> ${ jobData.id }</p>
-            <p><b>Score:</b> ${ jobData.score !== null ? jobData.score : 'N/A' }</p>
-            <p><b>Preferred Pitch:</b> ${ jobData.preferred_pitch || 'N/A' }</p>
+        <div class="job-header">
+            <div class="job-header-left">
+                <h1>${ jobData.title || 'N/A' }</h1>
+                <h2>${ jobData.company || 'N/A' } - ${ jobData.location || 'N/A' }</h2>
+                <p><a href="${ jobData.job_link || '#' }" target="_blank">View Original Job Post</a></p>
+            </div>
+            <div class="job-header-right">
+                <button id="interested-btn" class="status-btn interested-btn" data-job-id="${jobId}"></button>
+                <button id="not-interested-btn" class="status-btn not-interested-btn" data-job-id="${jobId}"></button>
+                <button id="apply-btn" class="status-btn apply-btn" data-job-id="${jobId}">Apply</button>
+            </div>
         </div>
-        <h2>Evaluation Grid</h2>
-        ${formatEvaluationGrid(jobData.evaluation_grid)}
-        <h2>Synthesis and Decision</h2>
-        <div class="job-description-content">${ jobData['synthesis_and_decision'] || 'Not available.' }</div>
-        <h3>Full Job Description</h3>
-        <div id="live-description-container"><div id="loader">Fetching live details...</div></div>
-        <div class="btn-container">
-            <button id="interested-btn" class="status-btn interested-btn" data-job-id="${jobId}"></button>
-            <button id="not-interested-btn" class="status-btn not-interested-btn" data-job-id="${jobId}"></button>
-            <button id="apply-btn" class="status-btn" data-job-id="${jobId}">Apply</button>
+        <div class="job-content-scrollable">
+            <div class="info">
+                <h3>Review</h3>
+                <p><b>ID:</b> ${ jobData.id }</p>
+                <p><b>Score:</b> ${ jobData.score !== null ? jobData.score : 'N/A' }</p>
+                <p><b>Preferred Pitch:</b> ${ jobData.preferred_pitch || 'N/A' }</p>
+            </div>
+            <h2>Evaluation Grid</h2>
+            ${formatEvaluationGrid(jobData.evaluation_grid)}
+            <h2>Synthesis and Decision</h2>
+            <div class="job-description-content">${ jobData['synthesis_and_decision'] || 'Not available.' }</div>
+            <h3>Full Job Description</h3>
+            <div id="live-description-container"><div id="loader">Fetching live details...</div></div>
         </div>
     `;
 
