@@ -1202,6 +1202,42 @@ document.body.addEventListener('click', function(event) {
         });
         return;
     }
+    
+    if (id === 'delete-publications-btn') {
+        if (!confirm('Are you sure you want to delete the Publications section? This action cannot be undone.')) {
+            return;
+        }
+
+        button.textContent = 'Deleting...';
+        button.disabled = true;
+
+        fetch("/customizer/delete-publications", {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Publications section deleted successfully!');
+                setTimeout(() => {
+                    refreshPdf();
+                    document.getElementById('view-pdf-btn').click();
+                    // Refresh ranking data after PDF update
+                    setTimeout(() => refreshRankingData(), 2000);
+                }, 1500);
+            } else {
+                alert('Error deleting publications: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Delete publications error:', error);
+            alert('A critical error occurred while deleting the publications section.');
+        })
+        .finally(() => {
+            button.textContent = 'Delete Publications';
+            button.disabled = false;
+        });
+        return;
+    }
 });
 
 

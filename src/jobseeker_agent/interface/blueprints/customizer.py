@@ -420,6 +420,54 @@ def save_introduction():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@bp.route("/delete-publications", methods=["POST"])
+def delete_publications():
+    """Deletes the publications section from the resume.tex file."""
+    try:
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        content = resume_file.read_text(encoding="utf-8")
+
+        # Pattern to match the entire Publications section
+        # This includes the section header and everything until the next section or \end{resume}
+        pattern = re.compile(
+            r"\\section{Publications}.*?(?=\\section{|\\end{resume})",
+            re.DOTALL
+        )
+
+        new_content = pattern.sub("", content)
+
+        if new_content == content:
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": "Publications section not found in resume.tex.",
+                    }
+                ),
+                404,
+            )
+
+        resume_file.write_text(new_content, encoding="utf-8")
+
+        compile_success, compile_log = compile_utils.compile_tex()
+        if not compile_success:
+            # Revert the change if compilation fails
+            resume_file.write_text(content, encoding="utf-8")
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": f"PDF recompilation failed: {compile_log}",
+                    }
+                ),
+                500,
+            )
+
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @bp.route("/apply-manual-ranking", methods=["POST"])
 def apply_manual_ranking():
     """Applies a manual ranking of experiences to the resume."""
