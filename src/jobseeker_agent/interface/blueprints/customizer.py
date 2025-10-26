@@ -425,6 +425,7 @@ def apply_manual_ranking():
     """Applies a manual ranking of experiences to the resume."""
     data = request.get_json()
     experience_order = data.get("experience_order")
+    hidden_experiences = data.get("hidden_experiences", [])
     
     if not experience_order or not isinstance(experience_order, list):
         return jsonify({"success": False, "error": "Invalid experience order provided"}), 400
@@ -435,8 +436,8 @@ def apply_manual_ranking():
         resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
         resume_content = resume_file.read_text(encoding="utf-8")
         
-        # Apply the reordering
-        updated_content = reorder_experiences(resume_content, experience_order)
+        # Apply the reordering (with hidden experiences)
+        updated_content = reorder_experiences(resume_content, experience_order, hidden_experiences)
         resume_file.write_text(updated_content, encoding="utf-8")
         
         # Recompile the PDF
@@ -496,7 +497,18 @@ def get_current_experience_order():
         # Sort by position to get the order
         ordered_experiences = sorted(positions.keys(), key=lambda k: positions[k])
         
-        return jsonify({"experience_order": ordered_experiences})
+        # Detect hidden experiences (those wrapped in \iffalse ... \fi)
+        hidden_experiences = []
+        for exp_key, marker in experience_markers.items():
+            # Check if this experience is within an \iffalse ... \fi block
+            pattern = rf"\\iffalse.*?{re.escape(marker)}.*?\\fi"
+            if re.search(pattern, experience_section, re.DOTALL):
+                hidden_experiences.append(exp_key)
+        
+        return jsonify({
+            "experience_order": ordered_experiences,
+            "hidden_experiences": hidden_experiences
+        })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

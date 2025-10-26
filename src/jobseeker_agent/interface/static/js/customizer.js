@@ -538,10 +538,16 @@ function startAndPollIntroductions() {
 
 function getExperienceOrder() {
     const container = document.getElementById('experience-blocks-container');
-    if (!container) return [];
+    if (!container) return { experience_order: [], hidden_experiences: [] };
     
-    const blocks = container.querySelectorAll('.experience-block');
-    return Array.from(blocks).map(block => block.dataset.exp);
+    const blocks = Array.from(container.querySelectorAll('.experience-block'));
+    
+    return {
+        experience_order: blocks.map(block => block.dataset.exp),
+        hidden_experiences: blocks
+            .filter(block => block.dataset.hidden === 'true')
+            .map(block => block.dataset.exp)
+    };
 }
 
 function loadCurrentSkills() {
@@ -660,6 +666,29 @@ function loadCurrentExperienceOrder() {
         if (data.experience_order) {
             updateExperienceBlocksOrder(data.experience_order);
         }
+        
+        // Apply hidden state to blocks
+        if (data.hidden_experiences) {
+            const container = document.getElementById('experience-blocks-container');
+            if (container) {
+                // Reset all blocks to visible first
+                container.querySelectorAll('.experience-block').forEach(block => {
+                    block.dataset.hidden = 'false';
+                    const btn = block.querySelector('.experience-toggle-btn');
+                    if (btn) btn.textContent = '👁';
+                });
+                
+                // Then mark hidden ones
+                data.hidden_experiences.forEach(expName => {
+                    const block = container.querySelector(`[data-exp="${expName}"]`);
+                    if (block) {
+                        block.dataset.hidden = 'true';
+                        const btn = block.querySelector('.experience-toggle-btn');
+                        if (btn) btn.textContent = '👁‍🗨';
+                    }
+                });
+            }
+        }
     })
     .catch(error => console.error("Failed to load experience order:", error));
 }
@@ -682,6 +711,19 @@ function initializeDragAndDrop() {
         dragClass: 'sortable-drag',
         easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
         // No onEnd needed - we get the order when user clicks Apply
+    });
+    
+    // Add event listeners for toggle buttons
+    container.querySelectorAll('.experience-toggle-btn').forEach(btn => {
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            const block = btn.closest('.experience-block');
+            if (!block) return;
+            
+            const isHidden = block.dataset.hidden === 'true';
+            block.dataset.hidden = isHidden ? 'false' : 'true';
+            btn.textContent = isHidden ? '👁' : '👁‍🗨';
+        };
     });
 }
 
@@ -1029,14 +1071,17 @@ document.body.addEventListener('click', function(event) {
         button.textContent = 'Applying...';
         button.disabled = true;
         
-        const experienceOrder = getExperienceOrder();
+        const experienceData = getExperienceOrder();
         const skillRanking = getSkillsOrder();
         
-        // Appliquer d'abord les expériences
+        // Appliquer d'abord les expériences (avec hidden state)
         fetch("/customizer/apply-manual-ranking", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ experience_order: experienceOrder })
+            body: JSON.stringify({
+                experience_order: experienceData.experience_order,
+                hidden_experiences: experienceData.hidden_experiences
+            })
         })
         .then(response => response.json())
         .then(data => {
@@ -1067,7 +1112,7 @@ document.body.addEventListener('click', function(event) {
                 expTitle.textContent = 'Experiences';
                 reportContainer.appendChild(expTitle);
                 const expList = document.createElement('ul');
-                experienceOrder.forEach(item => {
+                experienceData.experience_order.forEach(item => {
                     const li = document.createElement('li');
                     li.textContent = item;
                     expList.appendChild(li);

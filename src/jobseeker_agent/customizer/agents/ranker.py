@@ -50,10 +50,13 @@ def rank(
     return response
 
 
-def reorder_experiences(tex_content: str, ranked_experiences: List[str]) -> str:
+def reorder_experiences(tex_content: str, ranked_experiences: List[str], hidden_experiences: List[str] = None) -> str:
     """
     Reorders the experience entries in the resume's .tex file content.
+    Hidden experiences are wrapped in \iffalse ... \fi blocks.
     """
+    hidden_experiences = hidden_experiences or []
+    
     section_pattern = re.compile(r"(\\section{Experience}.*?)(?=\\section{|\\end{resume})", re.DOTALL)
     section_match = section_pattern.search(tex_content)
     if not section_match:
@@ -61,9 +64,14 @@ def reorder_experiences(tex_content: str, ranked_experiences: List[str]) -> str:
 
     experience_section_content = section_match.group(1)
     
+    # Find all individual experience entries, removing any existing \iffalse ... \fi wrappers first
+    # This ensures we can toggle hidden state cleanly
+    cleaned_section = re.sub(r'\\iffalse\s*', '', experience_section_content)
+    cleaned_section = re.sub(r'\\fi\s*', '', cleaned_section)
+    
     # Find all individual experience entries
     entry_pattern = re.compile(r"(?:\\textbf{|Personal Project –).*?(?=\\vspace{-2mm})", re.DOTALL)
-    entries = entry_pattern.findall(experience_section_content)
+    entries = entry_pattern.findall(cleaned_section)
     
     # Add the vspace back to each entry as it's used as a delimiter
     entries = [entry + "\\vspace{-2mm}\n" for entry in entries]
@@ -81,7 +89,13 @@ def reorder_experiences(tex_content: str, ranked_experiences: List[str]) -> str:
     new_entries_str = ""
     for exp_name in ranked_experiences:
         if exp_name in entry_map:
-            new_entries_str += entry_map[exp_name]
+            experience_block = entry_map[exp_name]
+            
+            # If the experience should be hidden, wrap it with \iffalse ... \fi
+            if exp_name in hidden_experiences:
+                experience_block = f"\\iffalse\n{experience_block}\\fi\n"
+            
+            new_entries_str += experience_block
 
     # Replace old entries block with the new one
     # We need to find the content between \section{Experience} and the next \section
