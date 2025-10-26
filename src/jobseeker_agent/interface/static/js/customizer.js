@@ -379,36 +379,6 @@ function startAndPollRanking() {
                 fetch("/customizer/ranking-report")
                 .then(res => res.json())
                 .then(reportData => {
-                    const reportContainer = document.getElementById('ranking-report');
-                    reportContainer.innerHTML = '';
-                    
-                    const expTitle = document.createElement('h5');
-                    expTitle.textContent = 'Experience Ranking';
-                    reportContainer.appendChild(expTitle);
-                    const expList = document.createElement('ul');
-                    reportData.experience_ranking.forEach(item => {
-                        const li = document.createElement('li');
-                        li.textContent = item;
-                        expList.appendChild(li);
-                    });
-                    reportContainer.appendChild(expList);
-
-                    const skillTitle = document.createElement('h5');
-                    skillTitle.textContent = 'Skill Ranking';
-                    reportContainer.appendChild(skillTitle);
-                    for (const category in reportData.skill_ranking) {
-                        const catTitle = document.createElement('h6');
-                        catTitle.textContent = category.replace(/_/g, ' ');
-                        reportContainer.appendChild(catTitle);
-                        const skillList = document.createElement('ul');
-                        reportData.skill_ranking[category].forEach(item => {
-                            const li = document.createElement('li');
-                            li.textContent = item;
-                            skillList.appendChild(li);
-                        });
-                        reportContainer.appendChild(skillList);
-                    }
-                    
                     // Update the visual order of experience blocks
                     updateExperienceBlocksOrder(reportData.experience_ranking);
                     
@@ -432,8 +402,7 @@ function startAndPollRanking() {
             } else if (data.status === 'pending') {
                 setTimeout(pollRankingStatus, 2000);
             } else if (data.status === 'failed') {
-                const reportContainer = document.getElementById('ranking-report');
-                reportContainer.innerHTML = `<p style="color: red;">Ranking failed: ${data.error || 'Unknown error'}</p>`;
+                alert('Ranking failed: ' + (data.error || 'Unknown error'));
                 const btn = document.getElementById('auto-rank-btn');
                 btn.textContent = 'Auto-Rank with AI';
                 btn.disabled = false;
@@ -447,8 +416,7 @@ function startAndPollRanking() {
         if (data.status === 'started') {
             pollRankingStatus();
         } else {
-            const reportContainer = document.getElementById('ranking-report');
-            reportContainer.innerHTML = `<p style="color: red;">Could not start ranking: ${data.status}</p>`;
+            alert('Could not start ranking: ' + data.status);
             const btn = document.getElementById('auto-rank-btn');
             btn.textContent = 'Auto-Rank with AI';
             btn.disabled = false;
@@ -941,8 +909,8 @@ document.body.addEventListener('click', function(event) {
         });
         button.classList.add('active');
         
-        // Initialize drag-and-drop when switching to Executor tab
-        if (tabId === 'executor') {
+        // Initialize drag-and-drop when switching to Ranker tab
+        if (tabId === 'ranker') {
             const rankingSection = document.getElementById('ranking-section');
             if (rankingSection && rankingSection.style.display !== 'none') {
                 initializeDragAndDrop();
@@ -1099,35 +1067,6 @@ document.body.addEventListener('click', function(event) {
         .then(data => {
             if (data.success) {
                 console.log('Manual ranking applied successfully (experiences + skills).');
-                
-                // Update the ranking report
-                const reportContainer = document.getElementById('ranking-report');
-                reportContainer.innerHTML = '';
-                const title = document.createElement('h5');
-                title.textContent = 'Ranking Applied (Manual)';
-                reportContainer.appendChild(title);
-                
-                // Expériences
-                const expTitle = document.createElement('h6');
-                expTitle.textContent = 'Experiences';
-                reportContainer.appendChild(expTitle);
-                const expList = document.createElement('ul');
-                experienceData.experience_order.forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = item;
-                    expList.appendChild(li);
-                });
-                reportContainer.appendChild(expList);
-                
-                // Skills
-                const skillTitle = document.createElement('h6');
-                skillTitle.textContent = 'Skills';
-                reportContainer.appendChild(skillTitle);
-                for (const [category, skills] of Object.entries(skillRanking)) {
-                    const catTitle = document.createElement('p');
-                    catTitle.innerHTML = `<strong>${category.replace(/_/g, ' ')}:</strong> ${skills.join(', ')}`;
-                    reportContainer.appendChild(catTitle);
-                }
                 
                 document.getElementById('suggest-introductions-btn').style.display = 'block';
                 
