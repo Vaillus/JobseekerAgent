@@ -459,6 +459,48 @@ def apply_manual_ranking():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@bp.route("/get-current-experience-order", methods=["GET"])
+def get_current_experience_order():
+    """Parses and returns the current order of experiences from the resume."""
+    try:
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        resume_content = resume_file.read_text(encoding="utf-8")
+        
+        # Experience names and their markers in the .tex file
+        experience_markers = {
+            "JobseekerAgent": "Job-Seeking Agentic Workflow",
+            "CameraCalibration": "Camera Calibration for Autonomous Vehicle",
+            "Thales DMS": r"\textbf{Thales DMS}",
+            "IBM France": r"\textbf{IBM France}"
+        }
+        
+        # Find the Experience section
+        exp_section_pattern = re.compile(
+            r"\\section{Experience}(.*?)(?=\\section{|\\end{resume})",
+            re.DOTALL
+        )
+        exp_match = exp_section_pattern.search(resume_content)
+        
+        if not exp_match:
+            return jsonify({"error": "Experience section not found"}), 404
+        
+        experience_section = exp_match.group(1)
+        
+        # Find positions of each experience in the section
+        positions = {}
+        for exp_key, marker in experience_markers.items():
+            pos = experience_section.find(marker)
+            if pos != -1:
+                positions[exp_key] = pos
+        
+        # Sort by position to get the order
+        ordered_experiences = sorted(positions.keys(), key=lambda k: positions[k])
+        
+        return jsonify({"experience_order": ordered_experiences})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @bp.route("/get-current-skills", methods=["GET"])
 def get_current_skills():
     """Parses and returns the current skills from the resume."""

@@ -457,6 +457,20 @@ h1 { color: #2c3e50; flex-shrink: 0; }
     border-style: dashed;
 }
 
+/* SortableJS classes for smooth animations */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #e3f2fd !important;
+}
+
+.sortable-chosen {
+    cursor: grabbing !important;
+}
+
+.sortable-drag {
+    opacity: 1;
+}
+
 /* Skills ranking styles */
 #skills-ranking-section {
     background-color: #f8f9fa;
@@ -506,6 +520,10 @@ h1 { color: #2c3e50; flex-shrink: 0; }
     transition: all 0.2s ease;
     user-select: none;
     font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    position: relative;
 }
 
 .skill-block::before {
@@ -515,10 +533,43 @@ h1 { color: #2c3e50; flex-shrink: 0; }
     color: #3498db;
 }
 
+.skill-text {
+    display: inline-block;
+}
+
+.skill-remove-btn {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    font-size: 1.2em;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skill-block:hover .skill-remove-btn {
+    opacity: 1;
+}
+
+.skill-remove-btn:hover {
+    color: #c0392b;
+    transform: scale(1.2);
+}
+
 .skill-block:hover {
     background-color: #d4ebf5;
     border-color: #3498db;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding-right: 8px;
 }
 
 .skill-block.dragging {

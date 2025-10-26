@@ -565,7 +565,23 @@ function loadCurrentSkills() {
                 block.className = 'skill-block';
                 block.draggable = true;
                 block.dataset.skill = skill;
-                block.textContent = skill;
+                
+                // Create text node for the skill
+                const textSpan = document.createElement('span');
+                textSpan.className = 'skill-text';
+                textSpan.textContent = skill;
+                block.appendChild(textSpan);
+                
+                // Create remove button
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'skill-remove-btn';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    block.remove();
+                };
+                block.appendChild(removeBtn);
+                
                 container.appendChild(block);
             });
         });
@@ -582,66 +598,16 @@ function initializeSkillsDragAndDrop() {
         const container = document.getElementById(`${category}-blocks-container`);
         if (!container) return;
         
-        let draggedElement = null;
-        
-        const blocks = container.querySelectorAll('.skill-block');
-        
-        blocks.forEach(block => {
-            block.addEventListener('dragstart', (e) => {
-                draggedElement = block;
-                block.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-            });
-            
-            block.addEventListener('dragend', (e) => {
-                block.classList.remove('dragging');
-                container.querySelectorAll('.skill-block').forEach(b => {
-                    b.classList.remove('drag-over');
-                });
-            });
-            
-            block.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'move';
-                
-                if (draggedElement && draggedElement !== block) {
-                    block.classList.add('drag-over');
-                }
-            });
-            
-            block.addEventListener('dragleave', (e) => {
-                block.classList.remove('drag-over');
-            });
-            
-            block.addEventListener('drop', (e) => {
-                e.preventDefault();
-                e.stopPropagation(); // Prevent event from bubbling to container
-                block.classList.remove('drag-over');
-                
-                if (draggedElement && draggedElement !== block && draggedElement.parentNode === block.parentNode) {
-                    const allBlocks = Array.from(container.querySelectorAll('.skill-block'));
-                    const draggedIndex = allBlocks.indexOf(draggedElement);
-                    const targetIndex = allBlocks.indexOf(block);
-                    
-                    if (draggedIndex < targetIndex) {
-                        container.insertBefore(draggedElement, block.nextSibling);
-                    } else {
-                        container.insertBefore(draggedElement, block);
-                    }
-                }
-            });
-        });
-        
-        // Allow dropping at the end of the container
-        container.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-        
-        container.addEventListener('drop', (e) => {
-            e.preventDefault();
-            if (draggedElement && draggedElement.parentNode === container) {
-                container.appendChild(draggedElement);
-            }
+        // Use SortableJS for smooth drag-and-drop with animations
+        // Using 'group' allows dragging skills between different categories
+        new Sortable(container, {
+            group: 'skills',  // Shared group allows cross-category dragging
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+            // No onEnd needed - we get the order when user clicks Apply
         });
     });
 }
@@ -655,6 +621,7 @@ function getSkillsOrder() {
             return;
         }
         const blocks = container.querySelectorAll('.skill-block');
+        // Use dataset.skill which is set when the block is created
         result[category] = Array.from(blocks).map(block => block.dataset.skill);
     });
     return result;
@@ -681,64 +648,40 @@ function updateSkillsBlocksOrder(skillRanking) {
     }
 }
 
+function loadCurrentExperienceOrder() {
+    fetch("/customizer/get-current-experience-order")
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error("Error loading experience order:", data.error);
+            return;
+        }
+        
+        if (data.experience_order) {
+            updateExperienceBlocksOrder(data.experience_order);
+        }
+    })
+    .catch(error => console.error("Failed to load experience order:", error));
+}
+
 function refreshRankingData() {
     console.log("Refreshing ranking data (experiences and skills)...");
+    loadCurrentExperienceOrder();
     loadCurrentSkills();
-    // Experience blocks are static, no need to reload them
 }
 
 function initializeDragAndDrop() {
     const container = document.getElementById('experience-blocks-container');
     if (!container) return;
     
-    let draggedElement = null;
-    
-    const blocks = container.querySelectorAll('.experience-block');
-    
-    blocks.forEach(block => {
-        block.addEventListener('dragstart', (e) => {
-            draggedElement = block;
-            block.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-        });
-        
-        block.addEventListener('dragend', (e) => {
-            block.classList.remove('dragging');
-            // Remove drag-over class from all blocks
-            container.querySelectorAll('.experience-block').forEach(b => {
-                b.classList.remove('drag-over');
-            });
-        });
-        
-        block.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            
-            if (draggedElement !== block) {
-                block.classList.add('drag-over');
-            }
-        });
-        
-        block.addEventListener('dragleave', (e) => {
-            block.classList.remove('drag-over');
-        });
-        
-        block.addEventListener('drop', (e) => {
-            e.preventDefault();
-            block.classList.remove('drag-over');
-            
-            if (draggedElement && draggedElement !== block) {
-                // Determine if we should insert before or after
-                const rect = block.getBoundingClientRect();
-                const midpoint = rect.top + rect.height / 2;
-                
-                if (e.clientY < midpoint) {
-                    container.insertBefore(draggedElement, block);
-                } else {
-                    container.insertBefore(draggedElement, block.nextSibling);
-                }
-            }
-        });
+    // Use SortableJS for smooth drag-and-drop with animations
+    new Sortable(container, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        // No onEnd needed - we get the order when user clicks Apply
     });
 }
 
@@ -771,7 +714,8 @@ function pollInitialLoadStatus() {
             // Initialize drag-and-drop for the ranking section
             initializeDragAndDrop();
             
-            // Load current skills from resume
+            // Load current order from resume
+            loadCurrentExperienceOrder();
             loadCurrentSkills();
         } else if (data.status === 'pending') {
             setTimeout(pollInitialLoadStatus, 2000);
@@ -881,13 +825,19 @@ document.body.addEventListener('click', function(event) {
                 .then(res => res.json())
                 .then(data => {
                     if(data.success) {
-                        setTimeout(refreshPdf, 1500);
+                        setTimeout(() => {
+                            refreshPdf();
+                            // Refresh ranking data after PDF update
+                            setTimeout(() => refreshRankingData(), 2000);
+                        }, 1500);
                     } else {
                         alert('Recompilation failed: ' + data.error);
                     }
                 });
         } else {
             refreshPdf();
+            // Refresh ranking data after PDF update
+            setTimeout(() => refreshRankingData(), 2000);
         }
         return;
     }
