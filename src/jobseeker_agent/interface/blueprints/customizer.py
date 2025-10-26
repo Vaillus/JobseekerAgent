@@ -420,6 +420,124 @@ def save_introduction():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@bp.route("/apply-manual-ranking", methods=["POST"])
+def apply_manual_ranking():
+    """Applies a manual ranking of experiences to the resume."""
+    data = request.get_json()
+    experience_order = data.get("experience_order")
+    
+    if not experience_order or not isinstance(experience_order, list):
+        return jsonify({"success": False, "error": "Invalid experience order provided"}), 400
+    
+    try:
+        from jobseeker_agent.customizer.agents.ranker import reorder_experiences
+        
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        resume_content = resume_file.read_text(encoding="utf-8")
+        
+        # Apply the reordering
+        updated_content = reorder_experiences(resume_content, experience_order)
+        resume_file.write_text(updated_content, encoding="utf-8")
+        
+        # Recompile the PDF
+        compile_success, compile_log = compile_utils.compile_tex()
+        if not compile_success:
+            # Revert the change if compilation fails
+            resume_file.write_text(resume_content, encoding="utf-8")
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": f"PDF recompilation failed: {compile_log}",
+                    }
+                ),
+                500,
+            )
+        
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/get-current-skills", methods=["GET"])
+def get_current_skills():
+    """Parses and returns the current skills from the resume."""
+    try:
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        resume_content = resume_file.read_text(encoding="utf-8")
+        
+        skills = {
+            "expertise": [],
+            "programming_language": [],
+            "technologies": []
+        }
+        
+        # Map des noms de catégories .tex vers nos clés
+        category_map = {
+            "Expertise": "expertise",
+            "Programming Languages": "programming_language",
+            "Technologies": "technologies"
+        }
+        
+        # Parse each skill category
+        for tex_name, key in category_map.items():
+            # Pattern: {\sl Category:} skill1, skill2, skill3\\
+            # Use (.+?) to capture everything (including single backslashes like \LaTeX) until \\
+            pattern = re.compile(
+                rf"\{{\\sl\s*{re.escape(tex_name)}:\}}\s*(.+?)\\\\",
+                re.IGNORECASE
+            )
+            match = pattern.search(resume_content)
+            if match:
+                skills_text = match.group(1).strip()
+                # Split by comma and clean each skill
+                skill_list = [s.strip() for s in skills_text.split(",") if s.strip()]
+                skills[key] = skill_list
+        
+        return jsonify(skills)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@bp.route("/apply-manual-skill-ranking", methods=["POST"])
+def apply_manual_skill_ranking():
+    """Applies a manual ranking of skills to the resume."""
+    data = request.get_json()
+    skill_ranking = data.get("skill_ranking")
+    
+    if not skill_ranking or not isinstance(skill_ranking, dict):
+        return jsonify({"success": False, "error": "Invalid skill ranking provided"}), 400
+    
+    try:
+        from jobseeker_agent.customizer.agents.ranker import reorder_skills
+        
+        resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
+        resume_content = resume_file.read_text(encoding="utf-8")
+        
+        # Apply the reordering
+        updated_content = reorder_skills(resume_content, skill_ranking)
+        resume_file.write_text(updated_content, encoding="utf-8")
+        
+        # Recompile the PDF
+        compile_success, compile_log = compile_utils.compile_tex()
+        if not compile_success:
+            # Revert the change if compilation fails
+            resume_file.write_text(resume_content, encoding="utf-8")
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "error": f"PDF recompilation failed: {compile_log}",
+                    }
+                ),
+                500,
+            )
+        
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @bp.route("/ranking-report")
 def get_ranking_report():
     """Serves the ranking report JSON file."""

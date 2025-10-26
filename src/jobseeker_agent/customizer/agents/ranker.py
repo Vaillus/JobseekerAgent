@@ -98,16 +98,22 @@ def reorder_skills(tex_content: str, ranked_skills: Dict[str, List[str]]) -> str
     """
     Reorders the skills within each category in the resume's .tex file content.
     """
-    skill_ranking = ranked_skills
-    for category, skills in skill_ranking.items():
-        tex_category = category
+    # Map des noms de catégories internes vers les noms .tex
+    category_map = {
+        "expertise": "Expertise",
+        "programming_language": "Programming Languages",
+        "technologies": "Technologies"
+    }
+    
+    for internal_name, skills in ranked_skills.items():
+        tex_category = category_map.get(internal_name, internal_name)
 
         # This more flexible pattern should find the category regardless of minor spacing issues
-        pattern = re.compile(f"(\\{{\\\\sl\\s*{tex_category}:}})(.*?)(?=\\\\|\\n)", re.IGNORECASE)
+        pattern = re.compile(f"(\\{{\\\\sl\\s*{re.escape(tex_category)}:}})(.*?)(?=\\\\\\\\)", re.IGNORECASE)
         
         def replacer(match):
             prefix = match.group(1)
-            new_skills_str = "; ".join(skills)
+            new_skills_str = ", ".join(skills)  # Use comma instead of semicolon
             return f"{prefix} {new_skills_str}"
 
         tex_content, count = pattern.subn(replacer, tex_content, count=1)

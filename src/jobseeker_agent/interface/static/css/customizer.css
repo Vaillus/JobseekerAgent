@@ -388,3 +388,146 @@ h1 { color: #2c3e50; flex-shrink: 0; }
 .job-description-content ul li {
     margin-bottom: 0.5em;
 }
+
+/* Experience ranking styles */
+#ranking-section {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1em;
+}
+
+#ranking-section h4 {
+    margin-top: 0;
+    margin-bottom: 1em;
+    color: #495057;
+}
+
+#experience-blocks-container {
+    counter-reset: experience-counter;
+}
+
+.experience-block {
+    background-color: white;
+    border: 2px solid #ced4da;
+    border-radius: 5px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    cursor: grab;
+    transition: all 0.2s ease;
+    position: relative;
+    padding-left: 45px;
+    user-select: none;
+}
+
+.experience-block::before {
+    counter-increment: experience-counter;
+    content: counter(experience-counter);
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.experience-block:hover {
+    background-color: #f8f9fa;
+    border-color: #3498db;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.experience-block.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: scale(0.98);
+}
+
+.experience-block.drag-over {
+    border-color: #27ae60;
+    background-color: #eafaf1;
+    border-style: dashed;
+}
+
+/* Skills ranking styles */
+#skills-ranking-section {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1em;
+}
+
+#skills-ranking-section h4 {
+    margin-top: 0;
+    margin-bottom: 1em;
+    color: #495057;
+}
+
+.skill-category-container {
+    margin-bottom: 1.5em;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 1em;
+}
+
+.skill-category-container:last-child {
+    margin-bottom: 0;
+}
+
+.skill-category-container h5 {
+    margin: 0 0 0.8em 0;
+    color: #555;
+    font-size: 1em;
+}
+
+.skill-blocks-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    counter-reset: skill-counter;
+    min-height: 40px;
+}
+
+.skill-block {
+    background-color: #e8f4f8;
+    border: 2px solid #b3d9e6;
+    border-radius: 15px;
+    padding: 6px 12px;
+    cursor: grab;
+    transition: all 0.2s ease;
+    user-select: none;
+    font-size: 0.9em;
+}
+
+.skill-block::before {
+    counter-increment: skill-counter;
+    content: counter(skill-counter) ". ";
+    font-weight: bold;
+    color: #3498db;
+}
+
+.skill-block:hover {
+    background-color: #d4ebf5;
+    border-color: #3498db;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.skill-block.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.skill-block.drag-over {
+    border-color: #27ae60;
+    background-color: #d5f4e6;
+    border-style: dashed;
+}

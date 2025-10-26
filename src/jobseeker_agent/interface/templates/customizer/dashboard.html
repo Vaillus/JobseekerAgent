@@ -41,8 +41,41 @@
                         <button id="run-executor-btn" class="toolbar-btn action-btn" style="width: 100%; margin-bottom: 1em;">Run Keyword Executor</button>
                         <h4>Execution Report:</h4>
                         <div id="executor-report"></div>
-                        <button id="rank-resume-btn" class="toolbar-btn action-btn" style="width: 100%; margin-top: 1em; display: none;">Rank Resume</button>
-                        <h4>Ranking Report:</h4>
+                        
+                        <div id="ranking-section" style="margin-top: 2em;">
+                            <h4>Experience Ranking</h4>
+                            <div style="display: flex; gap: 10px; margin-bottom: 1em;">
+                                <button id="auto-rank-btn" class="toolbar-btn action-btn" style="flex: 1;">Auto-Rank with AI</button>
+                                <button id="apply-manual-ranking-btn" class="toolbar-btn action-btn" style="flex: 1;">Apply Manual Order</button>
+                            </div>
+                            <div id="experience-blocks-container">
+                                <div class="experience-block" draggable="true" data-exp="JobseekerAgent">Job-Seeking Agentic Workflow</div>
+                                <div class="experience-block" draggable="true" data-exp="CameraCalibration">Camera Calibration for Autonomous Vehicle</div>
+                                <div class="experience-block" draggable="true" data-exp="Thales DMS">Thales DMS</div>
+                                <div class="experience-block" draggable="true" data-exp="IBM France">IBM France</div>
+                            </div>
+                        </div>
+                        
+                        <div id="skills-ranking-section" style="margin-top: 2em;">
+                            <h4>Skills Ranking</h4>
+                            
+                            <div class="skill-category-container">
+                                <h5>Expertise</h5>
+                                <div id="expertise-blocks-container" class="skill-blocks-container"></div>
+                            </div>
+                            
+                            <div class="skill-category-container">
+                                <h5>Programming Languages</h5>
+                                <div id="programming_language-blocks-container" class="skill-blocks-container"></div>
+                            </div>
+                            
+                            <div class="skill-category-container">
+                                <h5>Technologies</h5>
+                                <div id="technologies-blocks-container" class="skill-blocks-container"></div>
+                            </div>
+                        </div>
+                        
+                        <h4 style="margin-top: 1.5em;">Ranking Report:</h4>
                         <div id="ranking-report"></div>
                         <button id="suggest-introductions-btn" class="toolbar-btn action-btn" style="width: 100%; margin-top: 1em; display: none;">Suggest Opening Lines</button>
                         <div id="introduction-container" style="margin-top: 1em; display: none;">

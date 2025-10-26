@@ -336,6 +336,8 @@ function updateTitle(title, clickedButton = null) {
             setTimeout(() => {
                 refreshPdf();
                 document.getElementById('view-pdf-btn').click();
+                // Refresh ranking data after PDF update
+                setTimeout(() => refreshRankingData(), 2000);
             }, 1500);
         } else {
             alert('Error updating title: ' + (data.error || 'Unknown error'));
@@ -344,6 +346,27 @@ function updateTitle(title, clickedButton = null) {
     .catch(error => {
         console.error('Failed to update title:', error);
         alert('An error occurred while updating the title.');
+    });
+}
+
+function updateExperienceBlocksOrder(experienceRanking) {
+    const container = document.getElementById('experience-blocks-container');
+    if (!container) return;
+    
+    const blocks = Array.from(container.querySelectorAll('.experience-block'));
+    const blockMap = {};
+    blocks.forEach(block => {
+        blockMap[block.dataset.exp] = block;
+    });
+    
+    // Clear container
+    container.innerHTML = '';
+    
+    // Re-add blocks in the new order
+    experienceRanking.forEach(expName => {
+        if (blockMap[expName]) {
+            container.appendChild(blockMap[expName]);
+        }
     });
 }
 
@@ -386,15 +409,23 @@ function startAndPollRanking() {
                         reportContainer.appendChild(skillList);
                     }
                     
+                    // Update the visual order of experience blocks
+                    updateExperienceBlocksOrder(reportData.experience_ranking);
+                    
+                    // Update the visual order of skill blocks
+                    updateSkillsBlocksOrder(reportData.skill_ranking);
+                    
                     setTimeout(() => {
                         refreshPdf();
                         document.getElementById('view-pdf-btn').click();
+                        // Refresh skills after PDF update to catch any new skills
+                        setTimeout(() => refreshRankingData(), 3000);
                     }, 2500);
                 })
                 .catch(error => console.error("Failed to fetch ranking report:", error))
                 .finally(() => {
-                    const btn = document.getElementById('rank-resume-btn');
-                    btn.textContent = 'Rank Resume';
+                    const btn = document.getElementById('auto-rank-btn');
+                    btn.textContent = 'Auto-Rank with AI';
                     btn.disabled = false;
                     document.getElementById('suggest-introductions-btn').style.display = 'block';
                 });
@@ -403,8 +434,8 @@ function startAndPollRanking() {
             } else if (data.status === 'failed') {
                 const reportContainer = document.getElementById('ranking-report');
                 reportContainer.innerHTML = `<p style="color: red;">Ranking failed: ${data.error || 'Unknown error'}</p>`;
-                const btn = document.getElementById('rank-resume-btn');
-                btn.textContent = 'Rank Resume';
+                const btn = document.getElementById('auto-rank-btn');
+                btn.textContent = 'Auto-Rank with AI';
                 btn.disabled = false;
             }
         });
@@ -418,8 +449,8 @@ function startAndPollRanking() {
         } else {
             const reportContainer = document.getElementById('ranking-report');
             reportContainer.innerHTML = `<p style="color: red;">Could not start ranking: ${data.status}</p>`;
-            const btn = document.getElementById('rank-resume-btn');
-            btn.textContent = 'Rank Resume';
+            const btn = document.getElementById('auto-rank-btn');
+            btn.textContent = 'Auto-Rank with AI';
             btn.disabled = false;
         }
     });
@@ -505,6 +536,212 @@ function startAndPollIntroductions() {
     });
 }
 
+function getExperienceOrder() {
+    const container = document.getElementById('experience-blocks-container');
+    if (!container) return [];
+    
+    const blocks = container.querySelectorAll('.experience-block');
+    return Array.from(blocks).map(block => block.dataset.exp);
+}
+
+function loadCurrentSkills() {
+    fetch("/customizer/get-current-skills")
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error("Error loading skills:", data.error);
+            return;
+        }
+        
+        ['expertise', 'programming_language', 'technologies'].forEach(category => {
+            const container = document.getElementById(`${category}-blocks-container`);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            const skills = data[category] || [];
+            
+            skills.forEach(skill => {
+                const block = document.createElement('div');
+                block.className = 'skill-block';
+                block.draggable = true;
+                block.dataset.skill = skill;
+                block.textContent = skill;
+                container.appendChild(block);
+            });
+        });
+        
+        initializeSkillsDragAndDrop();
+    })
+    .catch(error => console.error("Failed to load skills:", error));
+}
+
+function initializeSkillsDragAndDrop() {
+    const categories = ['expertise', 'programming_language', 'technologies'];
+    
+    categories.forEach(category => {
+        const container = document.getElementById(`${category}-blocks-container`);
+        if (!container) return;
+        
+        let draggedElement = null;
+        
+        const blocks = container.querySelectorAll('.skill-block');
+        
+        blocks.forEach(block => {
+            block.addEventListener('dragstart', (e) => {
+                draggedElement = block;
+                block.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            
+            block.addEventListener('dragend', (e) => {
+                block.classList.remove('dragging');
+                container.querySelectorAll('.skill-block').forEach(b => {
+                    b.classList.remove('drag-over');
+                });
+            });
+            
+            block.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                
+                if (draggedElement && draggedElement !== block) {
+                    block.classList.add('drag-over');
+                }
+            });
+            
+            block.addEventListener('dragleave', (e) => {
+                block.classList.remove('drag-over');
+            });
+            
+            block.addEventListener('drop', (e) => {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent event from bubbling to container
+                block.classList.remove('drag-over');
+                
+                if (draggedElement && draggedElement !== block && draggedElement.parentNode === block.parentNode) {
+                    const allBlocks = Array.from(container.querySelectorAll('.skill-block'));
+                    const draggedIndex = allBlocks.indexOf(draggedElement);
+                    const targetIndex = allBlocks.indexOf(block);
+                    
+                    if (draggedIndex < targetIndex) {
+                        container.insertBefore(draggedElement, block.nextSibling);
+                    } else {
+                        container.insertBefore(draggedElement, block);
+                    }
+                }
+            });
+        });
+        
+        // Allow dropping at the end of the container
+        container.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+        
+        container.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (draggedElement && draggedElement.parentNode === container) {
+                container.appendChild(draggedElement);
+            }
+        });
+    });
+}
+
+function getSkillsOrder() {
+    const result = {};
+    ['expertise', 'programming_language', 'technologies'].forEach(category => {
+        const container = document.getElementById(`${category}-blocks-container`);
+        if (!container) {
+            result[category] = [];
+            return;
+        }
+        const blocks = container.querySelectorAll('.skill-block');
+        result[category] = Array.from(blocks).map(block => block.dataset.skill);
+    });
+    return result;
+}
+
+function updateSkillsBlocksOrder(skillRanking) {
+    for (const [category, skills] of Object.entries(skillRanking)) {
+        const container = document.getElementById(`${category}-blocks-container`);
+        if (!container) continue;
+        
+        const blocks = Array.from(container.querySelectorAll('.skill-block'));
+        const blockMap = {};
+        blocks.forEach(block => {
+            blockMap[block.dataset.skill] = block;
+        });
+        
+        container.innerHTML = '';
+        
+        skills.forEach(skillName => {
+            if (blockMap[skillName]) {
+                container.appendChild(blockMap[skillName]);
+            }
+        });
+    }
+}
+
+function refreshRankingData() {
+    console.log("Refreshing ranking data (experiences and skills)...");
+    loadCurrentSkills();
+    // Experience blocks are static, no need to reload them
+}
+
+function initializeDragAndDrop() {
+    const container = document.getElementById('experience-blocks-container');
+    if (!container) return;
+    
+    let draggedElement = null;
+    
+    const blocks = container.querySelectorAll('.experience-block');
+    
+    blocks.forEach(block => {
+        block.addEventListener('dragstart', (e) => {
+            draggedElement = block;
+            block.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        
+        block.addEventListener('dragend', (e) => {
+            block.classList.remove('dragging');
+            // Remove drag-over class from all blocks
+            container.querySelectorAll('.experience-block').forEach(b => {
+                b.classList.remove('drag-over');
+            });
+        });
+        
+        block.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            if (draggedElement !== block) {
+                block.classList.add('drag-over');
+            }
+        });
+        
+        block.addEventListener('dragleave', (e) => {
+            block.classList.remove('drag-over');
+        });
+        
+        block.addEventListener('drop', (e) => {
+            e.preventDefault();
+            block.classList.remove('drag-over');
+            
+            if (draggedElement && draggedElement !== block) {
+                // Determine if we should insert before or after
+                const rect = block.getBoundingClientRect();
+                const midpoint = rect.top + rect.height / 2;
+                
+                if (e.clientY < midpoint) {
+                    container.insertBefore(draggedElement, block);
+                } else {
+                    container.insertBefore(draggedElement, block.nextSibling);
+                }
+            }
+        });
+    });
+}
+
 function pollInitialLoadStatus() {
     console.log("Polling for initial load status...");
     fetch("/customizer/initial-load-status")
@@ -530,6 +767,12 @@ function pollInitialLoadStatus() {
             }
 
             startAndPollExtraction();
+            
+            // Initialize drag-and-drop for the ranking section
+            initializeDragAndDrop();
+            
+            // Load current skills from resume
+            loadCurrentSkills();
         } else if (data.status === 'pending') {
             setTimeout(pollInitialLoadStatus, 2000);
         } else if (data.status === 'failed') {
@@ -665,6 +908,8 @@ document.body.addEventListener('click', function(event) {
                 setTimeout(() => {
                     document.getElementById('view-pdf-btn').click();
                     refreshPdf();
+                    // Refresh ranking data after PDF update
+                    setTimeout(() => refreshRankingData(), 2000);
                 }, 1500);
             } else {
                 alert('Error saving file: ' + (data.error || 'Unknown error'));
@@ -703,6 +948,18 @@ document.body.addEventListener('click', function(event) {
             btn.classList.remove('active');
         });
         button.classList.add('active');
+        
+        // Initialize drag-and-drop when switching to Executor tab
+        if (tabId === 'executor') {
+            const rankingSection = document.getElementById('ranking-section');
+            if (rankingSection && rankingSection.style.display !== 'none') {
+                initializeDragAndDrop();
+            }
+            const skillsSection = document.getElementById('skills-ranking-section');
+            if (skillsSection && skillsSection.style.display !== 'none') {
+                initializeSkillsDragAndDrop();
+            }
+        }
         return;
     }
     
@@ -786,11 +1043,12 @@ document.body.addEventListener('click', function(event) {
                 } else {
                     reportContainer.innerHTML = '<div class="log-line">Execution successful, but no report was generated.</div>';
                 }
-                document.getElementById('rank-resume-btn').style.display = 'block';
 
                 setTimeout(() => {
                     refreshPdf();
                     document.getElementById('view-pdf-btn').click();
+                    // Refresh ranking data after PDF update (important for skill changes)
+                    setTimeout(() => refreshRankingData(), 3000);
                 }, 2500);
             } else {
                 const safeError = String(data.error || 'Unknown error');
@@ -810,10 +1068,91 @@ document.body.addEventListener('click', function(event) {
         return;
     }
 
-    if (id === 'rank-resume-btn') {
+    if (id === 'auto-rank-btn') {
         button.textContent = 'Ranking...';
         button.disabled = true;
         startAndPollRanking();
+        return;
+    }
+    
+    if (id === 'apply-manual-ranking-btn') {
+        button.textContent = 'Applying...';
+        button.disabled = true;
+        
+        const experienceOrder = getExperienceOrder();
+        const skillRanking = getSkillsOrder();
+        
+        // Appliquer d'abord les expériences
+        fetch("/customizer/apply-manual-ranking", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ experience_order: experienceOrder })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to apply experience ranking');
+            }
+            // Puis appliquer les skills
+            return fetch("/customizer/apply-manual-skill-ranking", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ skill_ranking: skillRanking })
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Manual ranking applied successfully (experiences + skills).');
+                
+                // Update the ranking report
+                const reportContainer = document.getElementById('ranking-report');
+                reportContainer.innerHTML = '';
+                const title = document.createElement('h5');
+                title.textContent = 'Ranking Applied (Manual)';
+                reportContainer.appendChild(title);
+                
+                // Expériences
+                const expTitle = document.createElement('h6');
+                expTitle.textContent = 'Experiences';
+                reportContainer.appendChild(expTitle);
+                const expList = document.createElement('ul');
+                experienceOrder.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    expList.appendChild(li);
+                });
+                reportContainer.appendChild(expList);
+                
+                // Skills
+                const skillTitle = document.createElement('h6');
+                skillTitle.textContent = 'Skills';
+                reportContainer.appendChild(skillTitle);
+                for (const [category, skills] of Object.entries(skillRanking)) {
+                    const catTitle = document.createElement('p');
+                    catTitle.innerHTML = `<strong>${category.replace(/_/g, ' ')}:</strong> ${skills.join(', ')}`;
+                    reportContainer.appendChild(catTitle);
+                }
+                
+                document.getElementById('suggest-introductions-btn').style.display = 'block';
+                
+                setTimeout(() => {
+                    refreshPdf();
+                    document.getElementById('view-pdf-btn').click();
+                    setTimeout(() => refreshRankingData(), 3000);
+                }, 2500);
+            } else {
+                alert('Error applying manual ranking: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Failed to apply manual ranking:', error);
+            alert('An error occurred while applying the manual ranking: ' + error.message);
+        })
+        .finally(() => {
+            button.textContent = 'Apply Manual Order';
+            button.disabled = false;
+        });
         return;
     }
     
@@ -847,6 +1186,8 @@ document.body.addEventListener('click', function(event) {
                 setTimeout(() => {
                     refreshPdf();
                     document.getElementById('view-pdf-btn').click();
+                    // Refresh ranking data after PDF update
+                    setTimeout(() => refreshRankingData(), 3000);
                 }, 2500);
             } else {
                 alert('Error saving introduction: ' + (data.error || 'Unknown error'));
