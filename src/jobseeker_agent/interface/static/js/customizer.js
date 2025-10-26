@@ -256,13 +256,25 @@ function renderData(keywordsData, titlesData) {
     if (!container || keywordsData.error) { return; }
 
     container.innerHTML = '';
-    for (const groupTitle in keywordsData) {
-        const groupData = keywordsData[groupTitle];
+    
+    // Check if we have validated data
+    const isValidated = keywordsData.validated === true;
+    const dataToRender = isValidated ? keywordsData.keywords : keywordsData;
+    
+    for (const groupTitle in dataToRender) {
+        const groupData = dataToRender[groupTitle];
         const groupDiv = document.createElement('div');
         groupDiv.className = 'keyword-group';
+        
+        // If validated, mark as validated from the start
+        if (isValidated) {
+            groupDiv.classList.add('validated');
+        }
+        
         const title = document.createElement('h3');
         title.textContent = groupTitle;
         groupDiv.appendChild(title);
+        
         const groupRemoveBtn = document.createElement('button');
         groupRemoveBtn.className = 'remove-btn group-remove-btn';
         groupRemoveBtn.innerHTML = '&times;';
@@ -271,14 +283,15 @@ function renderData(keywordsData, titlesData) {
             checkValidationState();
         };
         groupDiv.appendChild(groupRemoveBtn);
-        for (const subGroupTitle in groupData) {
-            const keywords = groupData[subGroupTitle];
-            if (!Array.isArray(keywords) || keywords.length === 0) continue;
+        
+        // Handle validated data structure (flat keywords array)
+        if (isValidated) {
+            const keywords = groupData.keywords || [];
+            const instructions = groupData.instructions || '';
+            
             const subGroupDiv = document.createElement('div');
             subGroupDiv.className = 'keyword-subgroup';
-            const subTitle = document.createElement('h4');
-            subTitle.textContent = subGroupTitle.replace(/_/g, ' ');
-            subGroupDiv.appendChild(subTitle);
+            
             const labelsDiv = document.createElement('div');
             labelsDiv.className = 'keyword-labels';
             keywords.forEach(keyword => {
@@ -286,7 +299,6 @@ function renderData(keywordsData, titlesData) {
                 const cleanKeyword = keyword.replace(/[\r\n]+/g, ' ').trim();
                 const labelSpan = document.createElement('span');
                 labelSpan.className = 'keyword-label';
-                labelSpan.classList.add(subGroupTitle.replace(/_/g, '-'));
                 labelSpan.textContent = cleanKeyword;
                 const labelRemoveBtn = document.createElement('button');
                 labelRemoveBtn.className = 'remove-btn';
@@ -297,24 +309,77 @@ function renderData(keywordsData, titlesData) {
             });
             subGroupDiv.appendChild(labelsDiv);
             groupDiv.appendChild(subGroupDiv);
+            
+            // Add input area with saved instructions
+            const inputArea = document.createElement('div');
+            inputArea.className = 'input-area';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Add a note...';
+            input.value = instructions; // Pre-fill with saved instructions
+            const validateBtn = document.createElement('button');
+            validateBtn.className = 'validate-btn';
+            validateBtn.textContent = '✓';
+            validateBtn.onclick = () => {
+                groupDiv.classList.toggle('validated');
+                checkValidationState();
+            };
+            inputArea.appendChild(input);
+            inputArea.appendChild(validateBtn);
+            groupDiv.appendChild(inputArea);
+        } else {
+            // Handle raw extraction data structure (nested subgroups)
+            for (const subGroupTitle in groupData) {
+                const keywords = groupData[subGroupTitle];
+                if (!Array.isArray(keywords) || keywords.length === 0) continue;
+                const subGroupDiv = document.createElement('div');
+                subGroupDiv.className = 'keyword-subgroup';
+                const subTitle = document.createElement('h4');
+                subTitle.textContent = subGroupTitle.replace(/_/g, ' ');
+                subGroupDiv.appendChild(subTitle);
+                const labelsDiv = document.createElement('div');
+                labelsDiv.className = 'keyword-labels';
+                keywords.forEach(keyword => {
+                    if (typeof keyword !== 'string') { return; }
+                    const cleanKeyword = keyword.replace(/[\r\n]+/g, ' ').trim();
+                    const labelSpan = document.createElement('span');
+                    labelSpan.className = 'keyword-label';
+                    labelSpan.classList.add(subGroupTitle.replace(/_/g, '-'));
+                    labelSpan.textContent = cleanKeyword;
+                    const labelRemoveBtn = document.createElement('button');
+                    labelRemoveBtn.className = 'remove-btn';
+                    labelRemoveBtn.innerHTML = '&times;';
+                    labelRemoveBtn.onclick = () => labelSpan.remove();
+                    labelSpan.appendChild(labelRemoveBtn);
+                    labelsDiv.appendChild(labelSpan);
+                });
+                subGroupDiv.appendChild(labelsDiv);
+                groupDiv.appendChild(subGroupDiv);
+            }
+            
+            // Add input area (empty for new data)
+            const inputArea = document.createElement('div');
+            inputArea.className = 'input-area';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Add a note...';
+            const validateBtn = document.createElement('button');
+            validateBtn.className = 'validate-btn';
+            validateBtn.textContent = '✓';
+            validateBtn.onclick = () => {
+                groupDiv.classList.toggle('validated');
+                checkValidationState();
+            };
+            inputArea.appendChild(input);
+            inputArea.appendChild(validateBtn);
+            groupDiv.appendChild(inputArea);
         }
-        const inputArea = document.createElement('div');
-        inputArea.className = 'input-area';
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = 'Add a note...';
-        const validateBtn = document.createElement('button');
-        validateBtn.className = 'validate-btn';
-        validateBtn.textContent = '✓';
-        validateBtn.onclick = () => {
-            groupDiv.classList.toggle('validated');
-            checkValidationState();
-        };
-        inputArea.appendChild(input);
-        inputArea.appendChild(validateBtn);
-        groupDiv.appendChild(inputArea);
+        
         container.appendChild(groupDiv);
     }
+    
+    // Update finalize button state
+    checkValidationState();
 }
 
 function updateTitle(title, clickedButton = null) {

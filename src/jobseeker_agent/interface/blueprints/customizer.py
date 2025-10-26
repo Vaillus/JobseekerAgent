@@ -641,8 +641,21 @@ def save_validated_keywords():
 
 @bp.route("/keywords")
 def get_keywords():
-    """Serves the keywords JSON file."""
-    keywords_file = get_data_path() / "resume" / str(state.JOB_ID) / "keywords.json"
+    """Serves the keywords JSON file (validated version if available)."""
+    job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+    
+    # Check for validated keywords first
+    validated_file = job_dir / "keywords_validated.json"
+    if validated_file.exists():
+        try:
+            with open(validated_file, "r", encoding="utf-8") as f:
+                validated_data = json.load(f)
+            return jsonify({"validated": True, "keywords": validated_data})
+        except Exception as e:
+            print(f"Error loading validated keywords: {e}")
+    
+    # Fall back to raw keywords
+    keywords_file = job_dir / "keywords.json"
     try:
         return send_from_directory(keywords_file.parent, keywords_file.name)
     except FileNotFoundError:
