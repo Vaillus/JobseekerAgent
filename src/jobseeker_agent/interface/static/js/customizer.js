@@ -589,6 +589,26 @@ function startAndPollIntroductions() {
     });
 }
 
+function updateCoverLetterWordCount() {
+    const editor = document.getElementById('cover-letter-editor');
+    const wordCountSpan = document.getElementById('cover-letter-wordcount');
+    
+    if (editor && wordCountSpan) {
+        const text = editor.value.trim();
+        const wordCount = text ? text.split(/\s+/).length : 0;
+        wordCountSpan.textContent = `${wordCount} words`;
+        
+        // Color code based on target range (200-300 words)
+        if (wordCount >= 200 && wordCount <= 300) {
+            wordCountSpan.style.color = '#28a745'; // Green
+        } else if (wordCount > 150 && wordCount < 350) {
+            wordCountSpan.style.color = '#ffc107'; // Orange
+        } else {
+            wordCountSpan.style.color = '#666'; // Gray
+        }
+    }
+}
+
 function loadCoverLetterContent() {
     fetch("/customizer/cover-letter-content")
     .then(response => response.json())
@@ -598,6 +618,13 @@ function loadCoverLetterContent() {
             const container = document.getElementById('cover-letter-editor-container');
             editor.value = data.content;
             container.style.display = 'block';
+            
+            // Update word count
+            updateCoverLetterWordCount();
+            
+            // Add event listener for real-time word count update
+            editor.removeEventListener('input', updateCoverLetterWordCount);
+            editor.addEventListener('input', updateCoverLetterWordCount);
         }
     })
     .catch(error => {
@@ -624,6 +651,13 @@ function startAndPollCoverLetter() {
                     const container = document.getElementById('cover-letter-editor-container');
                     editor.value = data.content;
                     container.style.display = 'block';
+                    
+                    // Update word count
+                    updateCoverLetterWordCount();
+                    
+                    // Add event listener for real-time word count update
+                    editor.removeEventListener('input', updateCoverLetterWordCount);
+                    editor.addEventListener('input', updateCoverLetterWordCount);
                 }
                 
                 const btn = document.getElementById('generate-cover-letter-btn');
@@ -694,6 +728,39 @@ function saveCoverLetter() {
     })
     .finally(() => {
         btn.textContent = 'Save Cover Letter';
+        btn.disabled = false;
+    });
+}
+
+function convertCoverLetterToPdf() {
+    const btn = document.getElementById('convert-cover-letter-btn');
+    const statusMessage = document.getElementById('cover-letter-status-message');
+    
+    btn.textContent = 'Converting...';
+    btn.disabled = true;
+    statusMessage.innerHTML = '<p style="color: #0066cc;">Converting markdown to PDF...</p>';
+    
+    fetch("/customizer/convert-cover-letter-to-pdf", {
+        method: 'POST'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            statusMessage.innerHTML = '<p style="color: green;">Cover letter converted to PDF successfully!</p>';
+            setTimeout(() => { 
+                statusMessage.innerHTML = '';
+                // Switch to cover letter view to see the PDF
+                switchToDocumentContext('cover-letter');
+            }, 1500);
+        } else {
+            statusMessage.innerHTML = `<p style="color: red;">Conversion failed: ${data.error || 'Unknown error'}</p>`;
+        }
+    })
+    .catch(error => {
+        statusMessage.innerHTML = `<p style="color: red;">Conversion failed: ${error.message}</p>`;
+    })
+    .finally(() => {
+        btn.textContent = 'Convert to PDF';
         btn.disabled = false;
     });
 }
@@ -1317,6 +1384,11 @@ document.body.addEventListener('click', function(event) {
     
     if (id === 'save-cover-letter-btn') {
         saveCoverLetter();
+        return;
+    }
+    
+    if (id === 'convert-cover-letter-btn') {
+        convertCoverLetterToPdf();
         return;
     }
     

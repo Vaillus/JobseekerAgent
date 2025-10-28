@@ -10,7 +10,7 @@ Instructions:
    - Second paragraph: Highlight 2 or 3 experiences or key skills (hard and soft skills) that correspond to the requirements of the offer. Illustrate always with concrete examples or quantified results. Mention them in the same order as in the resume.
    - Third paragraph: Write a wrap-up that summarizes what has been said by putting a term on my profile (e.g., "versatile problem solver"), and that reminds that I am fully aligned with their mission.
 
-2. The cover letter should ideally be between 250 and 350 words long.
+2. The cover letter should ideally be between 200 and 300 words long.
 
 3. Do not lie about the candidate's skills and expertise.
 

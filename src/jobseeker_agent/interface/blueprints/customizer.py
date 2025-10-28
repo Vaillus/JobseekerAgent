@@ -396,6 +396,41 @@ def save_cover_letter():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@bp.route("/convert-cover-letter-to-pdf", methods=["POST"])
+def convert_cover_letter_to_pdf():
+    """Converts the markdown cover letter to LaTeX and compiles it to PDF."""
+    try:
+        from jobseeker_agent.customizer.agents.cover_letter.md_to_tex import markdown_to_latex_cover_letter
+        from jobseeker_agent.interface.utils import compile as compile_utils
+        
+        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+        markdown_file = job_dir / "cover-letter.md"
+        tex_file = job_dir / "cover-letter.tex"
+        
+        if not markdown_file.exists():
+            return jsonify({"success": False, "error": "Markdown file not found"}), 404
+        
+        # Convert markdown to LaTeX
+        print("[CONVERT] Converting markdown to LaTeX...")
+        markdown_to_latex_cover_letter(markdown_file, tex_file)
+        print("[CONVERT] Conversion complete.")
+        
+        # Compile to PDF
+        print("[CONVERT] Compiling LaTeX to PDF...")
+        success, log = compile_utils.compile_cover_letter_tex()
+        
+        if not success:
+            return jsonify({"success": False, "error": "PDF compilation failed", "log": log}), 500
+        
+        print("[CONVERT] PDF generated successfully.")
+        return jsonify({"success": True, "message": "Cover letter converted and compiled successfully"})
+    
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @bp.route("/introduction-report")
 def get_introduction_report():
     """Serves the introduction report JSON file."""

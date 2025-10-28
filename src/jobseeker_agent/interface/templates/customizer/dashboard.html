@@ -105,7 +105,13 @@
                         <div id="cover-letter-status-message" style="margin-bottom: 1em;"></div>
                         <div id="cover-letter-editor-container" style="display: none; margin-top: 1em;">
                             <textarea id="cover-letter-editor" style="width: 100%; min-height: 400px; padding: 1em; font-family: monospace; font-size: 13px; border: 1px solid #ccc; background-color: #f9f9f9; resize: vertical;"></textarea>
-                            <button id="save-cover-letter-btn" class="toolbar-btn action-btn" style="width: 100%; margin-top: 0.5em;">Save Cover Letter</button>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5em;">
+                                <span id="cover-letter-wordcount" style="color: #666; font-size: 13px;">0 words</span>
+                                <div style="display: flex; gap: 0.5em;">
+                                    <button id="save-cover-letter-btn" class="toolbar-btn action-btn">Save Cover Letter</button>
+                                    <button id="convert-cover-letter-btn" class="toolbar-btn action-btn">Convert to PDF</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

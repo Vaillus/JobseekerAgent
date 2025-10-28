@@ -58,11 +58,13 @@ def write_cover_letter(
     messages.append(first_draft)
     wordcount = len(first_draft.content.split())
     print(f"    [STAGE 1] Draft generated ({wordcount} words)")
+    if status_callback:
+        status_callback(f"Stage 1/4: Draft generated ({wordcount} words)")
     
     # Stage 2: Critique the draft
     print("    [STAGE 2] Critiquing draft...")
     if status_callback:
-        status_callback("Stage 2/4: Critiquing draft...")
+        status_callback(f"Stage 2/4: Critiquing draft ({wordcount} words)")
     
     critic_prompt = load_local_prompt("critic")
     messages.append(HumanMessage(content=critic_prompt))
@@ -73,7 +75,7 @@ def write_cover_letter(
     # Stage 3: Correct based on critique
     print("    [STAGE 3] Correcting draft...")
     if status_callback:
-        status_callback("Stage 3/4: Correcting based on critique...")
+        status_callback(f"Stage 3/4: Correcting based on critique ({wordcount} words)")
     
     corrector_prompt = load_local_prompt("corrector")
     messages.append(HumanMessage(content=corrector_prompt.format(
@@ -83,17 +85,19 @@ def write_cover_letter(
     messages.append(corrected)
     wordcount = len(corrected.content.split())
     print(f"    [STAGE 3] Corrected draft generated ({wordcount} words)")
+    if status_callback:
+        status_callback(f"Stage 3/4: Corrected draft generated ({wordcount} words)")
     
     # Stage 4: Compress if needed
-    if not (250 <= wordcount <= 350):
-        print(f"    [STAGE 4] Compressing cover letter ({wordcount} words -> 250-350)...")
+    if not (200 <= wordcount <= 300):
+        print(f"    [STAGE 4] Compressing cover letter ({wordcount} words -> 200-300)...")
         if status_callback:
-            status_callback("Stage 4/4: Compressing cover letter...")
+            status_callback(f"Stage 4/4: Compressing cover letter ({wordcount} words -> 200-300)")
         
-        if wordcount > 350:
-            wordcount_sentence = f"The letter should be between 250 and 350 words long. It is currently {wordcount} words long. It should be approximately {int((wordcount - 325)/wordcount*100)}% shorter."
+        if wordcount > 300:
+            wordcount_sentence = f"The letter should be between 200 and 300 words long. It is currently {wordcount} words long. It should be approximately {int((wordcount - 250)/wordcount*100)}% shorter."
         else:
-            wordcount_sentence = f"The letter should be between 250 and 350 words long. It is currently {wordcount} words long. It should be approximately {int((300 - wordcount)/wordcount*100)}% longer."
+            wordcount_sentence = f"The letter should be between 200 and 300 words long. It is currently {wordcount} words long. It should be approximately {int((250 - wordcount)/wordcount*100)}% longer."
         
         compressor_prompt = load_local_prompt("compressor")
         messages.append(HumanMessage(content=compressor_prompt.format(
@@ -103,9 +107,13 @@ def write_cover_letter(
         messages.append(compressed)
         final_wordcount = len(compressed.content.split())
         print(f"    [STAGE 4] Compressed cover letter generated ({final_wordcount} words)")
+        if status_callback:
+            status_callback(f"Complete! Final cover letter: {final_wordcount} words")
         
         print("[COVER LETTER] Multi-stage workflow complete!")
         return compressed.content
     
     print("[COVER LETTER] Multi-stage workflow complete!")
+    if status_callback:
+        status_callback(f"Complete! Final cover letter: {wordcount} words")
     return corrected.content
