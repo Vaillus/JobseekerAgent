@@ -21,8 +21,9 @@ def suggest_introductions(
     job_id: int,
     job_description: str,
     profil_pro: str,
+    synthesis_and_decision: str,
     resume: str,
-    model: str = "gpt-4-turbo",
+    model: str = "gpt-5-mini",
 ) -> IntroducerResponse:
     """Suggest introductions for the resume."""
     opening_lines_path = get_opening_lines_path(job_id)
@@ -31,11 +32,11 @@ def suggest_introductions(
             return json.load(f)
 
     introducer_prompt = load_prompt("introducer")
-    llm = get_llm(model)
+    llm = get_llm(model, temperature= 0.2)
     llm = llm.with_structured_output(IntroducerResponse)
     message = HumanMessage(
         content=introducer_prompt.format(
-            job_description=job_description, profil_pro=profil_pro, resume=resume
+            job_description=job_description, profil_pro=profil_pro, synthesis_and_decision=synthesis_and_decision, resume=resume
         )
     )
     response = llm.invoke([message])

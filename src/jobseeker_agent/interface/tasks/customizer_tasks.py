@@ -5,6 +5,7 @@ from jobseeker_agent.interface.utils import compile as compile_utils
 from jobseeker_agent.utils.paths import (
     load_prompt,
     load_cv_template,
+    load_cover_letter_template,
     get_data_path,
     load_raw_job,
 )
@@ -13,6 +14,7 @@ from jobseeker_agent.customizer.agents.keyword_extractor import extract_keywords
 from jobseeker_agent.customizer.agents.keyword_executor import execute_keywords
 from jobseeker_agent.customizer.agents.ranker import rank, reorder_experiences, reorder_skills
 from jobseeker_agent.customizer.agents.introducer import suggest_introductions
+from jobseeker_agent.customizer.agents.cover_letter.cover_letter import write_cover_letter
 
 
 def run_keyword_extraction_task():
@@ -186,6 +188,7 @@ def run_introducer_task():
         profil_pro = load_prompt("profil_pro")
         resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
         resume_content = resume_file.read_text(encoding="utf-8")
+        synthesis_and_decision = state.JOB_DETAILS.get("synthesis", "")
         print("    [THREAD] ...data loaded.")
 
         print("    [THREAD] Calling LLM to suggest introductions...")
@@ -193,6 +196,7 @@ def run_introducer_task():
             job_id=state.JOB_ID,
             job_description=state.JOB_DESCRIPTION,
             profil_pro=profil_pro,
+            synthesis_and_decision=synthesis_and_decision,
             resume=resume_content,
         )
         print("    [THREAD] ...LLM response received.")
@@ -203,4 +207,82 @@ def run_introducer_task():
         print(f"❌ Background introduction suggestion failed: {e}")
         state.INTRODUCTION_STATUS["status"] = "failed"
         state.INTRODUCTION_STATUS["error"] = str(e)
+
+
+def run_cover_letter_task():
+    """The actual cover letter generation logic to be run in a background thread."""
+    try:
+        print("➡️ [THREAD] Cover letter task started.")
+        print(f"    [DEBUG] Initial status: {state.COVER_LETTER_STATUS}")
+        state.COVER_LETTER_STATUS["status"] = "pending"
+        print(f"    [DEBUG] Status set to pending: {state.COVER_LETTER_STATUS}")
+
+        print("    [THREAD] Loading cover letter template...")
+        cover_letter_template = load_cover_letter_template()
+        print(f"    [DEBUG] Template loaded, length: {len(cover_letter_template)} chars")
+        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+        cover_letter_file = job_dir / "cover-letter.tex"
+        print(f"    [DEBUG] Cover letter file path: {cover_letter_file}")
+        
+        # Copy template to job directory
+        cover_letter_file.write_text(cover_letter_template, encoding="utf-8")
+        print("    [THREAD] ...template copied.")
+
+        print("    [THREAD] Loading job, prompt, and resume...")
+        profil_pro = load_prompt("profil_pro")
+        print(f"    [DEBUG] Profil pro loaded, length: {len(profil_pro)} chars")
+        resume_file = job_dir / "resume.tex"
+        resume_content = resume_file.read_text(encoding="utf-8")
+        print(f"    [DEBUG] Resume loaded, length: {len(resume_content)} chars")
+        synthesis_and_decision = state.JOB_DETAILS.get("synthesis", "")
+        print(f"    [DEBUG] Synthesis loaded, length: {len(synthesis_and_decision)} chars")
+        print("    [THREAD] ...data loaded.")
+
+        print("    [THREAD] Calling LLM to write cover letter...")
+        print(f"    [DEBUG] Job description length: {len(state.JOB_DESCRIPTION)} chars")
+        
+        # Define status callback to update progress
+        def update_status(message: str):
+            state.COVER_LETTER_STATUS["message"] = message
+            print(f"    [PROGRESS] {message}")
+        
+        cover_letter_content = write_cover_letter(
+            job_description=state.JOB_DESCRIPTION,
+            profil_pro=profil_pro,
+            synthesis_and_decision=synthesis_and_decision,
+            resume=resume_content,
+            cover_letter_template=cover_letter_template,
+            status_callback=update_status
+        )
+        print("    [THREAD] ...LLM response received.")
+        print(f"    [DEBUG] Cover letter content type: {type(cover_letter_content)}")
+        print(f"    [DEBUG] Cover letter content length: {len(str(cover_letter_content))} chars")
+        print(f"    [DEBUG] First 200 chars: {str(cover_letter_content)[:200]}")
+
+        # Write the generated content to the cover letter file
+        cover_letter_file.write_text(str(cover_letter_content), encoding="utf-8")
+        print("    [THREAD] ...cover letter written to file.")
+        print(f"    [DEBUG] File size: {cover_letter_file.stat().st_size} bytes")
+
+        # Compile the cover letter
+        print("    [THREAD] Compiling cover letter TeX file...")
+        compile_success, compile_log = compile_utils.compile_cover_letter_tex()
+        print(f"    [DEBUG] Compilation success: {compile_success}")
+        if not compile_success:
+            print(f"    [DEBUG] Compilation log: {compile_log[:500]}")
+            raise Exception(f"PDF compilation failed: {compile_log}")
+        print("    [THREAD] ...TeX file compiled.")
+
+        state.COVER_LETTER_STATUS["status"] = "complete"
+        print(f"    [DEBUG] Final status: {state.COVER_LETTER_STATUS}")
+        print("✅ Background cover letter generation complete.")
+    except Exception as e:
+        print(f"❌ Background cover letter generation failed: {e}")
+        print(f"    [DEBUG] Exception type: {type(e)}")
+        import traceback
+        print(f"    [DEBUG] Full traceback:")
+        traceback.print_exc()
+        state.COVER_LETTER_STATUS["status"] = "failed"
+        state.COVER_LETTER_STATUS["error"] = str(e)
+        print(f"    [DEBUG] Error status set: {state.COVER_LETTER_STATUS}")
 

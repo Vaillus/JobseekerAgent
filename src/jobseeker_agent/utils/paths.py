@@ -22,6 +22,15 @@ def load_cv_template(lang: str = "en") -> str:
         return f.read()
 
 
+def load_cover_letter_template(lang: str = "en") -> str:
+    """Loads the cover letter template from the file."""
+    if lang not in ["en", "fr"]:
+        raise ValueError("Language not supported, please choose 'en' or 'fr'")
+    cover_letter_path = get_data_path() / "resume" / "template" / f"cover-letter-{lang}.tex"
+    with open(cover_letter_path, "r") as f:
+        return f.read()
+
+
 def get_reviewer_data_dir() -> Path:
     """Retourne le chemin vers le dossier reviewer."""
     reviewer_dir = get_data_path() / "reviewer"
@@ -161,6 +170,14 @@ def load_reviews() -> List[Dict[str, Any]]:
             return json.load(f)
         except json.JSONDecodeError:
             return []
+
+def load_review(job_id: int) -> Dict[str, Any]:
+    """Charge la review depuis le fichier JSON principal."""
+    reviews = load_reviews()
+    review = next((r for r in reviews if r["id"] == job_id), None)
+    if not review:
+        raise ValueError(f"Review with ID {job_id} not found")
+    return review
 
 def save_reviews(reviews: List[Dict[str, Any]]) -> None:
     """Sauvegarde les reviews dans le fichier JSON principal."""

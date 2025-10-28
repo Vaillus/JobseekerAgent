@@ -20,3 +20,21 @@ def compile_tex():
         return False, result.stdout
     return True, ""
 
+
+def compile_cover_letter_tex():
+    """Compiles the cover-letter.tex file to a PDF."""
+    job_dir = get_data_path() / "resume" / f"{state.JOB_ID}"
+    print(f"Compiling cover-letter.tex for job {state.JOB_ID}...")
+    result = subprocess.run(
+        ["pdflatex", "-output-directory", str(job_dir), str(job_dir / "cover-letter.tex")],
+        capture_output=True,
+        text=True,
+    )
+    print("Compilation finished.")
+    if result.returncode != 0:
+        print("--- LaTeX Compilation Error ---")
+        print(result.stdout)
+        print(result.stderr)
+        return False, result.stdout
+    return True, ""
+

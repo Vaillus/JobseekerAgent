@@ -569,6 +569,57 @@ function startAndPollIntroductions() {
     });
 }
 
+function startAndPollCoverLetter() {
+    function pollCoverLetterStatus() {
+        fetch("/customizer/cover-letter-status")
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'complete') {
+                const statusMessage = document.getElementById('cover-letter-status-message');
+                statusMessage.innerHTML = '<p style="color: green;">Cover letter generated successfully!</p>';
+                
+                const viewerContainer = document.getElementById('cover-letter-viewer-container');
+                const pdfViewer = document.getElementById('cover-letter-pdf-viewer');
+                
+                const pdfUrl = `/customizer/pdf/cover-letter.pdf?t=${new Date().getTime()}`;
+                pdfViewer.src = pdfUrl;
+                viewerContainer.style.display = 'block';
+                
+                const btn = document.getElementById('generate-cover-letter-btn');
+                btn.textContent = 'Generate Cover Letter';
+                btn.disabled = false;
+            } else if (data.status === 'pending') {
+                // Update progress message if available
+                const statusMessage = document.getElementById('cover-letter-status-message');
+                if (data.message) {
+                    statusMessage.innerHTML = `<p style="color: #0066cc;">${data.message}</p>`;
+                }
+                setTimeout(pollCoverLetterStatus, 2000);
+            } else if (data.status === 'failed') {
+                const statusMessage = document.getElementById('cover-letter-status-message');
+                statusMessage.innerHTML = `<p style="color: red;">Generation failed: ${data.error || 'Unknown error'}</p>`;
+                const btn = document.getElementById('generate-cover-letter-btn');
+                btn.textContent = 'Generate Cover Letter';
+                btn.disabled = false;
+            }
+        });
+    }
+
+    fetch("/customizer/start-cover-letter", { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'started') {
+            pollCoverLetterStatus();
+        } else {
+            const statusMessage = document.getElementById('cover-letter-status-message');
+            statusMessage.innerHTML = `<p style="color: red;">Could not start generation: ${data.status}</p>`;
+            const btn = document.getElementById('generate-cover-letter-btn');
+            btn.textContent = 'Generate Cover Letter';
+            btn.disabled = false;
+        }
+    });
+}
+
 function getExperienceOrder() {
     const container = document.getElementById('experience-blocks-container');
     if (!container) return { experience_order: [], hidden_experiences: [] };
@@ -1161,6 +1212,15 @@ document.body.addEventListener('click', function(event) {
         document.getElementById('introduction-container').style.display = 'block';
         document.getElementById('introduction-report').innerHTML = '<p>Generating suggestions...</p>';
         startAndPollIntroductions();
+        return;
+    }
+    
+    if (id === 'generate-cover-letter-btn') {
+        button.textContent = 'Generating...';
+        button.disabled = true;
+        const statusMessage = document.getElementById('cover-letter-status-message');
+        statusMessage.innerHTML = '<p>Generating cover letter, please wait...</p>';
+        startAndPollCoverLetter();
         return;
     }
     

@@ -11,6 +11,7 @@ EXTRACTION_THREAD: Optional[threading.Thread] = None
 DATA_LOADING_THREAD: Optional[threading.Thread] = None
 RANKING_THREAD: Optional[threading.Thread] = None
 INTRODUCTION_THREAD: Optional[threading.Thread] = None
+COVER_LETTER_THREAD: Optional[threading.Thread] = None
 SCRAPING_THREAD: Optional[threading.Thread] = None
 REVIEW_THREAD: Optional[threading.Thread] = None
 
@@ -19,6 +20,7 @@ EXTRACTION_STATUS: dict = {"status": "idle", "error": None}
 DATA_LOADING_STATUS: dict = {"status": "idle", "error": None}
 RANKING_STATUS: dict = {"status": "idle", "error": None}
 INTRODUCTION_STATUS: dict = {"status": "idle", "error": None}
+COVER_LETTER_STATUS: dict = {"status": "idle", "error": None, "message": ""}
 SCRAPING_STATUS: dict = {"status": "idle", "new_jobs_count": 0, "error": None}
 REVIEW_STATUS: dict = {"status": "idle", "current": 0, "total": 0, "error": None}
 

@@ -347,6 +347,25 @@ def introduction_status():
     return jsonify(state.INTRODUCTION_STATUS)
 
 
+@bp.route("/start-cover-letter", methods=["POST"])
+def start_cover_letter():
+    """Starts the cover letter generation in a background thread."""
+    if state.COVER_LETTER_THREAD is None or not state.COVER_LETTER_THREAD.is_alive():
+        print("Starting cover letter generation thread...")
+        state.COVER_LETTER_THREAD = threading.Thread(target=customizer_tasks.run_cover_letter_task)
+        state.COVER_LETTER_THREAD.daemon = True
+        state.COVER_LETTER_THREAD.start()
+        return jsonify({"status": "started"})
+    else:
+        return jsonify({"status": "already_running"})
+
+
+@bp.route("/cover-letter-status")
+def cover_letter_status():
+    """Checks the status of the cover letter generation."""
+    return jsonify(state.COVER_LETTER_STATUS)
+
+
 @bp.route("/introduction-report")
 def get_introduction_report():
     """Serves the introduction report JSON file."""
