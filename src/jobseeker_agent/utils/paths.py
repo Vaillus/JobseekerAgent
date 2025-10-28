@@ -2,7 +2,7 @@ from pathlib import Path
 import json
 import inspect
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Union
 
 def get_project_root() -> Path:
     """Retourne la racine du projet."""
@@ -179,9 +179,11 @@ def load_review(job_id: int) -> Dict[str, Any]:
         raise ValueError(f"Review with ID {job_id} not found")
     return review
 
-def save_reviews(reviews: List[Dict[str, Any]]) -> None:
+def save_reviews(reviews: Union[List[Dict[str, Any]], Dict[str, Any]]) -> None:
     """Sauvegarde les reviews dans le fichier JSON principal."""
     reviews_path = get_reviews_json_path()
+    if isinstance(reviews, dict):
+        reviews = [reviews]
     with open(reviews_path, "w") as f:
         json.dump(reviews, f, indent=4)
 
