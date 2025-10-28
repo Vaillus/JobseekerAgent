@@ -221,12 +221,8 @@ def run_cover_letter_task():
         cover_letter_template = load_cover_letter_template()
         print(f"    [DEBUG] Template loaded, length: {len(cover_letter_template)} chars")
         job_dir = get_data_path() / "resume" / str(state.JOB_ID)
-        cover_letter_file = job_dir / "cover-letter.tex"
+        cover_letter_file = job_dir / "cover-letter.md"
         print(f"    [DEBUG] Cover letter file path: {cover_letter_file}")
-        
-        # Copy template to job directory
-        cover_letter_file.write_text(cover_letter_template, encoding="utf-8")
-        print("    [THREAD] ...template copied.")
 
         print("    [THREAD] Loading job, prompt, and resume...")
         profil_pro = load_prompt("profil_pro")
@@ -264,15 +260,8 @@ def run_cover_letter_task():
         print("    [THREAD] ...cover letter written to file.")
         print(f"    [DEBUG] File size: {cover_letter_file.stat().st_size} bytes")
 
-        # Compile the cover letter
-        print("    [THREAD] Compiling cover letter TeX file...")
-        compile_success, compile_log = compile_utils.compile_cover_letter_tex()
-        print(f"    [DEBUG] Compilation success: {compile_success}")
-        if not compile_success:
-            print(f"    [DEBUG] Compilation log: {compile_log[:500]}")
-            raise Exception(f"PDF compilation failed: {compile_log}")
-        print("    [THREAD] ...TeX file compiled.")
-
+        # Store the content in state for display
+        state.COVER_LETTER_STATUS["content"] = cover_letter_content
         state.COVER_LETTER_STATUS["status"] = "complete"
         print(f"    [DEBUG] Final status: {state.COVER_LETTER_STATUS}")
         print("✅ Background cover letter generation complete.")

@@ -366,6 +366,36 @@ def cover_letter_status():
     return jsonify(state.COVER_LETTER_STATUS)
 
 
+@bp.route("/cover-letter-content")
+def get_cover_letter_content():
+    """Gets the cover letter content from the file."""
+    cover_letter_file = get_data_path() / "resume" / str(state.JOB_ID) / "cover-letter.md"
+    try:
+        if cover_letter_file.exists():
+            content = cover_letter_file.read_text(encoding="utf-8")
+            return jsonify({"success": True, "content": content})
+        else:
+            return jsonify({"success": False, "error": "Cover letter not found"}), 404
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/save-cover-letter", methods=["POST"])
+def save_cover_letter():
+    """Saves the cover letter content to the file."""
+    data = request.get_json()
+    content = data.get("content")
+    if content is None:
+        return jsonify({"success": False, "error": "No content provided"}), 400
+
+    try:
+        cover_letter_file = get_data_path() / "resume" / str(state.JOB_ID) / "cover-letter.md"
+        cover_letter_file.write_text(content, encoding="utf-8")
+        return jsonify({"success": True, "message": "Cover letter saved successfully"})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @bp.route("/introduction-report")
 def get_introduction_report():
     """Serves the introduction report JSON file."""
@@ -748,6 +778,17 @@ def serve_tex():
         return jsonify({"content": content})
     except FileNotFoundError:
         return jsonify({"error": "TeX file not found"}), 404
+
+
+@bp.route("/cover-letter-tex")
+def serve_cover_letter_tex():
+    """Serves the raw cover-letter.tex file content."""
+    tex_file = get_data_path() / "resume" / str(state.JOB_ID) / "cover-letter.tex"
+    try:
+        content = tex_file.read_text(encoding="utf-8")
+        return jsonify({"content": content})
+    except FileNotFoundError:
+        return jsonify({"error": "Cover letter TeX file not found"}), 404
 
 
 @bp.route("/pdf/<path:filename>")

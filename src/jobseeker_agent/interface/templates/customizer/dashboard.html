@@ -101,9 +101,11 @@
                     <div id="cover-letter-tab" class="tab-content" style="display: none;">
                         <h4>Cover Letter Generation</h4>
                         <button id="generate-cover-letter-btn" class="toolbar-btn action-btn" style="width: 100%; margin-bottom: 1em;">Generate Cover Letter</button>
+                        <div id="cover-letter-progress" style="margin-bottom: 1em; color: #666; font-style: italic;"></div>
                         <div id="cover-letter-status-message" style="margin-bottom: 1em;"></div>
-                        <div id="cover-letter-viewer-container" style="display: none; width: 100%; height: 600px; border: 1px solid #ccc;">
-                            <iframe id="cover-letter-pdf-viewer" style="width: 100%; height: 100%; border: none;"></iframe>
+                        <div id="cover-letter-editor-container" style="display: none; margin-top: 1em;">
+                            <textarea id="cover-letter-editor" style="width: 100%; min-height: 400px; padding: 1em; font-family: monospace; font-size: 13px; border: 1px solid #ccc; background-color: #f9f9f9; resize: vertical;"></textarea>
+                            <button id="save-cover-letter-btn" class="toolbar-btn action-btn" style="width: 100%; margin-top: 0.5em;">Save Cover Letter</button>
                         </div>
                     </div>
                 </div>

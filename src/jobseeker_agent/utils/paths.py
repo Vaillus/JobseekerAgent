@@ -26,7 +26,7 @@ def load_cover_letter_template(lang: str = "en") -> str:
     """Loads the cover letter template from the file."""
     if lang not in ["en", "fr"]:
         raise ValueError("Language not supported, please choose 'en' or 'fr'")
-    cover_letter_path = get_data_path() / "resume" / "template" / f"cover-letter-{lang}.tex"
+    cover_letter_path = get_data_path() / "resume" / "template" / f"cover-letter-{lang}.md"
     with open(cover_letter_path, "r") as f:
         return f.read()
 

@@ -1,16 +1,7 @@
-# Input data
-## Job description
-{job_description}
-## Candidate profile
-{profil_pro}
-## Synthesis and decision
-{synthesis_and_decision}
-## Candidate resume
-{resume}
-## Cover letter
-{cover_letter}
-
 # Task
-Compress the cover letter.
+{wordcount_sentence}
+Adjust the length of the cover letter to be between 250 and 350 words.
 Return the compressed cover letter.
-It should be a valid latex document.
+You may shorten in particular the first paragraph if it is too long.
+Or simply remove an experience that is not that relevant for the job offer.
+Return as plain text only.

@@ -1,6 +1,7 @@
 // No more DOMContentLoaded wrapper
 
 let highlighter; // Declare highlighter in a broader scope
+let currentContext = 'resume'; // Tracks whether viewing 'resume' or 'cover-letter'
 
 // --- Utility Functions ---
 
@@ -15,8 +16,14 @@ function refreshPdf() {
 }
 
 function refreshTex() {
+    refreshTexForContext(currentContext);
+}
+
+function refreshTexForContext(context) {
     const texEditor = document.getElementById('tex-editor');
-    fetch("/customizer/tex")
+    const endpoint = context === 'cover-letter' ? '/customizer/cover-letter-tex' : '/customizer/tex';
+    
+    fetch(endpoint)
         .then(response => response.json())
         .then(data => {
             if (data.content) {
@@ -25,6 +32,19 @@ function refreshTex() {
                 texEditor.value = "Error loading TeX file: " + (data.error || "Unknown error");
             }
         });
+}
+
+function switchToDocumentContext(context) {
+    currentContext = context;
+    const pdfViewer = document.getElementById('pdf-viewer');
+    const filename = context === 'cover-letter' ? 'cover-letter.pdf' : 'resume.pdf';
+    const url = `/customizer/pdf/${filename}?t=${new Date().getTime()}`;
+    pdfViewer.src = url;
+    
+    // If TeX viewer is visible, refresh its content
+    if (document.getElementById('tex-viewer').style.display === 'block') {
+        refreshTexForContext(context);
+    }
 }
 
 function fetchJobDetails(data) {
@@ -569,6 +589,22 @@ function startAndPollIntroductions() {
     });
 }
 
+function loadCoverLetterContent() {
+    fetch("/customizer/cover-letter-content")
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.content) {
+            const editor = document.getElementById('cover-letter-editor');
+            const container = document.getElementById('cover-letter-editor-container');
+            editor.value = data.content;
+            container.style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.log('No cover letter found yet:', error);
+    });
+}
+
 function startAndPollCoverLetter() {
     function pollCoverLetterStatus() {
         fetch("/customizer/cover-letter-status")
@@ -578,26 +614,36 @@ function startAndPollCoverLetter() {
                 const statusMessage = document.getElementById('cover-letter-status-message');
                 statusMessage.innerHTML = '<p style="color: green;">Cover letter generated successfully!</p>';
                 
-                const viewerContainer = document.getElementById('cover-letter-viewer-container');
-                const pdfViewer = document.getElementById('cover-letter-pdf-viewer');
+                // Clear progress message
+                const progressDiv = document.getElementById('cover-letter-progress');
+                progressDiv.textContent = '';
                 
-                const pdfUrl = `/customizer/pdf/cover-letter.pdf?t=${new Date().getTime()}`;
-                pdfViewer.src = pdfUrl;
-                viewerContainer.style.display = 'block';
+                // Display the cover letter content in editor
+                if (data.content) {
+                    const editor = document.getElementById('cover-letter-editor');
+                    const container = document.getElementById('cover-letter-editor-container');
+                    editor.value = data.content;
+                    container.style.display = 'block';
+                }
                 
                 const btn = document.getElementById('generate-cover-letter-btn');
                 btn.textContent = 'Generate Cover Letter';
                 btn.disabled = false;
             } else if (data.status === 'pending') {
                 // Update progress message if available
-                const statusMessage = document.getElementById('cover-letter-status-message');
+                const progressDiv = document.getElementById('cover-letter-progress');
                 if (data.message) {
-                    statusMessage.innerHTML = `<p style="color: #0066cc;">${data.message}</p>`;
+                    progressDiv.textContent = data.message;
                 }
                 setTimeout(pollCoverLetterStatus, 2000);
             } else if (data.status === 'failed') {
                 const statusMessage = document.getElementById('cover-letter-status-message');
                 statusMessage.innerHTML = `<p style="color: red;">Generation failed: ${data.error || 'Unknown error'}</p>`;
+                
+                // Clear progress message
+                const progressDiv = document.getElementById('cover-letter-progress');
+                progressDiv.textContent = '';
+                
                 const btn = document.getElementById('generate-cover-letter-btn');
                 btn.textContent = 'Generate Cover Letter';
                 btn.disabled = false;
@@ -617,6 +663,38 @@ function startAndPollCoverLetter() {
             btn.textContent = 'Generate Cover Letter';
             btn.disabled = false;
         }
+    });
+}
+
+function saveCoverLetter() {
+    const editor = document.getElementById('cover-letter-editor');
+    const content = editor.value;
+    const btn = document.getElementById('save-cover-letter-btn');
+    const statusMessage = document.getElementById('cover-letter-status-message');
+    
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+    
+    fetch("/customizer/save-cover-letter", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: content })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            statusMessage.innerHTML = '<p style="color: green;">Cover letter saved successfully!</p>';
+            setTimeout(() => { statusMessage.innerHTML = ''; }, 3000);
+        } else {
+            statusMessage.innerHTML = `<p style="color: red;">Save failed: ${data.error || 'Unknown error'}</p>`;
+        }
+    })
+    .catch(error => {
+        statusMessage.innerHTML = `<p style="color: red;">Save failed: ${error.message}</p>`;
+    })
+    .finally(() => {
+        btn.textContent = 'Save Cover Letter';
+        btn.disabled = false;
     });
 }
 
@@ -1017,6 +1095,14 @@ document.body.addEventListener('click', function(event) {
     // --- Tab Switching ---
     if (button.classList.contains('tab-btn')) {
         const tabId = button.dataset.tab;
+        
+        // Switch document context based on tab
+        if (tabId === 'cover-letter') {
+            switchToDocumentContext('cover-letter');
+        } else {
+            switchToDocumentContext('resume');
+        }
+        
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.style.display = tab.id === `${tabId}-tab` ? 'block' : 'none';
         });
@@ -1035,6 +1121,11 @@ document.body.addEventListener('click', function(event) {
             if (skillsSection && skillsSection.style.display !== 'none') {
                 initializeSkillsDragAndDrop();
             }
+        }
+        
+        // Load cover letter content when switching to Cover Letter tab
+        if (tabId === 'cover-letter') {
+            loadCoverLetterContent();
         }
         return;
     }
@@ -1221,6 +1312,11 @@ document.body.addEventListener('click', function(event) {
         const statusMessage = document.getElementById('cover-letter-status-message');
         statusMessage.innerHTML = '<p>Generating cover letter, please wait...</p>';
         startAndPollCoverLetter();
+        return;
+    }
+    
+    if (id === 'save-cover-letter-btn') {
+        saveCoverLetter();
         return;
     }
     
