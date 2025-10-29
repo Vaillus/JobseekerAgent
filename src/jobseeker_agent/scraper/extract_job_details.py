@@ -84,6 +84,9 @@ def extract_job_details(url: str) -> dict | None:
     - description
     - status (Open/Closed/Potentially Closed (No Apply Button Found))
     - workplace_type (Remote/Hybrid/On-site)
+    
+    Returns None if the page is not a valid LinkedIn job posting (e.g., redirected
+    to an error page) - detected by absence of job description.
     """
     page_content = fetch_job_page(url)
     if not page_content:
@@ -91,9 +94,16 @@ def extract_job_details(url: str) -> dict | None:
         return None
 
     soup = BeautifulSoup(page_content, 'html.parser')
+    
+    description = _get_description(soup)
+    
+    # If we can't find the description, the page is likely invalid (redirected, error page, etc.)
+    if description == 'Description not found.':
+        print("Page does not appear to be a valid LinkedIn job posting (no description found).")
+        return None
 
     return {
-        "description": _get_description(soup),
+        "description": description,
         "status": _get_job_status(soup),
         "workplace_type": _get_workplace_type(soup),
     }

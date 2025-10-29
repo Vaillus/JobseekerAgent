@@ -18,10 +18,12 @@ class JobReviewer:
 
     def _get_unprocessed_jobs(self):
         return [
-            job for job in self.raw_jobs if job["id"] not in self.processed_job_ids
+            job
+            for job in self.raw_jobs
+            if job["id"] not in self.processed_job_ids and job.get("status") != "Closed"
         ]
 
-    def review_random_job(self, model):
+    def review_random_job(self, model, with_correction=True):
         unprocessed_jobs = self._get_unprocessed_jobs()
         if not unprocessed_jobs:
             print("All jobs have been reviewed.")
@@ -36,7 +38,7 @@ class JobReviewer:
             print(f"Failed to retrieve details for job {job_id}. Skipping.")
             return
 
-        review = review_agent(job_to_review, job_details, model)
+        review = review_agent(job_to_review, job_details, model, with_correction)
 
         self.reviews.append(review)
         self.processed_job_ids.add(job_id)
@@ -47,14 +49,14 @@ class JobReviewer:
         print(f"Review for job {job_id} saved.")
         return review
 
-    def review_n_jobs(self, n: int, model: str):
+    def review_n_jobs(self, n: int, model: str, with_correction=True):
         for i in range(n):
             print(f"--- Reviewing job {i+1}/{n} ---")
-            review = self.review_random_job(model)
+            review = self.review_random_job(model, with_correction)
             if review is None:
                 break
 
 
 if __name__ == "__main__":
     reviewer = JobReviewer()
-    reviewer.review_n_jobs(300, "gpt-5-mini")
+    reviewer.review_n_jobs(300, "gpt-4.1")

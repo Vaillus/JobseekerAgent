@@ -11,6 +11,7 @@ from jobseeker_agent.utils.paths import (
 )
 from jobseeker_agent.scraper.extract_job_details import extract_job_details
 from jobseeker_agent.scraper.run_scraper import run_scraping
+from jobseeker_agent.scraper.update_job_statuses import update_job_statuses
 from jobseeker_agent.reviewer.review_batch import JobReviewer
 from jobseeker_agent.interface import state
 
@@ -30,6 +31,9 @@ job_ids = sorted(list(set(raw_jobs_map.keys()) & set(reviews_map.keys())))
 print(f"Found {len(job_ids)} common job IDs.")
 
 for job_id in job_ids:
+    # Skip jobs whose raw status is Closed
+    if raw_jobs_map.get(job_id, {}).get("status") == "Closed":
+        continue
     job_data = {
         "id": job_id,
         **raw_jobs_map.get(job_id, {}),
@@ -163,6 +167,64 @@ def get_scraping_status():
     return jsonify(state.SCRAPING_STATUS)
 
 
+@bp.route("/update-status", methods=["POST"])
+def start_update_status():
+    """Launch job status update in a background thread."""
+    print("--- Request received for /update-status ---")
+    
+    if state.UPDATE_STATUS_THREAD and state.UPDATE_STATUS_THREAD.is_alive():
+        return jsonify({"success": False, "message": "Status update already in progress"}), 400
+    
+    # Reset status
+    state.UPDATE_STATUS_STATUS = {"status": "running", "current": 0, "total": 0, "jobs_updated_count": 0, "error": None}
+    
+    def update_status_task():
+        try:
+            print("Starting job status update...")
+            
+            def progress_callback(current, total):
+                state.UPDATE_STATUS_STATUS = {
+                    "status": "running",
+                    "current": current,
+                    "total": total,
+                    "jobs_updated_count": 0,
+                    "error": None
+                }
+            
+            jobs_updated_count = update_job_statuses(status_callback=progress_callback)
+            final_total = state.UPDATE_STATUS_STATUS.get("total", 0)
+            state.UPDATE_STATUS_STATUS = {
+                "status": "completed",
+                "current": final_total,
+                "total": final_total,
+                "jobs_updated_count": jobs_updated_count,
+                "error": None
+            }
+            print(f"Status update completed. {jobs_updated_count} jobs updated to 'Closed'.")
+        except Exception as e:
+            print(f"Error during status update: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            state.UPDATE_STATUS_STATUS = {
+                "status": "error",
+                "current": state.UPDATE_STATUS_STATUS.get("current", 0),
+                "total": state.UPDATE_STATUS_STATUS.get("total", 0),
+                "jobs_updated_count": 0,
+                "error": str(e)
+            }
+    
+    state.UPDATE_STATUS_THREAD = threading.Thread(target=update_status_task)
+    state.UPDATE_STATUS_THREAD.start()
+    
+    return jsonify({"success": True, "message": "Status update started"})
+
+
+@bp.route("/update-status/status", methods=["GET"])
+def get_update_status_status():
+    """Get current update status status."""
+    return jsonify(state.UPDATE_STATUS_STATUS)
+
+
 @bp.route("/review", methods=["POST"])
 def start_review():
     """Launch review in a background thread."""
@@ -182,7 +244,7 @@ def start_review():
             reviewer = JobReviewer()
             
             for i in range(count):
-                job_review = reviewer.review_random_job("gpt-5-mini")
+                job_review = reviewer.review_random_job("gpt-4.1", with_correction=True)
                 if job_review is None:
                     # No more jobs to review
                     state.REVIEW_STATUS["total"] = i
@@ -236,6 +298,9 @@ def refresh_jobs():
         job_ids = sorted(list(set(raw_jobs_map.keys()) & set(reviews_map.keys())))
         
         for job_id in job_ids:
+            # Skip jobs whose raw status is Closed
+            if raw_jobs_map.get(job_id, {}).get("status") == "Closed":
+                continue
             job_data = {
                 "id": job_id,
                 **raw_jobs_map.get(job_id, {}),
