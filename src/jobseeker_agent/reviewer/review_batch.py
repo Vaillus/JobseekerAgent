@@ -18,7 +18,9 @@ class JobReviewer:
 
     def _get_unprocessed_jobs(self):
         return [
-            job for job in self.raw_jobs if job["id"] not in self.processed_job_ids
+            job
+            for job in self.raw_jobs
+            if job["id"] not in self.processed_job_ids and job.get("status") != "Closed"
         ]
 
     def review_random_job(self, model, with_correction=True):

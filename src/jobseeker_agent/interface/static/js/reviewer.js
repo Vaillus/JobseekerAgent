@@ -94,6 +94,92 @@ function startScrapingPolling() {
     }, 2000); // Poll every 2 seconds
 }
 
+// Update status functionality
+let updateStatusInterval = null;
+
+document.getElementById('update-status-btn').addEventListener('click', () => {
+    const updateStatusBtn = document.getElementById('update-status-btn');
+    const statusDiv = document.getElementById('update-status-display');
+    const progressContainer = document.getElementById('update-status-progress');
+    
+    updateStatusBtn.disabled = true;
+    statusDiv.className = 'status-display running';
+    statusDiv.textContent = 'Starting status check...';
+    progressContainer.style.display = 'block';
+    
+    fetch('/update-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            statusDiv.textContent = 'Checking statuses in progress...';
+            startUpdateStatusPolling();
+        } else {
+            statusDiv.className = 'status-display error';
+            statusDiv.textContent = `Error: ${data.message || 'Unknown error'}`;
+            updateStatusBtn.disabled = false;
+            progressContainer.style.display = 'none';
+        }
+    })
+    .catch(error => {
+        statusDiv.className = 'status-display error';
+        statusDiv.textContent = `Error: ${error.message}`;
+        updateStatusBtn.disabled = false;
+        progressContainer.style.display = 'none';
+    });
+});
+
+function startUpdateStatusPolling() {
+    if (updateStatusInterval) clearInterval(updateStatusInterval);
+    
+    updateStatusInterval = setInterval(() => {
+        fetch('/update-status/status')
+            .then(response => response.json())
+            .then(data => {
+                const statusDiv = document.getElementById('update-status-display');
+                const updateStatusBtn = document.getElementById('update-status-btn');
+                const progressBar = document.getElementById('update-status-progress-bar');
+                const progressText = document.getElementById('update-status-progress-text');
+                const progressContainer = document.getElementById('update-status-progress');
+                
+                if (data.status === 'running') {
+                    statusDiv.className = 'status-display running';
+                    statusDiv.textContent = 'Checking job statuses...';
+                    progressContainer.style.display = 'block';
+                    
+                    const percentage = data.total > 0 ? (data.current / data.total) * 100 : 0;
+                    progressBar.style.width = `${percentage}%`;
+                    progressText.textContent = `${data.current} / ${data.total}`;
+                } else if (data.status === 'completed') {
+                    clearInterval(updateStatusInterval);
+                    statusDiv.className = 'status-display completed';
+                    statusDiv.textContent = `Status check completed! ${data.jobs_updated_count} jobs updated to 'Closed'.`;
+                    progressBar.style.width = '100%';
+                    progressText.textContent = `${data.total} / ${data.total}`;
+                    updateStatusBtn.disabled = false;
+                    
+                    // Refresh job list to reflect status changes
+                    refreshJobList();
+                } else if (data.status === 'error') {
+                    clearInterval(updateStatusInterval);
+                    statusDiv.className = 'status-display error';
+                    statusDiv.textContent = `Error: ${data.error || 'Unknown error'}`;
+                    updateStatusBtn.disabled = false;
+                    progressContainer.style.display = 'none';
+                } else {
+                    statusDiv.className = 'status-display idle';
+                    statusDiv.textContent = 'Ready to check statuses';
+                    progressContainer.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error polling update status:', error);
+            });
+    }, 2000); // Poll every 2 seconds
+}
+
 // Review functionality
 let reviewInterval = null;
 
