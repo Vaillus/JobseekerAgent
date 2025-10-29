@@ -28,8 +28,124 @@ document.querySelectorAll('.job-item').forEach(item => {
 // Scraping functionality
 let scrapingInterval = null;
 
+// Destinations state
+let scrapingDestinations = [];
+
+// Load destinations config on startup
+fetch('/scrape/config')
+    .then(response => response.json())
+    .then(data => {
+        if (data && Array.isArray(data.destinations)) {
+            scrapingDestinations = data.destinations;
+            renderDestinations();
+        }
+    })
+    .catch(err => console.error('Failed to load scraping config:', err));
+
+function renderDestinations() {
+    const list = document.getElementById('destinations-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    scrapingDestinations.forEach(dest => {
+        const row = document.createElement('div');
+        row.className = `destination-item ${dest.enabled ? '' : 'disabled'}`;
+
+        const info = document.createElement('div');
+        info.className = 'destination-info';
+        info.textContent = `${dest.location} (${dest.remote_type})`;
+
+        const toggle = document.createElement('button');
+        toggle.className = 'destination-toggle';
+        toggle.textContent = dest.enabled ? '✓' : '✗';
+        toggle.addEventListener('click', () => {
+            dest.enabled = !dest.enabled;
+            persistDestinations();
+            renderDestinations();
+        });
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'destination-edit-btn';
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => showInlineForm(dest));
+
+        row.appendChild(info);
+        const actions = document.createElement('div');
+        actions.appendChild(toggle);
+        actions.appendChild(editBtn);
+        row.appendChild(actions);
+        list.appendChild(row);
+    });
+}
+
+function showInlineForm(dest = null) {
+    const form = document.getElementById('destination-inline-form');
+    if (!form) return;
+    form.style.display = 'block';
+
+    const locInput = document.getElementById('new-destination-location');
+    const typeSelect = document.getElementById('new-destination-remote-type');
+    const confirmBtn = document.getElementById('confirm-add-destination');
+    const cancelBtn = document.getElementById('cancel-add-destination');
+
+    if (dest) {
+        locInput.value = dest.location;
+        typeSelect.value = dest.remote_type;
+        confirmBtn.textContent = 'Save';
+    } else {
+        locInput.value = '';
+        typeSelect.value = 'any';
+        confirmBtn.textContent = 'Add';
+    }
+
+    const onConfirm = () => {
+        const location = locInput.value.trim();
+        const remoteType = typeSelect.value;
+        if (!location) {
+            alert('Please enter a location');
+            return;
+        }
+        if (dest) {
+            dest.location = location;
+            dest.remote_type = remoteType;
+        } else {
+            const newId = scrapingDestinations.length > 0 ? Math.max(...scrapingDestinations.map(d => d.id || 0)) + 1 : 1;
+            scrapingDestinations.push({ id: newId, location, remote_type: remoteType, enabled: true });
+        }
+        form.style.display = 'none';
+        persistDestinations();
+        renderDestinations();
+        // Cleanup handlers
+        confirmBtn.removeEventListener('click', onConfirm);
+        cancelBtn.removeEventListener('click', onCancel);
+    };
+
+    const onCancel = () => {
+        form.style.display = 'none';
+        confirmBtn.removeEventListener('click', onConfirm);
+        cancelBtn.removeEventListener('click', onCancel);
+    };
+
+    confirmBtn.addEventListener('click', onConfirm);
+    cancelBtn.addEventListener('click', onCancel);
+}
+
+const addDestBtn = document.getElementById('add-destination-btn');
+if (addDestBtn) {
+    addDestBtn.addEventListener('click', () => showInlineForm());
+}
+
+function persistDestinations() {
+    fetch('/scrape/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destinations: scrapingDestinations })
+    }).catch(err => console.error('Failed to save scraping config:', err));
+}
+
 document.getElementById('scrape-btn').addEventListener('click', () => {
-    const timeHorizon = document.getElementById('time-horizon').value;
+    const daysInput = document.getElementById('time-horizon-days');
+    const days = parseInt(daysInput ? daysInput.value : '1', 10);
     const scrapeBtn = document.getElementById('scrape-btn');
     const statusDiv = document.getElementById('scrape-status');
     
@@ -40,7 +156,7 @@ document.getElementById('scrape-btn').addEventListener('click', () => {
     fetch('/scrape', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ time_horizon: timeHorizon })
+        body: JSON.stringify({ days: days, destinations: scrapingDestinations })
     })
     .then(response => response.json())
     .then(data => {

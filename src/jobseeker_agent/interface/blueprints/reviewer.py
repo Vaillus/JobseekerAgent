@@ -8,6 +8,8 @@ from jobseeker_agent.utils.paths import (
     load_raw_jobs,
     load_job_statuses,
     save_job_statuses,
+    load_scraping_destinations,
+    save_scraping_destinations,
 )
 from jobseeker_agent.scraper.extract_job_details import extract_job_details
 from jobseeker_agent.scraper.run_scraper import run_scraping
@@ -129,7 +131,19 @@ def start_scraping():
     """Launch scraping in a background thread."""
     print("--- Request received for /scrape ---")
     data = request.get_json()
-    time_horizon = data.get("time_horizon", "day")
+    # Support either days (int) or legacy time_horizon (str)
+    if "days" in data:
+        try:
+            time_horizon = int(data["days"])
+        except Exception:
+            return jsonify({"success": False, "message": "Invalid 'days' value"}), 400
+    else:
+        time_horizon = data.get("time_horizon", "day")
+
+    # Optional destinations list; if not provided, load from server-side config
+    destinations = data.get("destinations")
+    if destinations is None:
+        destinations = load_scraping_destinations()
     
     if state.SCRAPING_THREAD and state.SCRAPING_THREAD.is_alive():
         return jsonify({"success": False, "message": "Scraping already in progress"}), 400
@@ -140,7 +154,7 @@ def start_scraping():
     def scrape_task():
         try:
             print(f"Starting scraping with time_horizon={time_horizon}")
-            new_jobs_count = run_scraping(max_time=time_horizon)
+            new_jobs_count = run_scraping(max_time=time_horizon, destinations_config=destinations)
             state.SCRAPING_STATUS = {
                 "status": "completed",
                 "new_jobs_count": new_jobs_count,
@@ -159,6 +173,37 @@ def start_scraping():
     state.SCRAPING_THREAD.start()
     
     return jsonify({"success": True, "message": "Scraping started"})
+
+
+@bp.route("/scrape/config", methods=["GET"])
+def get_scraping_config():
+    """Return scraping destinations configuration. If empty, generate defaults in-memory."""
+    destinations = load_scraping_destinations()
+    if not destinations:
+        destinations = [
+            {"id": 1, "location": "Sidney, Australia", "remote_type": "any", "enabled": True},
+            {"id": 2, "location": "Australia", "remote_type": "remote", "enabled": True},
+            {"id": 3, "location": "Paris, France", "remote_type": "any", "enabled": True},
+            {"id": 4, "location": "France", "remote_type": "remote", "enabled": True},
+            {"id": 5, "location": "Germany", "remote_type": "remote", "enabled": True},
+            {"id": 6, "location": "Amsterdam, Netherlands", "remote_type": "any", "enabled": True},
+            {"id": 7, "location": "Netherlands", "remote_type": "remote", "enabled": True},
+        ]
+    return jsonify({"destinations": destinations})
+
+
+@bp.route("/scrape/config", methods=["POST"])
+def save_scraping_config():
+    """Persist scraping destinations configuration to JSON."""
+    data = request.get_json()
+    destinations = data.get("destinations")
+    if not isinstance(destinations, list):
+        return jsonify({"success": False, "message": "Field 'destinations' must be a list"}), 400
+    try:
+        save_scraping_destinations(destinations)
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
 
 
 @bp.route("/scrape/status", methods=["GET"])

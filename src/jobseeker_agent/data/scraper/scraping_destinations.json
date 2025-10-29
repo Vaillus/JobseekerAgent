@@ -1,0 +1,50 @@
+[
+    {
+        "enabled": true,
+        "id": 1,
+        "location": "Sidney, Australia",
+        "remote_type": "any"
+    },
+    {
+        "enabled": true,
+        "id": 2,
+        "location": "Australia",
+        "remote_type": "remote"
+    },
+    {
+        "enabled": true,
+        "id": 3,
+        "location": "Paris, France",
+        "remote_type": "any"
+    },
+    {
+        "enabled": true,
+        "id": 4,
+        "location": "France",
+        "remote_type": "remote"
+    },
+    {
+        "enabled": true,
+        "id": 5,
+        "location": "Germany",
+        "remote_type": "remote"
+    },
+    {
+        "enabled": true,
+        "id": 6,
+        "location": "Amsterdam, Netherlands",
+        "remote_type": "any"
+    },
+    {
+        "enabled": true,
+        "id": 7,
+        "location": "Netherlands",
+        "remote_type": "remote"
+    },
+    {
+        "id": 8,
+        "location": "Brisbane, Queensland, Australie",
+        "remote_type": "any",
+        "enabled": true
+    }
+]

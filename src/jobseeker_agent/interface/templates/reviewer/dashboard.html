@@ -27,12 +27,27 @@
             <div id="scraper-tab" class="sidebar-tab-content">
                 <h2>Scrape Jobs</h2>
                 <div class="control-group">
-                    <label for="time-horizon">Time Horizon:</label>
-                    <select id="time-horizon" class="control-select">
-                        <option value="day">1 Day</option>
-                        <option value="week">1 Week</option>
-                    </select>
+                    <label for="time-horizon-days">Number of days:</label>
+                    <input type="number" id="time-horizon-days" class="control-input" value="1" min="1" max="365">
                 </div>
+
+                <div id="destinations-section" class="control-group">
+                    <h3>Destinations</h3>
+                    <div id="destinations-list"></div>
+                    <div id="destination-inline-form" style="display:none; margin-top:8px;">
+                        <input type="text" id="new-destination-location" class="control-input" placeholder="Location (e.g., Paris, France)">
+                        <select id="new-destination-remote-type" class="control-select">
+                            <option value="any">any</option>
+                            <option value="remote">remote</option>
+                            <option value="hybrid">hybrid</option>
+                            <option value="on_site">on_site</option>
+                        </select>
+                        <button id="confirm-add-destination" class="control-btn">Add</button>
+                        <button id="cancel-add-destination" class="control-btn">Cancel</button>
+                    </div>
+                    <button id="add-destination-btn" class="control-btn">+ Add Destination</button>
+                </div>
+
                 <button id="scrape-btn" class="control-btn scrape-btn">Launch Scraping</button>
                 <div id="scrape-status" class="status-display"></div>
                 
@@ -71,8 +86,9 @@
         <div id="job-details" style="display: none; height: 100%; flex-direction: column;"></div>
     </div>
 
+    <script id="jobs-data" type="application/json">{{ all_jobs | tojson }}</script>
     <script>
-        const jobsData = {{ all_jobs | tojson }};
+        const jobsData = JSON.parse(document.getElementById('jobs-data').textContent);
     </script>
     <script src="{{ url_for('static', filename='js/reviewer.js') }}"></script>
 </body>

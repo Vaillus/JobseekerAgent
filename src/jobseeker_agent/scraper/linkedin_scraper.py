@@ -133,14 +133,19 @@ class LinkedInJobsScraper:
             pass
         else:
             raise ValueError(f"Invalid remote type: {remote_type}. Please choose from remote, hybrid, on_site, any.")
-        if max_time == "day":
+        # Support either predefined strings or an integer number of days
+        if isinstance(max_time, int):
+            if max_time < 1:
+                raise ValueError("max_time as days must be >= 1")
+            params["f_TPR"] = f'r{max_time * 86400}'
+        elif max_time == "day":
             params["f_TPR"] = 'r86400'
         elif max_time == "week":
             params["f_TPR"] = 'r604800'
         elif max_time == "month":
             params["f_TPR"] = 'r2592000'
         else:
-            raise ValueError(f"Invalid max time: {max_time}. Please choose from day, week, month.")
+            raise ValueError(f"Invalid max time: {max_time}. Please choose from day, week, month, or provide an integer number of days.")
         return f"{ScraperConfig.BASE_URL}?{'&'.join(f'{k}={quote(str(v))}' for k, v in params.items())}"
 
     def _clean_job_url(self, url: str) -> str:
