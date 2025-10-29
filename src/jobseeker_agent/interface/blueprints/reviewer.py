@@ -182,7 +182,7 @@ def start_review():
             reviewer = JobReviewer()
             
             for i in range(count):
-                job_review = reviewer.review_random_job("gpt-5-mini")
+                job_review = reviewer.review_random_job("gpt-4.1", with_correction=True)
                 if job_review is None:
                     # No more jobs to review
                     state.REVIEW_STATUS["total"] = i
