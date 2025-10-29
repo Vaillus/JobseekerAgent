@@ -229,6 +229,42 @@ pre { white-space: pre-wrap; word-wrap: break-word; color: #34495e; font-family:
 .apply-btn { background-color: #3498db; }
 .status-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
 
+.destination-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin: 4px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.destination-item.disabled {
+    opacity: 0.6;
+    background-color: #f7f7f7;
+}
+
+.destination-info {
+    font-size: 0.95em;
+    color: #2c3e50;
+}
+
+.destination-toggle,
+.destination-edit-btn {
+    margin-left: 6px;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fafafa;
+    cursor: pointer;
+}
+
+.destination-toggle:hover,
+.destination-edit-btn:hover {
+    background: #f0f0f0;
+}
+
 .evaluation-grid-container {
     display: flex;
     flex-direction: column;

@@ -39,6 +39,16 @@ def get_reviewer_data_dir() -> Path:
     reviewer_dir.mkdir(parents=True, exist_ok=True)
     return reviewer_dir
 
+def get_scraper_data_dir() -> Path:
+    """Retourne le chemin vers le dossier scraper (données de configuration du scraping)."""
+    scraper_dir = get_data_path() / "scraper"
+    scraper_dir.mkdir(parents=True, exist_ok=True)
+    return scraper_dir
+
+def get_scraping_destinations_path() -> Path:
+    """Retourne le chemin vers le fichier JSON des destinations de scraping."""
+    return get_scraper_data_dir() / "scraping_destinations.json"
+
 def get_linkedin_keywords_path() -> Path:
     """Retourne le chemin vers les keywords de LinkedIn."""
     return get_data_path() / "linkedin_keywords"
@@ -119,6 +129,23 @@ def load_raw_jobs() -> List[Dict[str, Any]]:
 
     with open(raw_jobs_path, "r") as f:
         return json.load(f)
+
+def load_scraping_destinations() -> List[Dict[str, Any]]:
+    """Charge les destinations de scraping depuis le fichier JSON."""
+    path = get_scraping_destinations_path()
+    if not path.exists():
+        return []
+    with open(path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []
+
+def save_scraping_destinations(destinations: List[Dict[str, Any]]) -> None:
+    """Sauvegarde les destinations de scraping dans le fichier JSON."""
+    path = get_scraping_destinations_path()
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(destinations, f, indent=4)
 
 def load_raw_job(job_id: int) -> Dict[str, Any]:
     """Charge le job brut depuis le fichier JSON."""
