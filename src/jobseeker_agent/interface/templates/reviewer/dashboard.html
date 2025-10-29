@@ -68,6 +68,9 @@
                     <input type="number" id="review-count" class="control-input" value="10" min="1" max="100">
                 </div>
                 <button id="review-btn" class="control-btn review-btn">Launch Review</button>
+                <div id="review-count-info" style="margin-top: 8px; font-size: 0.9em; color: #666;">
+                    À review: {{ review_count_info.unreviewed_count }} / {{ review_count_info.total_open_count }} ({{ review_count_info.percentage }}%)
+                </div>
                 <div id="review-progress" class="progress-container" style="display: none;">
                     <div class="progress-bar">
                         <div id="review-progress-bar" class="progress-bar-fill"></div>
