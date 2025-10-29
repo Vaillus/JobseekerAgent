@@ -42,9 +42,9 @@
         "remote_type": "remote"
     },
     {
+        "enabled": true,
         "id": 8,
-        "location": "Brisbane, Queensland, Australie",
-        "remote_type": "any",
-        "enabled": true
+        "location": "Brisbane, Australie",
+        "remote_type": "any"
     }
 ]

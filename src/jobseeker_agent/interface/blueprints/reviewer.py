@@ -69,10 +69,26 @@ def dashboard():
     unprocessed_jobs = [j for j in all_jobs if not j["status"]]
     print(f"Rendering dashboard with {len(unprocessed_jobs)} unprocessed jobs.")
 
+    # Calculate review count info
+    # Total: all open jobs (not Closed) in raw_jobs
+    total_open_count = len([j for j in raw_jobs if j.get("status") != "Closed"])
+    # Unreviewed: open jobs that are NOT in reviews.json
+    unreviewed_count = len([
+        j for j in raw_jobs 
+        if j.get("status") != "Closed" and j["id"] not in reviews_map
+    ])
+    percentage = (unreviewed_count / total_open_count * 100) if total_open_count > 0 else 0
+    review_count_info = {
+        "unreviewed_count": unreviewed_count,
+        "total_open_count": total_open_count,
+        "percentage": round(percentage, 1)
+    }
+
     return render_template(
         "reviewer/dashboard.html",
         sidebar_jobs=unprocessed_jobs,
         all_jobs=all_jobs,
+        review_count_info=review_count_info,
     )
 
 
@@ -369,12 +385,28 @@ def refresh_jobs():
         
         unprocessed_jobs = [j for j in all_jobs if not j["status"]]
         
+        # Calculate review count info
+        # Total: all open jobs (not Closed) in raw_jobs
+        total_open_count = len([j for j in raw_jobs if j.get("status") != "Closed"])
+        # Unreviewed: open jobs that are NOT in reviews.json
+        unreviewed_count = len([
+            j for j in raw_jobs 
+            if j.get("status") != "Closed" and j["id"] not in reviews_map
+        ])
+        percentage = (unreviewed_count / total_open_count * 100) if total_open_count > 0 else 0
+        review_count_info = {
+            "unreviewed_count": unreviewed_count,
+            "total_open_count": total_open_count,
+            "percentage": round(percentage, 1)
+        }
+        
         print(f"Returning {len(unprocessed_jobs)} unprocessed jobs.")
         
         return jsonify({
             "success": True,
             "jobs": all_jobs,
-            "sidebar_jobs": unprocessed_jobs
+            "sidebar_jobs": unprocessed_jobs,
+            "review_count_info": review_count_info
         })
     except Exception as e:
         print(f"Error refreshing jobs: {str(e)}")

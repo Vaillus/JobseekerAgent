@@ -423,6 +423,14 @@ function refreshJobList() {
                     
                     jobList.appendChild(jobItem);
                 });
+                
+                // Update review count info
+                if (data.review_count_info) {
+                    const countInfoDiv = document.getElementById('review-count-info');
+                    if (countInfoDiv) {
+                        countInfoDiv.textContent = `À review: ${data.review_count_info.unreviewed_count} / ${data.review_count_info.total_open_count} (${data.review_count_info.percentage}%)`;
+                    }
+                }
             }
         })
         .catch(error => {
@@ -576,6 +584,8 @@ function updateJobStatus(jobId, isInterested) {
             // Hide details and show placeholder
             document.getElementById('job-details').style.display = 'none';
             document.getElementById('placeholder').style.display = 'block';
+            // Refresh job list to update the count
+            refreshJobList();
         }
     });
 }
