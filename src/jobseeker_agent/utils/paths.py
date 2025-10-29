@@ -4,6 +4,8 @@ import inspect
 
 from typing import List, Dict, Any, Union
 
+from jobseeker_agent.scraper.extract_job_details import extract_job_details
+
 def get_project_root() -> Path:
     """Retourne la racine du projet."""
     return Path(__file__).resolve().parent.parent
@@ -124,6 +126,14 @@ def load_raw_job(job_id: int) -> Dict[str, Any]:
     job = next((j for j in raw_jobs if j["id"] == job_id), None)
     if not job:
         raise ValueError(f"Job with ID {job_id} not found")
+    return job
+
+def load_full_job(job_id: int) -> Dict[str, Any]:
+    """Charge le job complet depuis le fichier JSON."""
+    job = load_raw_job(job_id)
+    job_details = extract_job_details(job["job_link"])
+    for key, value in job_details.items():
+        job[key] = value
     return job
 
 def load_labels(generation_id: int) -> List[Dict[str, Any]]:
