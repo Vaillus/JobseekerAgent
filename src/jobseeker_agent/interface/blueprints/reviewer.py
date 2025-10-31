@@ -10,11 +10,16 @@ from jobseeker_agent.utils.paths import (
     save_job_statuses,
     load_scraping_destinations,
     save_scraping_destinations,
+    save_reviews,
+    load_processed_jobs,
+    save_processed_jobs,
 )
-from jobseeker_agent.scraper.extract_job_details import extract_job_details
+from jobseeker_agent.scraper.extract_job_details import extract_job_details, extract_full_job_details
 from jobseeker_agent.scraper.run_scraper import run_scraping
 from jobseeker_agent.scraper.update_job_statuses import update_job_statuses
+from jobseeker_agent.scraper.job_manager import add_new_job, load_raw_jobs as load_raw_jobs_manager, save_raw_jobs
 from jobseeker_agent.reviewer.review_batch import JobReviewer
+from jobseeker_agent.reviewer.agents.reviewer import review as review_agent
 from jobseeker_agent.interface import state
 
 bp = Blueprint("reviewer", __name__)
@@ -127,8 +132,23 @@ def get_job_details(job_id: int):
         return jsonify({"error": "Job not found"}), 404
     
     print(f"Fetching live details for job link: {job_link}")
-    live_details = extract_job_details(job_link)
-    if not live_details:
+    
+    # Utiliser extract_full_job_details qui est plus robuste
+    from jobseeker_agent.scraper.extract_job_details import extract_full_job_details
+    import time
+    
+    # Ajouter un petit délai pour éviter le rate limiting si plusieurs requêtes sont faites rapidement
+    time.sleep(0.5)
+    
+    live_details = extract_full_job_details(job_link)
+    
+    # Si ça échoue, essayer avec extract_job_details en dernier recours
+    if not live_details or not live_details.get("description"):
+        print("extract_full_job_details failed, trying extract_job_details...")
+        time.sleep(0.5)  # Délai supplémentaire
+        live_details = extract_job_details(job_link)
+    
+    if not live_details or not live_details.get("description"):
         print("Could not fetch live details.")
         return jsonify({"description": None})
 
@@ -452,4 +472,122 @@ def refresh_jobs():
     except Exception as e:
         print(f"Error refreshing jobs: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@bp.route("/review/manual", methods=["POST"])
+def manual_review():
+    """Review a job manually from a LinkedIn URL."""
+    print("--- Request received for /review/manual ---")
+    data = request.get_json()
+    job_url = data.get("url", "").strip()
+    
+    if not job_url:
+        return jsonify({"success": False, "message": "Missing 'url' field"}), 400
+    
+    # Nettoyer l'URL (retirer les paramètres de tracking)
+    clean_url = job_url.split("?")[0] if "?" in job_url else job_url
+    
+    if not clean_url.startswith("https://www.linkedin.com/jobs/view/"):
+        return jsonify({"success": False, "message": "Invalid LinkedIn job URL"}), 400
+    
+    try:
+        # Vérifier si le job existe déjà dans raw_jobs
+        raw_jobs = load_raw_jobs_manager()
+        existing_job = None
+        for job in raw_jobs:
+            # Comparer avec l'URL nettoyée
+            job_link = job.get("job_link", "")
+            job_link_clean = job_link.split("?")[0] if "?" in job_link else job_link
+            if job_link_clean == clean_url:
+                existing_job = job
+                break
+        
+        # Si le job n'existe pas, l'ajouter
+        if not existing_job:
+            print(f"Job not found in raw_jobs, adding it...")
+            # Extraire les détails complets du job
+            job_details = extract_full_job_details(clean_url)
+            
+            if not job_details:
+                return jsonify({"success": False, "message": "Failed to extract job details from URL"}), 400
+            
+            # Créer les données du job pour l'ajout
+            new_job_data = {
+                "title": job_details.get("title", "Unknown"),
+                "company": job_details.get("company", "Unknown"),
+                "location": "Unknown",  # On ne peut pas extraire la location depuis la page individuelle facilement
+                "job_link": clean_url,
+                "posted_date": "N/A",  # On ne peut pas extraire la date depuis la page individuelle facilement
+            }
+            
+            # Utiliser add_new_job mais avec les détails déjà extraits
+            # Pour éviter de refaire l'extraction, on va ajouter manuellement
+            jobs = load_raw_jobs_manager()
+            
+            # Vérifier les doublons basés sur 'job_link' (nettoyé)
+            if any(
+                (job.get("job_link", "").split("?")[0] if "?" in job.get("job_link", "") else job.get("job_link", "")) == clean_url
+                for job in jobs
+            ):
+                return jsonify({"success": False, "message": "Job already exists"}), 400
+            
+            # Ajouter status et workplace_type depuis job_details
+            new_job_data["status"] = job_details.get("status", "Unknown")
+            new_job_data["workplace_type"] = job_details.get("workplace_type", "Not found")
+            
+            # Convertir la date de publication
+            from jobseeker_agent.scraper.date_parser import parse_relative_date
+            new_job_data["posted_date"] = parse_relative_date(new_job_data.get("posted_date", ""))
+            
+            # Déterminer le nouvel ID
+            if jobs:
+                new_id = jobs[-1].get("id", -1) + 1
+            else:
+                new_id = 1
+            
+            # Ajouter le nouvel emploi
+            new_job = {"id": new_id, **new_job_data}
+            jobs.append(new_job)
+            save_raw_jobs(jobs)
+            
+            existing_job = new_job
+            print(f"Job {existing_job['id']} added successfully.")
+        else:
+            print(f"Job {existing_job['id']} already exists in raw_jobs.")
+        
+        # Maintenant, faire le review
+        print(f"Reviewing job {existing_job['id']}...")
+        
+        # Récupérer les détails à jour pour le review
+        job_details = extract_full_job_details(existing_job["job_link"])
+        if not job_details:
+            return jsonify({"success": False, "message": "Failed to retrieve job details for review"}), 400
+        
+        # Faire le review directement
+        review = review_agent(existing_job, job_details, "gpt-4.1", with_correction=True)
+        
+        # Sauvegarder le review
+        reviews = load_reviews()
+        reviews.append(review)
+        save_reviews(reviews)
+        
+        # Marquer comme traité
+        processed_jobs = set(load_processed_jobs())
+        processed_jobs.add(existing_job["id"])
+        save_processed_jobs(list(processed_jobs))
+        
+        print(f"Review completed for job {existing_job['id']}.")
+        
+        return jsonify({
+            "success": True,
+            "message": f"Job reviewed successfully",
+            "job_id": existing_job["id"],
+            "review": review
+        })
+        
+    except Exception as e:
+        print(f"Error during manual review: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"success": False, "message": str(e)}), 500
 
