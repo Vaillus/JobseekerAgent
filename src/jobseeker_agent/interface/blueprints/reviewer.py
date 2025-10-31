@@ -48,6 +48,31 @@ base_jobs.sort(key=lambda x: x.get("score", -float("inf")), reverse=True)
 print("Jobs sorted by score.")
 
 
+def run_review_latest_task(count: int):
+    try:
+        print(f"Starting latest-first review of {count} jobs")
+        reviewer = JobReviewer()
+        state.REVIEW_STATUS = {"status": "running", "current": 0, "total": count, "error": None}
+        for i in range(count):
+            job_review = reviewer.review_next_latest("gpt-4.1", with_correction=True)
+            if job_review is None:
+                state.REVIEW_STATUS["total"] = i
+                break
+            state.REVIEW_STATUS["current"] = i + 1
+            print(f"Reviewed {i + 1}/{count} jobs (latest-first)")
+        state.REVIEW_STATUS["status"] = "completed"
+        print(f"Review (latest-first) completed. Reviewed {state.REVIEW_STATUS['current']} jobs.")
+    except Exception as e:
+        print(f"Error during latest-first review: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        state.REVIEW_STATUS = {
+            "status": "error",
+            "current": state.REVIEW_STATUS.get("current", 0),
+            "total": count,
+            "error": str(e)
+        }
+
 @bp.route("/")
 def dashboard():
     """Renders the main dashboard HTML."""
@@ -293,7 +318,7 @@ def start_review():
     data = request.get_json()
     count = data.get("count", 10)
     
-    if state.REVIEW_THREAD and state.REVIEW_THREAD.is_alive():
+    if state.REVIEW_STATUS.get("status") == "running":
         return jsonify({"success": False, "message": "Review already in progress"}), 400
     
     # Reset status
@@ -331,6 +356,22 @@ def start_review():
     
     return jsonify({"success": True, "message": "Review started"})
 
+
+@bp.route("/review/latest", methods=["POST"])
+def start_review_latest():
+    """Launch latest-first review in a background thread."""
+    print("--- Request received for /review/latest ---")
+    data = request.get_json()
+    count = data.get("count", 10)
+
+    if state.REVIEW_STATUS.get("status") == "running":
+        return jsonify({"success": False, "message": "Review already in progress"}), 400
+
+    state.REVIEW_STATUS = {"status": "running", "current": 0, "total": count, "error": None}
+    state.REVIEW_THREAD = threading.Thread(target=run_review_latest_task, args=(count,))
+    state.REVIEW_THREAD.start()
+
+    return jsonify({"success": True, "message": "Latest-first review started"})
 
 @bp.route("/review/status", methods=["GET"])
 def get_review_status():

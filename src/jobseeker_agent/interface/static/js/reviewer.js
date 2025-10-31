@@ -31,6 +31,9 @@ let scrapingInterval = null;
 // Destinations state
 let scrapingDestinations = [];
 
+// Auto-review flag after scraping
+let autoEvaluateAfterScrape = false;
+
 // Load destinations config on startup
 fetch('/scrape/config')
     .then(response => response.json())
@@ -148,6 +151,8 @@ document.getElementById('scrape-btn').addEventListener('click', () => {
     const days = parseInt(daysInput ? daysInput.value : '1', 10);
     const scrapeBtn = document.getElementById('scrape-btn');
     const statusDiv = document.getElementById('scrape-status');
+    const evalCheckbox = document.getElementById('evaluate-after-scrape');
+    autoEvaluateAfterScrape = !!(evalCheckbox && evalCheckbox.checked);
     
     scrapeBtn.disabled = true;
     statusDiv.className = 'status-display running';
@@ -194,6 +199,49 @@ function startScrapingPolling() {
                     statusDiv.className = 'status-display completed';
                     statusDiv.textContent = `Scraping completed! ${data.new_jobs_count} new jobs added.`;
                     scrapeBtn.disabled = false;
+
+                    // Trigger latest-first review automatically if opted-in
+                    if (autoEvaluateAfterScrape && data.new_jobs_count > 0) {
+                        // Switch to review tab to show progress
+                        document.querySelector('[data-tab="review"]').click();
+                        
+                        const reviewBtn = document.getElementById('review-btn');
+                        const reviewStatus = document.getElementById('review-status');
+                        const progressContainer = document.getElementById('review-progress');
+                        reviewBtn.disabled = true;
+                        reviewStatus.className = 'status-display running';
+                        reviewStatus.textContent = 'Launching review...';
+                        progressContainer.style.display = 'block';
+
+                        fetch('/review/latest', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ count: data.new_jobs_count })
+                        })
+                        .then(response => response.json())
+                        .then(resp => {
+                            if (resp.success) {
+                                reviewStatus.textContent = 'Review in progress...';
+                                startReviewPolling();
+                            } else {
+                                reviewStatus.className = 'status-display error';
+                                reviewStatus.textContent = `Error: ${resp.message || 'Unknown error'}`;
+                                reviewBtn.disabled = false;
+                                progressContainer.style.display = 'none';
+                            }
+                        })
+                        .catch(error => {
+                            reviewStatus.className = 'status-display error';
+                            reviewStatus.textContent = `Error: ${error.message}`;
+                            reviewBtn.disabled = false;
+                            progressContainer.style.display = 'none';
+                        })
+                        .finally(() => {
+                            autoEvaluateAfterScrape = false;
+                        });
+                    } else {
+                        autoEvaluateAfterScrape = false;
+                    }
                 } else if (data.status === 'error') {
                     clearInterval(scrapingInterval);
                     statusDiv.className = 'status-display error';
