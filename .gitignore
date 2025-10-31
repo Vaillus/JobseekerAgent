@@ -21,3 +21,4 @@ src/jobseeker_agent/data/prompts/profil_pro.md
 src/jobseeker_agent/data/reviewer/job_statuses.json
 src/jobseeker_agent/data/resume/
 .DS_Store
+src/jobseeker_agent/reviewer/evaluation/test-models-on-18.ipynb
