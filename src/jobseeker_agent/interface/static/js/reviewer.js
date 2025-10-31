@@ -646,3 +646,75 @@ function applyForJob(jobId) {
     // Simply redirect to the customizer interface URL
     window.location.href = `/customizer/apply/${jobId}`;
 }
+
+// Manual review functionality
+const manualReviewModal = document.getElementById('manual-review-modal');
+const manualReviewBtn = document.getElementById('manual-review-btn');
+const manualReviewSubmit = document.getElementById('manual-review-submit');
+const manualReviewCancel = document.getElementById('manual-review-cancel');
+const manualReviewUrl = document.getElementById('manual-review-url');
+const manualReviewStatus = document.getElementById('manual-review-status');
+
+if (manualReviewBtn) {
+    manualReviewBtn.addEventListener('click', () => {
+        manualReviewModal.style.display = 'flex';
+        manualReviewUrl.value = '';
+        manualReviewStatus.textContent = '';
+        manualReviewStatus.className = 'status-display';
+    });
+}
+
+if (manualReviewCancel) {
+    manualReviewCancel.addEventListener('click', () => {
+        manualReviewModal.style.display = 'none';
+    });
+}
+
+if (manualReviewSubmit) {
+    manualReviewSubmit.addEventListener('click', () => {
+        const url = manualReviewUrl.value.trim();
+        if (!url) {
+            alert('Please enter a LinkedIn job URL');
+            return;
+        }
+        
+        manualReviewSubmit.disabled = true;
+        manualReviewStatus.className = 'status-display running';
+        manualReviewStatus.textContent = 'Processing...';
+        
+        fetch('/review/manual', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: url })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                manualReviewStatus.className = 'status-display completed';
+                manualReviewStatus.textContent = `Review completed! Job ID: ${data.job_id}`;
+                manualReviewModal.style.display = 'none';
+                
+                // Refresh job list
+                refreshJobList();
+            } else {
+                manualReviewStatus.className = 'status-display error';
+                manualReviewStatus.textContent = `Error: ${data.message || 'Unknown error'}`;
+            }
+            manualReviewSubmit.disabled = false;
+        })
+        .catch(error => {
+            manualReviewStatus.className = 'status-display error';
+            manualReviewStatus.textContent = `Error: ${error.message}`;
+            manualReviewSubmit.disabled = false;
+        });
+    });
+}
+
+// Close modal when clicking outside
+if (manualReviewModal) {
+    manualReviewModal.addEventListener('click', (e) => {
+        if (e.target === manualReviewModal) {
+            manualReviewModal.style.display = 'none';
+        }
+    });
+}

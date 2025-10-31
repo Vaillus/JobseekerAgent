@@ -83,6 +83,10 @@
                     <div id="review-progress-text" class="progress-text">0 / 0</div>
                 </div>
                 <div id="review-status" class="status-display"></div>
+                
+                <h2 style="margin-top: 2em;">Manual Review</h2>
+                <button id="manual-review-btn" class="control-btn manual-review-btn">Review Job from URL</button>
+                <div id="manual-review-status" class="status-display"></div>
             </div>
         </div>
     </div>
@@ -92,6 +96,21 @@
             <p>Select a job from the list on the left to see its details.</p>
         </div>
         <div id="job-details" style="display: none; height: 100%; flex-direction: column;"></div>
+    </div>
+
+    <!-- Modal for manual review -->
+    <div id="manual-review-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 2em; border-radius: 8px; max-width: 500px; width: 90%;">
+            <h2>Review Job from LinkedIn URL</h2>
+            <div class="control-group">
+                <label for="manual-review-url">LinkedIn Job URL:</label>
+                <input type="text" id="manual-review-url" class="control-input" placeholder="https://www.linkedin.com/jobs/view/...">
+            </div>
+            <div style="margin-top: 1em; display: flex; gap: 1em;">
+                <button id="manual-review-submit" class="control-btn">Review</button>
+                <button id="manual-review-cancel" class="control-btn">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <script id="jobs-data" type="application/json">{{ all_jobs | tojson }}</script>

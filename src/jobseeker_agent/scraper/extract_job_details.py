@@ -78,6 +78,20 @@ def _get_workplace_type(soup: BeautifulSoup) -> str:
                 return "On-site"
     return "Not found"
 
+def _get_job_title(soup: BeautifulSoup) -> str:
+    """Extracts the job title from the soup object."""
+    title_tag = soup.select_one('h1.top-card-layout__title')
+    if title_tag:
+        return title_tag.get_text().strip()
+    return 'Title not found.'
+
+def _get_company_name(soup: BeautifulSoup) -> str:
+    """Extracts the company name from the soup object."""
+    company_tag = soup.select_one('a.topcard__org-name-link')
+    if company_tag:
+        return company_tag.get_text().strip()
+    return 'Company not found.'
+
 def extract_job_details(url: str) -> dict | None:
     """
     Analyzes a LinkedIn job posting and returns its details:
@@ -106,6 +120,40 @@ def extract_job_details(url: str) -> dict | None:
         "description": description,
         "status": _get_job_status(soup),
         "workplace_type": _get_workplace_type(soup),
+    }
+
+def extract_full_job_details(url: str) -> dict | None:
+    """
+    Analyzes a LinkedIn job posting and returns its full details:
+    - description
+    - status (Open/Closed/Potentially Closed (No Apply Button Found))
+    - workplace_type (Remote/Hybrid/On-site)
+    - title (job title)
+    - company (company name)
+    
+    Returns None if the page is not a valid LinkedIn job posting (e.g., redirected
+    to an error page) - detected by absence of job description.
+    """
+    page_content = fetch_job_page(url)
+    if not page_content:
+        print("Failed to fetch page content.")
+        return None
+
+    soup = BeautifulSoup(page_content, 'html.parser')
+    
+    description = _get_description(soup)
+    
+    # If we can't find the description, the page is likely invalid (redirected, error page, etc.)
+    if description == 'Description not found.':
+        print("Page does not appear to be a valid LinkedIn job posting (no description found).")
+        return None
+
+    return {
+        "description": description,
+        "status": _get_job_status(soup),
+        "workplace_type": _get_workplace_type(soup),
+        "title": _get_job_title(soup),
+        "company": _get_company_name(soup),
     }
 
 if __name__ == "__main__":
