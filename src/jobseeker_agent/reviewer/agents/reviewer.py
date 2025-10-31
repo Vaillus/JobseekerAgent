@@ -12,6 +12,7 @@ load_dotenv()
 
 class Evaluation(TypedDict):
     """Single evaluation criterion."""
+    id: Annotated[int, ..., "The integer id of the criterion from the evaluation grid."]
     criteria: Annotated[str, ..., "The criteria that are met by the job description."]
     evidence: Annotated[str, ..., "The evidence for the criteria."]
     score: Annotated[float, ..., "The score for this criterion."]
