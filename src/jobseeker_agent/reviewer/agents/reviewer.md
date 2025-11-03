@@ -12,7 +12,7 @@ Identify which of the following criteria are met by the job description:
 - [1] Explicitly mentions Reinforcement Learning (RL) as a key requirement or skill: (+2)
 - [2] Mentions explicitly algorithmic/mathematical optimization (e.g., Operations Research, planning, combinatorial optimization, MILP): (+2)
 - [3] Agentic workflows (ie. langchain, tool use, prompt engineering, etc.) are part of the job: (+2), +1 more if a large part of the job is dedicated to this.
-- [4] Requires demonstrated expertise in a specific technical domain or toolset that is absent from my profile's listed skills and experiences: (-2 if this domain/tool is central to the role, defined as being in the job title, company name, or a primary responsibility/requirement; -1 if it is a secondary qualification).
+- [4] Requires demonstrated expertise in a specific technical domain or toolset that is absent from my profile's listed skills and experiences: (excluding programming languages) (-2 if this domain/tool is central to the role, defined as being in the job title, company name, or a primary responsibility/requirement; -1 if it is a secondary qualification).
 - [5] Requires a programming language I am not familiar with, AND does not mention Python: (-1)
 - [6] More focused on infrastructure (databases, cloud, Docker) than on algorithms: (-3)
 - [7] Vague description of actual tasks for a data scientist/engineer job: (-1)
@@ -41,6 +41,14 @@ Identify which of the following criteria are met by the job description:
 For example, do not output "- Leading a team: No (+0)". Instead do not output anything for this criteria.
 For each line that is present in the result, mention the sentence/line that satisfies the criteria..
 Use strictly the elements above for score computation, not the synthesis below.
+
+IMPORTANT: For each criterion that is met, you MUST return an Evaluation object with:
+- id: The exact integer ID from the brackets above (e.g., 1, 2, 3, ..., 24). Use the exact number shown in [brackets] for each criterion.
+- criteria: The text description of the criterion (for reference)
+- evidence: The exact quote from the job description that satisfies the criterion
+- score: The score value for this criterion (e.g., +2, -1.5, +0.5)
+
+Do NOT include criteria that are not met. Do NOT reformulate or modify the criterion text. Use the exact ID number as shown in the list above.
 
 
 
