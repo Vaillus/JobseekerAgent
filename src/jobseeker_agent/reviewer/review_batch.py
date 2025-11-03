@@ -23,7 +23,7 @@ class JobReviewer:
             if job["id"] not in self.processed_job_ids and job.get("status") != "Closed"
         ]
 
-    def review_random_job(self, model, with_correction=True):
+    def review_random_job(self, model, with_correction=True, reasoning_level=None):
         unprocessed_jobs = self._get_unprocessed_jobs()
         if not unprocessed_jobs:
             print("All jobs have been reviewed.")
@@ -38,7 +38,7 @@ class JobReviewer:
             print(f"Failed to retrieve details for job {job_id}. Skipping.")
             return
 
-        review = review_agent(job_to_review, job_details, model, with_correction)
+        review = review_agent(job_to_review, job_details, model, with_correction, reasoning_level)
 
         self.reviews.append(review)
         self.processed_job_ids.add(job_id)
@@ -49,7 +49,7 @@ class JobReviewer:
         print(f"Review for job {job_id} saved.")
         return review
 
-    def review_next_latest(self, model, with_correction=True):
+    def review_next_latest(self, model, with_correction=True, reasoning_level=None):
         unprocessed_jobs = self._get_unprocessed_jobs()
         if not unprocessed_jobs:
             print("All jobs have been reviewed.")
@@ -65,7 +65,7 @@ class JobReviewer:
             print(f"Failed to retrieve details for job {job_id}. Skipping.")
             return
 
-        review = review_agent(job_to_review, job_details, model, with_correction)
+        review = review_agent(job_to_review, job_details, model, with_correction, reasoning_level)
 
         self.reviews.append(review)
         self.processed_job_ids.add(job_id)
@@ -76,10 +76,10 @@ class JobReviewer:
         print(f"Review for job {job_id} saved.")
         return review
 
-    def review_n_jobs(self, n: int, model: str, with_correction=True):
+    def review_n_jobs(self, n: int, model: str, with_correction=True, reasoning_level=None):
         for i in range(n):
             print(f"--- Reviewing job {i+1}/{n} ---")
-            review = self.review_random_job(model, with_correction)
+            review = self.review_random_job(model, with_correction, reasoning_level)
             if review is None:
                 break
 

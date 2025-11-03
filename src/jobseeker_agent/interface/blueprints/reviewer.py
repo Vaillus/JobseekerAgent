@@ -59,7 +59,7 @@ def run_review_latest_task(count: int):
         reviewer = JobReviewer()
         state.REVIEW_STATUS = {"status": "running", "current": 0, "total": count, "error": None}
         for i in range(count):
-            job_review = reviewer.review_next_latest("gpt-4.1", with_correction=True)
+            job_review = reviewer.review_next_latest("gpt-5-mini", with_correction=True, reasoning_level="low")
             if job_review is None:
                 state.REVIEW_STATUS["total"] = i
                 break
@@ -350,7 +350,7 @@ def start_review():
             reviewer = JobReviewer()
             
             for i in range(count):
-                job_review = reviewer.review_random_job("gpt-4.1", with_correction=True)
+                job_review = reviewer.review_random_job("gpt-5-mini", with_correction=True, reasoning_level="low")
                 if job_review is None:
                     # No more jobs to review
                     state.REVIEW_STATUS["total"] = i

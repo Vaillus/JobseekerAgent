@@ -188,7 +188,7 @@ def run_introducer_task():
         profil_pro = load_prompt("profil_pro")
         resume_file = get_data_path() / "resume" / str(state.JOB_ID) / "resume.tex"
         resume_content = resume_file.read_text(encoding="utf-8")
-        synthesis_and_decision = state.JOB_DETAILS.get("synthesis", "")
+        synthesis_and_decision = state.JOB_DETAILS.get("synthesis") or ""
         print("    [THREAD] ...data loaded.")
 
         print("    [THREAD] Calling LLM to suggest introductions...")
@@ -230,7 +230,7 @@ def run_cover_letter_task():
         resume_file = job_dir / "resume.tex"
         resume_content = resume_file.read_text(encoding="utf-8")
         print(f"    [DEBUG] Resume loaded, length: {len(resume_content)} chars")
-        synthesis_and_decision = state.JOB_DETAILS.get("synthesis", "")
+        synthesis_and_decision = state.JOB_DETAILS.get("synthesis") or ""
         print(f"    [DEBUG] Synthesis loaded, length: {len(synthesis_and_decision)} chars")
         print("    [THREAD] ...data loaded.")
 
