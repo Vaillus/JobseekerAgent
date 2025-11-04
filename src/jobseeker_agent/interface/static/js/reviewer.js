@@ -72,6 +72,21 @@ function renderDestinations() {
         editBtn.textContent = 'Edit';
         editBtn.addEventListener('click', () => showInlineForm(dest));
 
+        // Nouveau: bouton supprimer
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'destination-delete-btn';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.title = 'Supprimer';
+        deleteBtn.addEventListener('click', () => {
+            const ok = confirm(`Supprimer "${dest.location}" ?`);
+            if (!ok) return;
+            // Retire l’élément du tableau puis persiste
+            scrapingDestinations = scrapingDestinations.filter(d => (d.id || d.location) !== (dest.id || dest.location));
+            persistDestinations();
+            renderDestinations();
+        });
+
+        
         row.appendChild(info);
         const actions = document.createElement('div');
         actions.appendChild(toggle);
