@@ -34,7 +34,7 @@ def _model_supports_reasoning(model_name: str) -> bool:
     """
     model_lower = model_name.lower()
     # Seuls les modèles gpt-5* supportent le reasoning
-    return model_lower.startswith("gpt-5")
+    return model_lower.startswith("gpt-5") or "gemini" in model_lower
 
 
 def review(

@@ -27,15 +27,16 @@ Identify which of the following criteria are met by the job description:
 - [15] Involves leading a team of highly qualified/experienced people (junior excluded): (-1)
 - [16] In a domain I am not familiar with: (-1)
 - [17] Involves coaching world-class scientists: (-2)
+- [18] Requires experience with training LLMs: (-2)
 
 ## The Company
-- [18] Top-tier company (e.g., Google, Apple, Meta, Helsing, Mistral AI, Perplexity, OpenAI, Anthropic, Nvidia): (+2) (Do not trust the description of the company in the job description for this criteria, but your prior knowledge about the company if any.)
-- [19] More than 150 employees: (-1)
-- [20] Offers a full-remote option: (+2)
-- [21] Consulting job for a standard/low-tier consulting firm: (-2)
-- [22] In the defense sector: (+2)
-- [23] In the robotics sector: (+2)
-- [24] If not french, requires security clearance: (-1.5)
+- [19] Top-tier company (e.g., Google, Apple, Meta, Helsing, Mistral AI, Perplexity, OpenAI, Anthropic, Nvidia): (+2) (Do not trust the description of the company in the job description for this criteria, but your prior knowledge about the company if any.)
+- [20] More than 150 employees: (-1)
+- [21] Offers a full-remote option: (+2)
+- [22] Consulting job for a standard/low-tier consulting firm: (-2)
+- [23] In the defense sector: (+2)
+- [24] In the robotics sector: (+2)
+- [25] If not french, requires security clearance: (-1.5)
 
 ^ only mention the lines that are relevant to the job description, with associated score bonus or penalty. 
 For example, do not output "- Leading a team: No (+0)". Instead do not output anything for this criteria.

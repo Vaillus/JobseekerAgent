@@ -66,7 +66,6 @@ def calculate_cost(model_name: str, input_tokens: int, output_tokens: int) -> fl
     return input_cost + output_cost
 
 
-# --- 🏭 Ta fonction "Factory" ---
 def get_llm(model_name: str, temperature: float = 0, reasoning: Optional[dict] = None):
     """
     Retourne une instance du modèle de chat en fonction de son nom.
@@ -84,8 +83,18 @@ def get_llm(model_name: str, temperature: float = 0, reasoning: Optional[dict] =
         return ChatOpenAI(model=model_name, temperature=temperature, reasoning=reasoning)
     
     elif "gemini" in model_name:
-        print(f"✅ Chargement du modèle Gemini : {model_name}")
-        return ChatGoogleGenerativeAI(model=model_name, temperature=temperature)
+        if not reasoning:
+            thinking_budget = -1
+        elif "pro" in model_name:
+            thinking_budget = 128 if reasoning["effort"] == "low" else -1
+        else:
+            thinking_budget = 0 if reasoning["effort"] == "low" else -1
+        print(f"✅ Chargement du modèle Gemini : {model_name} with thinking budget {thinking_budget}")
+        return ChatGoogleGenerativeAI(
+            model=model_name, 
+            temperature=temperature, 
+            thinking_budget=thinking_budget
+        )
         
     elif "claude" in model_name:
         print(f"✅ Chargement du modèle Claude : {model_name}")

@@ -17,7 +17,7 @@ def main():
         return
     
     # Prendre les 10 derniers job IDs
-    job_ids = [ 883, 911, 920, 929, 937, 938]
+    job_ids = [827, 850, 861, 865, 883, 911, 920, 929, 937, 938]
     print(f"📋 Using last 10 job IDs: {job_ids}")
     print()
     
@@ -25,60 +25,96 @@ def main():
     # Focus sur OpenAI: gpt-4.1, gpt-5-mini, gpt-5-main
     # Sans reasoning et sans correction
     configs = [
-        {
-            "name": "gpt-4.1_normal",
-            "model": "gpt-4.1",
-            "with_correction": False,
-            "reasoning_level": None
-        },
-        {
-            "name": "gpt-4.1_corrected",
-            "model": "gpt-4.1",
-            "with_correction": True,
-            "reasoning_level": None
-        },
-        {
-            "name": "gpt-5-mini_low",
-            "model": "gpt-5-mini",
-            "with_correction": False,
-            "reasoning_level": "low"
-        },
-        {
-            "name": "gpt-5-mini_normal",
-            "model": "gpt-5-mini",
-            "with_correction": False,
-            "reasoning_level": None
-        },
-        {
-            "name": "gpt-5-mini_low_corrected",
-            "model": "gpt-5-mini",
-            "with_correction": True,
-            "reasoning_level": "low"
-        },
-        {
-            "name": "gpt-5-mini_normal_corrected",
-            "model": "gpt-5-mini",
-            "with_correction": True,
-            "reasoning_level": None
-        },
+        # {
+        #     "name": "gpt-4.1_normal",
+        #     "model": "gpt-4.1",
+        #     "with_correction": False,
+        #     "reasoning_level": None
+        # },
+        # {
+        #     "name": "gpt-4.1_corrected",
+        #     "model": "gpt-4.1",
+        #     "with_correction": True,
+        #     "reasoning_level": None
+        # },
+        # {
+        #     "name": "gpt-5-mini_low",
+        #     "model": "gpt-5-mini",
+        #     "with_correction": False,
+        #     "reasoning_level": "low"
+        # },
+        # {
+        #     "name": "gpt-5-mini_normal",
+        #     "model": "gpt-5-mini",
+        #     "with_correction": False,
+        #     "reasoning_level": None
+        # },
+        # {
+        #     "name": "gpt-5-mini_low_corrected",
+        #     "model": "gpt-5-mini",
+        #     "with_correction": True,
+        #     "reasoning_level": "low"
+        # },
+        # {
+        #     "name": "gpt-5-mini_normal_corrected",
+        #     "model": "gpt-5-mini",
+        #     "with_correction": True,
+        #     "reasoning_level": None
+        # },
         # {
         #     "name": "gpt-5_normal",
         #     "model": "gpt-5",
         #     "with_correction": False,
         #     "reasoning_level": None
         # },
+        # {
+        #     "name": "gpt-5_low",
+        #     "model": "gpt-5",
+        #     "with_correction": False,
+        #     "reasoning_level": "low"
+        # },
+        # {
+        #     "name": "gpt-5_low_corrected",
+        #     "model": "gpt-5",
+        #     "with_correction": True,
+        #     "reasoning_level": "low"
+        # },
         {
-            "name": "gpt-5_low",
-            "model": "gpt-5",
+            "name": "gemini-2.5-pro_normal",
+            "model": "gemini-2.5-pro",
+            "with_correction": False,
+            "reasoning_level": None
+        },
+        {
+            "name": "gemini-2.5-pro_low",
+            "model": "gemini-2.5-pro",
             "with_correction": False,
             "reasoning_level": "low"
         },
         {
-            "name": "gpt-5_low_corrected",
-            "model": "gpt-5",
+            "name": "gemini-2.5-pro_low_corrected",
+            "model": "gemini-2.5-pro",
             "with_correction": True,
             "reasoning_level": "low"
         },
+        {
+            "name": "gemini-2.5-flash_low",
+            "model": "gemini-2.5-flash",
+            "with_correction": False,
+            "reasoning_level": "low"
+        },
+        # {
+        #     "name": "gemini-2.5-flash_low_corrected",
+        #     "model": "gemini-2.5-flash",
+        #     "with_correction": True,
+        #     "reasoning_level": "low"
+        # },
+        {
+            "name": "gemini-2.5-flash_normal",
+            "model": "gemini-2.5-flash",
+            "with_correction": False,
+            "reasoning_level": None
+        }
     ]
     
     # Définir le generation_id
