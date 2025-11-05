@@ -1,0 +1,779 @@
+================================================================================
+JOB 18
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+HIGHLIGHTS (13)
+────────────────────────────────────────────────────────────────────────────────
+ 1. detecting data quality issues
+ 2. data seasonality
+ 3. time series forecasting models
+ 4. automated data profiling systems
+ 5. generative AI workflows
+ 6. ML-powered incident correlation
+ 7. Python 3
+ 8. PyTorch
+ 9. VueJS
+10. Java
+11. Spring Boot 3
+12. Hands-on production experience
+13. three years of experience in a ML engineer role
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS VALIDÉS (sélection manuelle)
+────────────────────────────────────────────────────────────────────────────────
+ 1. time series forecasting
+ 2. anomaly detection
+ 3. generative AI workflows
+ 4. LLMs
+ 5. agentic workflows
+ 6. LangChain
+
+Total: 6 keywords
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS REJETÉS (extraits mais non sélectionnés)
+────────────────────────────────────────────────────────────────────────────────
+ 1. seasonality modeling
+ 2. handling one-off events
+ 3. statistical / distribution change detection
+ 4. forecasting models
+ 5. data profiling
+ 6. detecting data quality issues
+ 7. data quality checks
+ 8. automated monitor recommendations
+ 9. automated monitor suggestions
+10. monitoring engine
+11. root cause analysis
+12. automated root cause analysis using metadata
+13. incident correlation / intelligent alert grouping
+14. automated incident description
+15. incident deduplication / grouping
+16. software engineering for ML
+17. model evaluation / monitoring
+18. deploy time series models
+19. deploy and maintain models in production
+20. model deployment pipelines
+21. Python 3
+22. PyTorch
+23. JAX
+24. Java (Spring Boot)
+25. Typescript (VueJS)
+26. Kubernetes (AWS EKS)
+27. AWS
+28. MySQL (AWS RDS)
+29. Temporal (job orchestration)
+30. GitLab CI
+31. CI/CD
+32. Prometheus
+33. Loki
+34. Grafana
+35. Sentry
+36. data warehouses
+37. BigQuery
+38. Snowflake
+39. table lineage
+40. query history
+41. metadata (monitoring-related)
+42. software engineering: design/implement/deploy/maintain
+43. integrate with other services
+44. contribute to product decisions
+45. scalability
+46. testing
+47. write APIs
+48. natural-language monitor specification
+
+Total: 48 keywords rejetés
+Taux de rétention: 6/54 = 11.1%
+
+================================================================================
+
+================================================================================
+JOB 71
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+HIGHLIGHTS (21)
+────────────────────────────────────────────────────────────────────────────────
+ 1. help companies
+manage and reduce their climate impact
+ 2. Climate change
+ 3. AI agents
+ 4. Design and productionize intelligent agents
+ 5. Building and deploying AI agents
+ 6. Context management & grounding
+ 7. Evaluation & quality monitoring
+ 8. Infrastructure & orchestration
+ 9. Agent observability
+10. logging, tracing, and debugging
+11. Cross-team collaboration
+12. Work hand in hand with designers, product managers, and backend engineers
+13. Python
+14. GenAI agent architectures
+15. prompt chaining
+16. context injection
+17. LLM orchestration frameworks
+18. cloud infrastructure, containers, and CI/CD workflows
+19. observability tools
+20. Passionate about real-world applications
+21. rom idea, to prototype, to production
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS VALIDÉS (sélection manuelle)
+────────────────────────────────────────────────────────────────────────────────
+ 1. AI agents
+ 2. GenAI agent architectures
+ 3. prompt chaining
+ 4. prompt engineering
+ 5. context injection
+ 6. LLM orchestration frameworks
+ 7. evaluation methods
+ 8. agent observability
+ 9. tracing
+10. cross-team collaboration
+11. work with designers
+12. work with backend engineers
+
+Total: 12 keywords
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS REJETÉS (extraits mais non sélectionnés)
+────────────────────────────────────────────────────────────────────────────────
+ 1. conversational and context-aware agents
+ 2. context management
+ 3. grounding
+ 4. vector search
+ 5. infrastructure & orchestration
+ 6. scalable infrastructure
+ 7. cloud infrastructure
+ 8. containers
+ 9. CI/CD workflows
+10. production deployment of GenAI features
+11. evaluation & quality monitoring
+12. evaluation frameworks
+13. test scenarios
+14. feedback loops
+15. quality monitoring
+16. observability tools for LLMs
+17. logging
+18. debugging tools
+19. auditability
+20. guardrails
+21. fail-safes
+22. fallback strategies
+23. auditability
+24. best practices
+25. LLMs
+26. GenAI
+27. production deployment of GenAI features
+28. Python
+29. scalable infrastructure
+30. cloud infrastructure
+31. containers
+32. CI/CD workflows
+33. work with product managers
+34. user interactions
+
+Total: 34 keywords rejetés
+Taux de rétention: 12/48 = 25.0%
+
+================================================================================
+
+================================================================================
+JOB 100
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+HIGHLIGHTS (13)
+────────────────────────────────────────────────────────────────────────────────
+ 1. data pipeline
+ 2. cross-functional team
+ 3. Machine Learning
+ 4. text-to-speech
+ 5. speech-to-text,
+ 6. reinforcement learning 
+ 7. vision
+ 8. GCP
+ 9. Python
+10. Agentic LLM pipeline
+11. ANN, rerankers, feedbackloops, knowledge graphs
+12. Classification Algorithms
+13. minimum cost flow problems
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS VALIDÉS (sélection manuelle)
+────────────────────────────────────────────────────────────────────────────────
+ 1. combinatorial optimization
+ 2. heuristics
+ 3. Bayesian optimization
+ 4. experiment tracking (WandB)
+ 5. data pipelines
+ 6. data engineering
+ 7. LangChain
+ 8. agent frameworks
+ 9. tool-augmented workflow
+10. LangGraph
+
+Total: 10 keywords
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS REJETÉS (extraits mais non sélectionnés)
+────────────────────────────────────────────────────────────────────────────────
+ 1. agentic LLM pipeline
+ 2. generative agents
+ 3. prompt engineering
+ 4. prompt A/B testing
+ 5. LLM fine-tuning
+ 6. LLM providers
+ 7. LLM lifecycle
+ 8. knowledge retrieval system
+ 9. ANN (approximate nearest neighbors)
+10. vector databases
+11. semantic search
+12. retrieval-augmented generation (RAG)
+13. rerankers
+14. knowledge graphs
+15. feedback loops
+16. classical NLP
+17. classification (NLP)
+18. intent detection
+19. sentiment analysis
+20. text-to-speech
+21. speech-to-text
+22. recommender systems
+23. product recommendation system
+24. minimum cost flow
+25. clustering (min-cost-flow)
+26. continuous training
+27. model observability
+28. model monitoring
+29. model deployment
+30. retraining pipelines
+31. Comet ML
+32. PromptLayer
+33. HuggingFace
+34. CI/CD
+35. test coverage
+36. FastAPI
+37. APIs
+38. batch jobs
+39. Kubeflow
+40. cron jobs
+41. domain-driven design
+42. k8s
+43. Terraform permissions
+44. Datadog
+45. PagerDuty
+46. feature pipelines
+47. BigQuery
+48. DBT
+49. GCP
+50. Vertex AI
+51. LLM providers (multiple)
+52. performance analysis post-release
+53. metrics/evaluation
+54. A/B testing (experiments)
+55. prompt A/B testing
+56. feedback loops
+
+Total: 56 keywords rejetés
+Taux de rétention: 10/66 = 15.2%
+
+================================================================================
+
+================================================================================
+JOB 270
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+HIGHLIGHTS (10)
+────────────────────────────────────────────────────────────────────────────────
+ 1. multimodal data
+ 2. RAG techniques 
+ 3. agentic systems
+ 4. cross-functional teams
+ 5. reasoning models
+ 6. mathematical optimizer
+ 7. Machine Learning/AI 
+ 8. healthcare industry
+ 9. LLMs
+10. Start-up experience
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS VALIDÉS (sélection manuelle)
+────────────────────────────────────────────────────────────────────────────────
+ 1. LLMs
+ 2. LangChain
+ 3. tool-augmented agents
+ 4. LangGraph
+ 5. model selection & orchestration
+ 6. operations research
+ 7. planning algorithms
+ 8. combinatorial optimization
+ 9. cross-functional collaboration
+10. integrate AI into platform
+
+Total: 10 keywords
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS REJETÉS (extraits mais non sélectionnés)
+────────────────────────────────────────────────────────────────────────────────
+ 1. agentic workflows
+ 2. multi-model orchestration
+ 3. agents
+ 4. OpenAI Agents SDK
+ 5. Langfuse
+ 6. RAG
+ 7. embeddings
+ 8. vector databases
+ 9. semantic search
+10. document processing
+11. multilingual document processing
+12. automatic report generation
+13. intelligent summarization
+14. proactive insight discovery
+15. insight synthesis
+16. summarization across sources
+17. ML pipelines
+18. production ML deployment
+19. LLM evaluation and monitoring
+20. evaluation & monitoring
+21. monitoring
+22. latency/quality tradeoffs
+23. fallback systems
+24. JVM
+25. Kotlin
+26. Java
+27. distributed systems
+28. backend services
+29. APIs
+30. user interfaces
+31. Python
+32. PyTorch
+33. JAX
+34. GPU programming
+35. parallelization
+36. WandB
+37. classifiers
+38. transformers
+39. neural networks
+40. data pipelines
+41. data engineering
+42. data ingestion
+43. embeddings
+44. semantic search
+45. vector databases
+46. optimization
+47. heuristics
+48. Bayesian optimization
+49. stochastic optimization
+50. reinforcement learning
+51. MDPs
+52. PPO
+53. DQN
+54. policy gradients
+55. computer vision
+56. camera calibration
+57. OpenCV
+58. YOLOv8
+59. optical flow
+60. Godot
+61. simulation
+62. cross-functional collaboration with product and design
+63. technical writing and papers
+64. presentations
+65. English
+66. French
+67. Spanish
+
+Total: 67 keywords rejetés
+Taux de rétention: 10/72 = 13.9%
+
+================================================================================
+
+================================================================================
+JOB 399
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+HIGHLIGHTS (11)
+────────────────────────────────────────────────────────────────────────────────
+ 1. retrieval-augmented generation (RAG) 
+ 2. deploy models into production
+ 3. Collaborate
+ 4. Python
+ 5. ML ecosystem
+ 6. RAG
+ 7. prompt engineering
+ 8. vector search
+ 9. model fine-tuning.
+10. MLOps
+11. LLMOps
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS VALIDÉS (sélection manuelle)
+────────────────────────────────────────────────────────────────────────────────
+ 1. prompt engineering
+ 2. model deployment
+ 3. performance
+ 4. monitoring
+
+Total: 4 keywords
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS REJETÉS (extraits mais non sélectionnés)
+────────────────────────────────────────────────────────────────────────────────
+ 1. Generative AI
+ 2. Large Language Models (LLMs)
+ 3. OpenAI
+ 4. Claude
+ 5. Cohere
+ 6. LLaMA
+ 7. prompt pipelines
+ 8. prompt design
+ 9. embeddings
+10. embedding-based search
+11. vector search
+12. vector databases
+13. semantic search
+14. retrieval-augmented generation (RAG)
+15. RAG
+16. model fine-tuning
+17. fine-tune LLMs
+18. MLOps
+19. LLMOps
+20. AWS
+21. AWS Bedrock
+22. SageMaker
+23. deploy models into production
+24. model serving
+25. APIs
+26. production-grade systems
+27. scalable AI systems
+28. maintainability
+29. responsible use
+30. responsible AI
+
+Total: 30 keywords rejetés
+Taux de rétention: 4/34 = 11.8%
+
+================================================================================
+
+================================================================================
+JOB 405
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+HIGHLIGHTS (20)
+────────────────────────────────────────────────────────────────────────────────
+ 1. automate workflows
+ 2. Develop scalable AI systems
+ 3. Collaborate across diverse teams
+ 4. Mentor and guide other engineers
+ 5. architectural decisions
+ 6. infrastructure automation
+ 7. system reliability
+ 8. deploying ML models
+ 9. shipping customer-facing ML products
+10. developing ML software
+11. data collection
+12. training
+13. evaluation
+14. prompting
+15. context management,
+16. reasoning
+17. safety evaluation
+18. benchmarking
+19. deploying models into production
+20. understand our clients' needs
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS VALIDÉS (sélection manuelle)
+────────────────────────────────────────────────────────────────────────────────
+ 1. agentic workflows
+ 2. training ML models
+ 3. evaluation (model & metric evaluation)
+ 4. benchmarking
+ 5. customer-facing ML products
+ 6. collaborate across diverse teams
+
+Total: 6 keywords
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS REJETÉS (extraits mais non sélectionnés)
+────────────────────────────────────────────────────────────────────────────────
+ 1. Large Language Model Agents
+ 2. prompting / prompt engineering
+ 3. context management
+ 4. reasoning
+ 5. augmenting support agents with intelligent assistance
+ 6. ML lifecycle (data collection → training → evaluation)
+ 7. data collection
+ 8. safety evaluation
+ 9. production-quality code and services
+10. develop scalable AI systems and platforms
+11. deploying models into production
+12. testing (unit/integration/e2e for ML)
+13. monitoring (models & services)
+14. system reliability improvements
+15. infrastructure automation
+16. architectural decisions
+17. automate workflows (support automation)
+18. AI-powered product experiences
+19. understand and generalize cross-functional stakeholder problems
+20. technical documentation
+21. communicate with technical and non-technical stakeholders
+22. mentor and guide other engineers
+23. code reviews
+
+Total: 23 keywords rejetés
+Taux de rétention: 6/29 = 20.7%
+
+================================================================================
+
+================================================================================
+JOB 434
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+HIGHLIGHTS (43)
+────────────────────────────────────────────────────────────────────────────────
+ 1. machine learning models
+ 2. data modelling
+ 3. forecasting
+ 4. anomaly detection
+ 5. Generative AI
+ 6. LLMs
+ 7. RAG
+ 8. intelligent agents
+ 9. decision automation.
+10. Validate and monitor models
+11. ensure precision, scalability,
+12. Data Preparation
+13. Feature Engineering
+14. automated workflows
+15. Decision Enablement
+16. dashboards
+17. visualizations
+18. Deploy and maintain ML models
+19. MLOps pipelines
+20. performance tracking
+21. knowledge retrieval
+22. data summarization
+23. contextual
+reasoning
+24. decision
+automation
+25. prompt engineering
+26. Python
+27. R,
+28. SQL
+29. TensorFlow, or PyTorch
+30. NumPy
+31. pandas
+32. PySpark
+33. Power BI
+34. Tableau
+35. Plotly
+36. visualization
+37. hypothesis testing
+38. probability
+39. statistics
+40. telecom
+41. network assurance
+42. large-scale telemetry
+datasets
+43. LangChain
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS VALIDÉS (sélection manuelle)
+────────────────────────────────────────────────────────────────────────────────
+ 1. machine learning models
+ 2. predictive analytics
+ 3. statistical methods
+ 4. hypothesis testing
+ 5. optimization
+ 6. time series forecasting
+ 7. anomaly detection
+ 8. data pipelines
+ 9. data wrangling
+10. data cleaning
+11. LLMs
+12. Generative AI
+13. fine-tuning
+14. data summarization
+15. contextual reasoning
+16. AI-driven agents
+17. agentic workflows
+18. LangChain
+19. prompt engineering
+20. agent orchestration
+21. prompt engineering
+22. prompt design
+23. evaluation for LLMs
+24. Docker
+25. Python
+26. PyTorch
+27. SQL
+28. pandas
+29. NumPy
+
+Total: 29 keywords
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS REJETÉS (extraits mais non sélectionnés)
+────────────────────────────────────────────────────────────────────────────────
+ 1. classification
+ 2. forecasting
+ 3. clustering
+ 4. root cause analysis
+ 5. root cause analysis
+ 6. behavioural deviations
+ 7. ETL
+ 8. data integration
+ 9. data transformation
+10. PySpark
+11. feature engineering
+12. traceability
+13. correlation
+14. automated workflows for data and models
+15. version control
+16. model deployment
+17. MLOps pipelines
+18. model retraining
+19. model lifecycle management
+20. CI/CD integration
+21. model governance
+22. model monitoring
+23. drift detection
+24. performance tracking and evaluation
+25. retraining triggers
+26. knowledge retrieval
+27. RAG
+28. vector databases
+29. semantic search
+30. cloud (AWS/Azure/GCP)
+31. DevOps integration
+32. APIs
+33. containerization
+34. scikit-learn
+35. TensorFlow
+36. PySpark
+37. build dashboards and visualizations
+38. visualization dashboards
+39. Power BI
+40. Tableau
+41. Plotly
+42. quantify business KPIs
+43. telecom / network analytics
+44. large-scale telemetry datasets
+45. AIOps
+46. closed-loop automation
+
+Total: 46 keywords rejetés
+Taux de rétention: 29/77 = 37.7%
+
+================================================================================
+
+================================================================================
+JOB 771
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+HIGHLIGHTS (30)
+────────────────────────────────────────────────────────────────────────────────
+ 1. Optronique
+ 2. Ingénieur R&D
+ 3. R&T Solutions Algorithmiques Avancées
+ 4. Recherche et Conception Algorithmique
+ 5. études bibliographiques
+ 6. Deep Learning
+ 7. Machine Learning
+ 8. Métaheuristiques
+ 9. planification IA d'observation
+10.  contrôle autonome de systèmes dynamiques
+11. maintenance prédictive
+12. performances temps-réel
+13. Python
+14. C++
+15. entraînement des modèles
+16. valider leur performance en conditions opérationnelles
+17. Informatique
+18. Mathématiques Appliquées
+19. Traitement du Signal
+20. Thèse en Intelligence Artificielle
+21. Traitement d'Image
+22. Machine Learning
+23. Deep Learning
+24. apprentissage non supervisé/supervisé/par renforcement
+25. Linux
+26. Docker
+27. GIT
+28. CUDA
+29. FPGA
+30. LLMs
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS VALIDÉS (sélection manuelle)
+────────────────────────────────────────────────────────────────────────────────
+ 1. Deep Learning
+ 2. Machine Learning
+ 3. Supervised learning
+ 4. Unsupervised learning
+ 5. Reinforcement Learning
+ 6. LLMs
+ 7. Observation planning
+ 8. Planning algorithms
+ 9. Predictive maintenance algorithms
+10. Optimization & stochastic optimization
+11. Heuristics & metaheuristics
+12. Data preparation & dataset engineering
+13. Git / GitLab / SVN
+14. Linux
+15. Docker / virtualization
+16. Bibliographic and algorithmic studies
+17. Tech watch / veille technologique
+18. Scientific publications & reporting
+19. Simulation frameworks
+
+Total: 19 keywords
+
+────────────────────────────────────────────────────────────────────────────────
+KEYWORDS REJETÉS (extraits mais non sélectionnés)
+────────────────────────────────────────────────────────────────────────────────
+ 1. Metaheuristics
+ 2. Model training pipelines
+ 3. Hyperparameter tuning
+ 4. Model evaluation & benchmarking
+ 5. CUDA / GPU programming
+ 6. Embedded systems
+ 7. Real-time performance
+ 8. On-board compute portability
+ 9. FPGA development
+10. Safety (sûreté)
+11. Cybersecurity for embedded systems
+12. Python
+13. C/C++
+14. PyTorch
+15. TensorFlow
+16. Autonomous control of dynamic systems
+17. Coding and implementation
+18. Validation on real and synthetic data
+19. Testing and performance evaluation
+20. Demonstrators in real-time
+21. Cross-validation and co-simulation
+22. Version control & configuration management
+23. Collaboration with electronics/software/system teams
+24. Technical specifications
+25. Portability / Embedding of algorithms
+26. Industrialization & deployment
+27. Knowledge capitalization / ReTex
+28. Co-simulation
+29. Real data
+30. Synthetic data
+
+Total: 30 keywords rejetés
+Taux de rétention: 19/49 = 38.8%
+
+================================================================================
+

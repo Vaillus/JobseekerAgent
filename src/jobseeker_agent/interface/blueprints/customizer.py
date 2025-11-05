@@ -260,6 +260,15 @@ def start_extraction():
 @bp.route("/extraction-status")
 def extraction_status():
     """Checks the status of the keyword extraction."""
+    job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+    keywords_file = job_dir / "keywords.json"
+    titles_file = job_dir / "titles.json"
+    
+    # If files exist, it's complete (regardless of status in memory)
+    if keywords_file.exists() and titles_file.exists():
+        return jsonify({"status": "complete", "error": None})
+    
+    # Files don't exist - check status in memory (pending, failed, or idle)
     return jsonify(state.EXTRACTION_STATUS)
 
 
@@ -267,8 +276,17 @@ def extraction_status():
 def start_initial_load():
     """Starts the initial data loading in a background thread."""
     if state.DATA_LOADING_THREAD is None or not state.DATA_LOADING_THREAD.is_alive():
-        if state.DATA_LOADING_STATUS["status"] == "complete":
+        # Check if file exists for current job
+        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+        job_details_file = job_dir / "job_details.json"
+        
+        if job_details_file.exists():
+            print(f"✅ job_details.json already exists for job {state.JOB_ID}. Skipping initial load.")
             return jsonify({"status": "complete"})
+
+        # File doesn't exist - check if already running
+        if state.DATA_LOADING_STATUS["status"] == "pending":
+            return jsonify({"status": "already_running"})
 
         print("Starting initial data load thread...")
         state.DATA_LOADING_THREAD = threading.Thread(target=customizer_tasks.run_initial_load_task)
@@ -282,13 +300,15 @@ def start_initial_load():
 @bp.route("/initial-load-status")
 def initial_load_status():
     """Checks the status of the initial data load."""
-    if state.DATA_LOADING_STATUS["status"] == "complete":
-        job_dir = get_data_path() / "resume" / str(state.JOB_ID)
-        job_details_file = job_dir / "job_details.json"
+    job_dir = get_data_path() / "resume" / str(state.JOB_ID)
+    job_details_file = job_dir / "job_details.json"
+    
+    # If file exists, it's complete (regardless of status in memory)
+    if job_details_file.exists():
         try:
             with open(job_details_file, "r", encoding="utf-8") as f:
                 job_details = json.load(f)
-            job_details["id"] = state.JOB_ID  # Add the job_id here
+            job_details["id"] = state.JOB_ID
 
             # Convert description from Markdown to HTML
             if "description" in job_details and job_details["description"]:
@@ -304,7 +324,8 @@ def initial_load_status():
             return jsonify(
                 {"status": "failed", "error": f"Could not load job details: {e}"}
             )
-
+    
+    # File doesn't exist - check status in memory (pending or failed)
     return jsonify(state.DATA_LOADING_STATUS)
 
 
