@@ -22,3 +22,6 @@ src/jobseeker_agent/data/reviewer/job_statuses.json
 src/jobseeker_agent/data/resume/
 .DS_Store
 src/jobseeker_agent/reviewer/evaluation/test-models-on-18.ipynb
+src/jobseeker_agent/customizer/evaluation/analyze_keywords.ipynb
+src/jobseeker_agent/customizer/evaluation/keyword_extractor/analyze_keywords.ipynb
+*.ipynb
