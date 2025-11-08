@@ -330,3 +330,17 @@ pre { white-space: pre-wrap; word-wrap: break-word; color: #34495e; font-family:
 .job-description-content ul li {
     margin-bottom: 0.5em;
 }
+
+.destination-delete-btn {
+    margin-left: 6px;
+    padding: 6px 10px;
+    border: 1px solid #c73e3e;
+    border-radius: 4px;
+    background: #fff;
+    color: #c73e3e;
+    cursor: pointer;
+}
+
+.destination-delete-btn:hover {
+    background: #fdecea;
+}
